@@ -42,5 +42,5 @@ node .claude/serve.js   # http://localhost:4173
 
 ## 배포
 
-`main`에 푸시하면 GitHub Actions가 `dist/`를 GitHub Pages로 배포합니다.
-레포 Settings → Pages → Source를 **GitHub Actions**로 설정해야 합니다.
+루트의 `Dockerfile`로 정적 앱 이미지를 빌드하며, `k8s-manifest.yaml`이
+`devmeet.zmint.dev`의 Deployment, Service, Ingress를 정의합니다.
