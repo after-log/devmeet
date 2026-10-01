@@ -1,0 +1,105 @@
+name: CI/CD
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: devmeet-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  static-check:
+    name: Static app checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+
+      - name: Verify required files
+        run: |
+          test -s frontend/dist/index.html
+          test -s frontend/dist/style.css
+          test -s frontend/dist/app.js
+
+      - name: Check JavaScript syntax
+        run: node --check frontend/dist/app.js
+
+  container-build:
+    name: Production container build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Verify production container build
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          push: false
+          tags: devmeet:ci
+          cache-from: type=gha,scope=devmeet-production
+          cache-to: type=gha,mode=max,scope=devmeet-production
+
+  deploy:
+    name: Deploy to k3s
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [static-check, container-build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: production
+    steps:
+      - name: Validate deployment secrets
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          test -n "$DEPLOY_HOST"
+          test -n "$DEPLOY_USER"
+          test -n "$DEPLOY_SSH_KEY"
+          test -n "$DEPLOY_KNOWN_HOSTS"
+
+      - name: Configure SSH
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/devmeet-deploy
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/devmeet-deploy ~/.ssh/known_hosts
+
+      - name: Deploy immutable image on server
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+        run: |
+          DEPLOY_DIR="/tmp/devmeet-deploy-${{ github.run_id }}-${{ github.run_attempt }}"
+          ssh -i ~/.ssh/devmeet-deploy \
+            -o BatchMode=yes \
+            -o IdentitiesOnly=yes \
+            -o ConnectTimeout=30 \
+            -o ConnectionAttempts=3 \
+            -o ServerAliveInterval=30 \
+            -o ServerAliveCountMax=20 \
+            -o TCPKeepAlive=yes \
+            "$DEPLOY_USER@$DEPLOY_HOST" \
+            "set -Eeuo pipefail
+             cd /home/ubuntu/devmeet
+             git fetch origin main
+             git worktree add --detach '$DEPLOY_DIR' '${{ github.sha }}'
+             cleanup() { git -C /home/ubuntu/devmeet worktree remove --force '$DEPLOY_DIR' || true; }
+             trap cleanup EXIT
+             bash '$DEPLOY_DIR/scripts/deploy.sh' '${{ github.sha }}' '$DEPLOY_DIR'"

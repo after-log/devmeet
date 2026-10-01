@@ -44,3 +44,7 @@ node .claude/serve.js   # http://localhost:4173
 
 루트의 `Dockerfile`로 정적 앱 이미지를 빌드하며, `k8s-manifest.yaml`이
 `devmeet.zmint.dev`의 Deployment, Service, Ingress를 정의합니다.
+
+`main` 브랜치에 푸시하면 GitHub Actions가 정적 파일과 컨테이너 빌드를
+검증한 뒤, 커밋 SHA로 태그한 이미지를 k3s에 자동 배포합니다. 배포 실패 시
+직전 이미지로 자동 롤백합니다.
