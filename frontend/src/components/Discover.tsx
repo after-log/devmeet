@@ -1,4 +1,5 @@
 import type { Preference, Profile } from '../types';
+import { useDevmeetStore } from '../stores/devmeet';
 export const isDeveloper = (profile: Profile) => /개발|엔지니어/.test(profile.job);
 const Discover = ({
   profiles,
@@ -22,6 +23,8 @@ const Discover = ({
   onRestart: () => void;
 }) => {
   const p = profiles[index];
+  const role = useDevmeetStore((s) => s.profile.role);
+  const likes = useDevmeetStore((s) => s.likes);
   return (
     <>
       <div className="topline">
@@ -33,13 +36,20 @@ const Discover = ({
           <span>/ {String(profiles.length).padStart(2, '0')}</span>
         </span>
       </div>
+      <p className="intro">
+        하루 3명 · 가치관 추천 2명 + 새로운 인연 1명
+        <br />
+        매일 오후 6시, 미오픈 카드는 이월되지 않아요.
+      </p>
       <div className="filter-row">
-        <button
-          className={`pill ${filter === 'all' ? 'active' : ''}`}
-          onClick={() => onFilter('all')}
-        >
-          전체
-        </button>
+        {role !== 'other' && (
+          <button
+            className={`pill ${filter === 'all' ? 'active' : ''}`}
+            onClick={() => onFilter('all')}
+          >
+            전체
+          </button>
+        )}
         <button
           className={`pill ${filter === 'dev' ? 'active' : ''}`}
           onClick={() => onFilter('dev')}
@@ -142,11 +152,11 @@ const Discover = ({
             <button className="btn secondary" onClick={onSkip}>
               건너뛰기 <span>→</span>
             </button>
-            <button className="btn" onClick={onLike}>
-              ♡ &nbsp;{liked ? '호감 보냈어요' : '호감 보내기'}
+            <button className="btn" onClick={onLike} disabled={liked || likes.length >= 3}>
+              ♡ &nbsp;{liked ? '좋아요 보냈어요' : role === 'other' ? '좋아요' : 'LGTM! · 좋아요'}
             </button>
           </div>
-          <p className="footnote">서로 호감을 보내면 대화가 열려요.</p>
+          <p className="footnote">서로 좋아요를 보내면 대화가 열려요. · 오늘 최대 3회</p>
         </>
       )}
     </>

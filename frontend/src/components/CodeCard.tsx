@@ -79,18 +79,18 @@ export const ProfilePreview = ({
     >
       {complete && (
         <div className="profile-body">
-          <p className="section-comment">// my values</p>
+          <p className="section-comment">// our pace</p>
           <div className="chips">
-            {tags.length ? (
-              tags.map((tag) => <span key={tag}>{tag}</span>)
-            ) : (
-              <span>아직 답한 문항이 없어요</span>
-            )}
+            {profile.details?.meeting && <span>{profile.details.meeting}</span>}
+            {profile.details?.contact && <span>{profile.details.contact}</span>}
+            {tags.length ? tags.map((tag) => <span key={tag}>{tag}</span>) : null}
           </div>
           <div className="verified mt-5">
             <span>✓</span>
             {profile.github === 'ok'
-              ? '회사 이메일 · GitHub 인증 완료'
+              ? profile.email === 'ok'
+                ? '회사 이메일 · GitHub 인증 완료'
+                : 'GitHub 인증 완료'
               : profile.email === 'ok'
                 ? '회사 이메일 인증 완료'
                 : '아직 인증한 항목이 없어요'}

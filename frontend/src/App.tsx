@@ -7,6 +7,7 @@ import LikesPage from './pages/LikesPage';
 import ChatsPage from './pages/ChatsPage';
 import ChatPage from './pages/ChatPage';
 import MyProfilePage from './pages/MyProfilePage';
+import AdminPage from './pages/AdminPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 const App = () => (
@@ -18,6 +19,7 @@ const App = () => (
       <Route path="likes" element={<LikesPage />} />
       <Route path="chat" element={<ChatsPage />} />
       <Route path="chat/:profileId" element={<ChatPage />} />
+      <Route path="admin" element={<AdminPage />} />
       <Route path="me" element={<MyProfilePage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Route>

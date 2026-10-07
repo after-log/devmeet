@@ -22,6 +22,7 @@ export interface SignupProfile {
   rel: string;
   time: string;
   ans: (boolean | null)[];
+  details?: Record<string, string>;
 }
 export const emptyProfile = (): SignupProfile => ({
   role: '',

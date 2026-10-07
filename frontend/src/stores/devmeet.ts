@@ -33,17 +33,19 @@ export interface DevmeetState {
   settings: () => void;
 }
 export const selectProfiles = (filter: Preference) =>
-  profiles.filter(
-    (p) =>
-      filter === 'all' ||
-      (filter === 'dev' ? /개발|엔지니어/.test(p.job) : !/개발|엔지니어/.test(p.job)),
-  );
+  profiles
+    .filter((_, index) => [0, 1, 3].includes(index))
+    .filter(
+      (p) =>
+        filter === 'all' ||
+        (filter === 'dev' ? /개발|엔지니어/.test(p.job) : !/개발|엔지니어/.test(p.job)),
+    );
 const initialProfile = savedProfile();
 export const useDevmeetStore = create<DevmeetState>()((set, get) => ({
   profile: initialProfile,
   step: 0,
   index: 0,
-  filter: initialProfile.pref || 'all',
+  filter: initialProfile.role === 'other' ? 'dev' : initialProfile.pref || 'all',
   ...savedSession(),
   modal: null,
   draftFilter: 'all',
@@ -52,7 +54,7 @@ export const useDevmeetStore = create<DevmeetState>()((set, get) => ({
   setStep: (step) => set({ step }),
   setIndex: (value) =>
     set((s) => ({ index: typeof value === 'function' ? value(s.index) : value })),
-  setFilter: (filter) => set({ filter }),
+  setFilter: (filter) => set({ filter: get().profile.role === 'other' ? 'dev' : filter }),
   setMatched: (matched) => set({ matched }),
   setMessages: (value) =>
     set((s) => ({ messages: typeof value === 'function' ? value(s.messages) : value })),
@@ -75,7 +77,7 @@ export const useDevmeetStore = create<DevmeetState>()((set, get) => ({
     const profile = {
       ...previous,
       role: previous.role || 'dev',
-      pref: previous.pref || 'all',
+      pref: previous.role === 'other' ? 'dev' : previous.pref || 'all',
     } satisfies SignupProfile;
     set({ profile, filter: profile.pref, index: 0 });
     try {
@@ -94,6 +96,10 @@ export const useDevmeetStore = create<DevmeetState>()((set, get) => ({
     const { filter, index, likes } = get();
     const current = selectProfiles(filter)[index];
     if (!current) return;
+    if (likes.length >= 3 && !likes.includes(current.initial)) {
+      toast('오늘의 좋아요 3회를 모두 사용했어요');
+      return;
+    }
     if (likes.includes(current.initial)) {
       toast('이미 호감을 보낸 프로필이에요');
       return;
