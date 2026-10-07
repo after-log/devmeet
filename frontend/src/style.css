@@ -1,0 +1,376 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-canvas: #1e1f22;
+  --color-surface: #242529;
+  --color-lift: #2b2d30;
+  --color-border: #393b40;
+  --color-blue: #6c95eb;
+  --color-green: #a5c17e;
+  --color-orange: #cf8e6d;
+  --color-purple: #c77dbb;
+  --font-sans: 'Galmuri9', 'Noto Sans KR', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --animate-cursor: blink 1.1s steps(1, end) infinite;
+
+  @keyframes blink {
+    50% {
+      opacity: 0;
+    }
+  }
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+  body {
+    @apply m-0 bg-[#18191b] font-sans text-[14px] leading-[1.6] text-[#dfe1e5];
+  }
+  button,
+  input,
+  select {
+    font: inherit;
+  }
+  button {
+    @apply cursor-pointer active:translate-y-px disabled:cursor-default;
+  }
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  select:focus-visible {
+    @apply outline-2 outline-offset-3 outline-blue;
+  }
+  h2 {
+    @apply m-0 text-[25px] leading-[1.45] font-semibold;
+  }
+  h3 {
+    @apply my-[1em] text-[1.17em] font-bold;
+  }
+  p {
+    @apply my-[1em];
+  }
+  input,
+  select {
+    @apply min-h-[46px] w-full rounded-[5px] border border-[#424650] bg-surface p-[13px] text-[#dfe1e5];
+  }
+}
+
+/* Shared controls and code cards keep a single styling definition. */
+@layer components {
+  .logo {
+    @apply font-mono text-[21px] leading-[normal] font-semibold tracking-[-1px] [&_span]:text-green;
+  }
+  .demo {
+    @apply font-mono text-[11px] leading-[normal] text-[#777b85];
+  }
+  .icon {
+    @apply ml-auto h-10 w-10 rounded-md text-[19px] text-[#999da7] hover:bg-lift;
+  }
+  .topline {
+    @apply mb-[22px] flex items-center justify-between max-[480px]:mb-[15px];
+  }
+  .syntax,
+  .keyword {
+    @apply text-orange;
+  }
+  .variable {
+    @apply text-purple;
+  }
+  .string {
+    @apply text-green;
+  }
+  .count {
+    @apply font-mono text-xs leading-[normal] [&_span]:text-[#767983];
+  }
+  .filter-row {
+    @apply mb-[19px] flex items-center gap-5;
+  }
+  .pill {
+    @apply min-h-9 py-[5px] text-[13px] text-[#90949e];
+  }
+  .pill.active {
+    @apply text-[#dfe1e5] shadow-[0_2px_var(--color-blue)];
+  }
+  .filter {
+    @apply ml-auto [&_span]:ml-2 [&_span]:font-mono [&_span]:text-[13px] [&_span]:text-[#727681];
+  }
+  .profile {
+    @apply overflow-hidden rounded-[9px] border border-border bg-canvas;
+  }
+  .file-tab {
+    @apply flex h-[43px] items-center gap-[9px] border-b border-border bg-lift px-[17px] font-mono text-xs leading-[normal] text-[#b9bdc7];
+  }
+  .file-icon {
+    @apply text-[10px] font-bold text-blue;
+  }
+  .tab-end {
+    @apply ml-auto text-base text-[#767983];
+  }
+  .profile-heading {
+    @apply flex items-center justify-between gap-3 px-5 pt-[23px] pb-5 max-[480px]:pt-5 max-[360px]:px-4;
+  }
+  .profile-heading p {
+    @apply mt-[5px] mb-0 text-xs text-[#a9adb6] [&_span]:text-[#767c87];
+  }
+  .profile-name {
+    @apply flex items-center gap-[10px] text-[27px] font-semibold;
+  }
+  .profile-name span {
+    @apply font-mono text-base leading-[normal] tracking-[-.5px] text-[#9297a2];
+  }
+  .profile-name b {
+    @apply text-[13px] font-normal text-green;
+  }
+  .initial-box {
+    @apply relative grid h-[52px] w-[52px] flex-none place-content-center rounded-[7px] border border-[#3b3e45] bg-lift font-mono text-[21px] leading-[normal] text-[#b1b5c0];
+  }
+  .initial-box span {
+    @apply absolute right-2 bottom-[3px] text-xs text-green;
+  }
+  .code-block {
+    @apply overflow-hidden pt-[7px] pb-[15px];
+  }
+  .code-line {
+    @apply flex min-h-[27px] items-baseline font-mono text-xs leading-[2.2] whitespace-nowrap max-[360px]:text-[11px];
+  }
+  .code-line i {
+    @apply w-[42px] flex-none text-center text-[10px] text-[#646976] not-italic select-none max-[360px]:w-8;
+  }
+  .code-line code {
+    font: inherit;
+    @apply text-[#bcbec4];
+  }
+  .profile-body {
+    @apply border-t border-[#313338] px-5 pt-[18px] pb-4 max-[360px]:px-4;
+  }
+  .section-comment {
+    @apply mt-0 mb-[11px] font-mono text-xs leading-[normal] text-[#818795];
+  }
+  .bio {
+    @apply m-0 text-[15px] leading-[1.9] break-keep text-[#d0d3da];
+  }
+  .reason {
+    @apply mt-[22px] border-t border-[#323439] pt-[17px] max-[480px]:mt-[18px];
+  }
+  .reason-top {
+    @apply flex items-center justify-between text-xs text-[#a8adb7];
+  }
+  .reason-top b {
+    @apply font-mono text-[18px] leading-[normal] font-normal text-blue;
+  }
+  .reason-top small {
+    @apply ml-[3px] text-xs;
+  }
+  .reason p {
+    @apply mt-[7px] mb-[17px] text-xs leading-[1.8] break-keep text-[#989ea9];
+  }
+  .verified {
+    @apply text-[11px] text-[#7f8793] [&_span]:mr-[5px] [&_span]:text-green;
+  }
+  .btn {
+    @apply min-h-12 rounded-md border border-blue bg-blue px-4 py-3 text-[14px] font-semibold whitespace-nowrap text-[#151922] disabled:opacity-35;
+  }
+  .btn.secondary {
+    @apply border-[#43464e] bg-transparent text-[#b5bac5] [&_span]:ml-2 [&_span]:text-[#8d93a0];
+  }
+  .full {
+    @apply mt-6 w-full;
+  }
+  .footnote {
+    @apply mt-[13px] mb-0 text-center text-[11px] text-[#747b88];
+  }
+  .eyebrow {
+    @apply mt-0 mb-[15px] font-mono text-xs leading-[normal] tracking-normal text-[#858b97];
+  }
+  .intro {
+    @apply mt-3 mb-[27px] text-[13px] text-[#8e95a1];
+  }
+  .muted {
+    @apply leading-[1.8] text-[#969eab];
+  }
+  .panel {
+    @apply my-[22px] rounded-[7px] border border-border bg-surface p-[19px];
+  }
+  .panel h3 {
+    @apply mt-0 mb-[9px] text-base font-medium;
+  }
+  .panel p {
+    @apply text-[13px] leading-[1.8];
+  }
+  .option {
+    @apply my-3 flex w-full items-center gap-[13px] rounded-md border border-[#393c44] bg-surface px-[15px] py-[18px] text-left;
+  }
+  .option.selected {
+    @apply border-blue bg-[#262f40];
+  }
+  .symbol {
+    @apply font-mono text-xl leading-[normal] text-orange;
+  }
+  .option strong {
+    @apply block text-[14px] font-medium;
+  }
+  .option small {
+    @apply mt-[5px] block text-xs text-[#979eaa];
+  }
+  .end {
+    @apply ml-auto text-blue;
+  }
+  .tag {
+    @apply ml-auto flex-none rounded border border-[#454951] px-[10px] py-[5px] font-mono text-[11px] leading-[normal] text-[#a6adba];
+  }
+  .tag.ok {
+    @apply border-[#4c5b45] text-green;
+  }
+  .tag.ing {
+    @apply border-[#3f4d6b] text-blue;
+  }
+  .back {
+    @apply mb-3 min-h-10 p-0 text-xs text-[#8d95a2];
+  }
+  .step {
+    @apply mt-[10px] mb-[35px] flex gap-[5px];
+  }
+  .step i {
+    @apply h-[2px] flex-1 bg-[#383c44];
+  }
+  .step .done {
+    @apply bg-blue;
+  }
+  .onboard-hero {
+    @apply my-[15px] text-[28px];
+  }
+  .onboard-lead {
+    @apply mb-7 text-[13px] leading-[1.8] text-[#929aa7];
+  }
+  .secure {
+    @apply text-xs leading-[1.9] text-[#929aa7];
+  }
+  .formlabel {
+    @apply mt-[22px] mb-[9px] block text-[13px] text-[#a4acb9];
+  }
+  .listrow {
+    @apply flex w-full items-center gap-[13px] border-b border-[#363940] py-[19px] text-left;
+  }
+  .listrow strong {
+    @apply text-[14px] font-medium;
+  }
+  .listrow small {
+    @apply mt-[5px] block text-xs text-[#929aa6];
+  }
+  .listrow time {
+    @apply ml-auto font-mono text-[10px] leading-[normal] text-green;
+  }
+  .small-avatar {
+    @apply grid h-[46px] w-[46px] flex-none place-items-center rounded-md border border-[#40434a] bg-lift font-mono text-[14px] leading-[normal] text-green;
+  }
+  .empty {
+    @apply px-[10px] py-[65px] text-center;
+  }
+  .big {
+    @apply mb-7 font-mono text-xl leading-[normal] text-green;
+  }
+  .empty h3 {
+    @apply text-[19px] font-medium;
+  }
+  .empty p {
+    @apply text-[13px] leading-[1.9] text-[#8d96a4];
+  }
+  .profile-self {
+    @apply py-6 text-center;
+  }
+  .profile-self .small-avatar {
+    @apply m-auto h-16 w-16 text-xl;
+  }
+  .profile-self h3 {
+    @apply text-[17px] font-medium;
+  }
+  .settings-row {
+    @apply flex w-full justify-between gap-[10px] border-b border-[#363940] py-[19px] text-left text-[13px] [&_span]:text-[#8d96a4];
+  }
+  .tip {
+    @apply my-6 text-center text-[11px] leading-[1.8] text-[#7f8897];
+  }
+  .bubble {
+    @apply my-[14px] max-w-[85%] rounded-md bg-lift px-4 py-[13px] text-[14px] [overflow-wrap:anywhere];
+  }
+  .bubble.mine {
+    @apply ml-auto bg-[#29364e] text-[#c6d7fa];
+  }
+  .chat-form {
+    @apply mt-[25px] flex gap-2;
+  }
+  .chat-form button {
+    @apply w-[46px] flex-none rounded-[5px] bg-blue text-xl text-[#151922];
+  }
+  .gradient-title {
+    @apply mt-[25px] mb-[18px] font-mono text-[23px] leading-[normal] text-green;
+  }
+  .prompt {
+    @apply mt-1 mb-6 font-mono text-[13px] leading-[normal] text-[#8a909c] [&_span]:mr-[9px] [&_span]:text-green;
+  }
+  .cursor {
+    @apply ml-[7px] inline-block h-[14px] w-[7px] animate-cursor bg-blue align-[-2px] motion-reduce:animate-none;
+  }
+  .checks {
+    @apply mt-8 mb-0 list-none border-t border-[#313338] p-0;
+  }
+  .checks li {
+    @apply flex items-baseline gap-[15px] border-b border-[#313338] px-[2px] py-4 text-[13px] leading-[1.75] break-keep text-[#b7bcc7];
+  }
+  .checks b {
+    @apply flex-none font-mono text-[11px] leading-[normal] font-normal text-blue;
+  }
+  .prev {
+    @apply mt-7 overflow-hidden rounded-lg border border-border bg-surface;
+  }
+  .prev .file-tab {
+    @apply h-[38px];
+  }
+  .prev .code-block {
+    @apply pt-[6px] pb-[11px];
+  }
+  .ox {
+    @apply mt-[26px] mb-[14px] rounded-lg border border-border bg-surface p-[19px];
+  }
+  .ox-top {
+    @apply mb-[18px] flex items-center justify-between;
+  }
+  .cat {
+    @apply rounded border border-[#50423a] px-[9px] py-1 font-mono text-[11px] leading-[normal] text-orange;
+  }
+  .ox-top b {
+    @apply font-mono text-xs leading-[normal] font-normal text-[#dfe1e5] [&_span]:text-[#767983];
+  }
+  .ox-q {
+    @apply mt-0 mb-[22px] min-h-[66px] text-[18px] leading-[1.75] break-keep;
+  }
+  .progress {
+    @apply h-[2px] overflow-hidden rounded-[2px] bg-[#383c44];
+  }
+  .progress i {
+    @apply block h-full bg-blue transition-[width] duration-250 motion-reduce:transition-none;
+  }
+  .ox-actions {
+    @apply grid grid-cols-2 gap-[10px];
+  }
+  .ox-actions .btn {
+    @apply flex min-h-[58px] items-center justify-center gap-[9px];
+  }
+  .ox-actions .btn b {
+    @apply font-mono text-[11px] leading-[normal] font-normal opacity-60;
+  }
+  .skip {
+    @apply mt-4 block min-h-10 w-full text-xs text-[#848b98];
+  }
+  .chips {
+    @apply flex flex-wrap gap-2;
+  }
+  .chips span {
+    @apply rounded-full border border-[#42454d] px-3 py-[6px] font-mono text-[11px] leading-[normal] text-[#b5bac5];
+  }
+}

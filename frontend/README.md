@@ -1,50 +1,87 @@
 # devmeet
 
 검증된 개발자와, 개발자를 만나고 싶은 사람을 연결하는 소개팅 앱 프로토타입.
-빌드 도구 없이 동작하는 정적 목업입니다.
-
-## 미리보기
-
-- 첫 방문: `$ devmeet init` 가입 플로우부터 시작
-- 재방문: 발견 화면으로 바로 진입 (`localStorage`)
-- 헤더의 `⌘` 버튼으로 가입 흐름을 언제든 다시 볼 수 있습니다
-
-## 화면 흐름
-
-```
-$ devmeet init
-  ├─ 01 IDENTITY    역할(개발자 / 개발자를 만나고 싶은 사람) + 프로필 이름
-  ├─ 02 TRUST       회사 이메일 인증 · GitHub 연결 (역할에 따라 분기)
-  ├─ 03 VALUES      가치관 O/X 8문항
-  ├─ 04 PREFERENCE  만나고 싶은 사람 · 연애 가치관 · 만남 시간
-  └─ build complete me.profile.ts 카드 확인 → 발견
-
-발견 → 호감 → (상호 호감) → 대화
-```
-
-## 구조
-
-| 경로 | 설명 |
-|---|---|
-| `dist/index.html` | 앱 셸 |
-| `dist/app.js` | 전체 화면 렌더링 · 상태 |
-| `dist/style.css` | 디자인 시스템 (IntelliJ 다크 팔레트 + JetBrains Mono) |
-| `data/value-questions.json` | 가치관 O/X 문항 뱅크 80개 (일상·연애·커리어·외모 각 20개) |
-
-가입 플로우에서는 문항 뱅크 중 카테고리별 2개씩 8문항을 사용합니다.
-`dealbreaker: true` 문항은 점수 가산이 아니라 필터/경고용으로 설계했습니다.
+Vite + React + TypeScript + Tailwind CSS로 구성한 모바일 정적 목업입니다.
 
 ## 로컬 실행
 
 ```bash
-node .claude/serve.js   # http://localhost:4173
+npm ci
+npm run dev
 ```
+
+개발 서버: http://localhost:5173
+
+```bash
+npm run format     # Prettier 포맷 및 Tailwind 클래스 정렬
+npm run format:check # 포맷 검사
+npm run typecheck  # TypeScript strict 검사
+npm run build      # 타입 검사 후 dist/에 프로덕션 빌드
+npm run preview    # http://localhost:4173 에서 빌드 결과 확인
+```
+
+현재 로컬 Node.js 20.12에서도 실행할 수 있도록 Vite 6을 사용합니다.
+CI와 Docker 빌드는 Node.js 22를 사용합니다.
+
+## 화면 흐름
+
+- 첫 방문: 가입 시작 → 역할·이름 → 모의 인증 → 가치관 O/X 8문항 → 선호 설정 → 프로필 완성
+- 재방문: 발견 화면으로 진입. 가입 프로필은 localStorage에 보관합니다.
+- 발견 → 호감 → 민준과 상호 호감 목업 → 대화
+- 마이 화면에서 인증·가치관·선호 설정을 다시 체험할 수 있습니다.
+- 헤더의 `⌘` 버튼으로 가입 흐름을 처음부터 시작할 수 있습니다.
+
+인증, 추천 프로필, 신고, 메시지 전송은 백엔드에 연결되지 않은 목업입니다.
+호감·매칭·대화는 sessionStorage에 보관하므로 같은 탭에서 새로고침해도 유지됩니다.
+
+## 라우트
+
+React Router의 BrowserRouter를 사용합니다.
+
+| URL                | 화면                                   |
+| ------------------ | -------------------------------------- |
+| `/`                | 첫 방문은 가입, 재방문은 발견으로 이동 |
+| `/signup`          | 가입                                   |
+| `/discover`        | 발견                                   |
+| `/likes`           | 보낸 호감                              |
+| `/chat`            | 대화 목록                              |
+| `/chat/:profileId` | 대화 상세 (현재 목업은 `MJ`)           |
+| `/me`              | 나의 프로필                            |
+
+알 수 없는 URL은 404 화면을 표시합니다. 매칭되지 않은 대화 주소는 목록으로 이동합니다.
+기존 nginx의 `try_files` 설정으로 배포 환경에서도 URL 직접 접근과 새로고침을 지원합니다.
+
+## 구조
+
+| 경로                             | 설명                                             |
+| -------------------------------- | ------------------------------------------------ |
+| `index.html`                     | Vite HTML 진입점                                 |
+| `src/main.tsx`                   | React 진입점                                     |
+| `src/App.tsx`                    | 페이지 전환 및 앱 상태                           |
+| `src/components/`                | 가입·발견·대화·모달·프로필 코드 카드             |
+| `src/pages/`                     | 라우트별 페이지                                  |
+| `src/context/DevmeetContext.tsx` | 라우트 간 공유 상태                              |
+| `src/hooks/useDevmeet.ts`        | 앱 상태 및 액션                                  |
+| `src/lib/profile-storage.ts`     | 가입 프로필 저장·복원                            |
+| `src/types.ts`                   | 프로필·역할·선호·인증 타입                       |
+| `src/data/`                      | 기존 추천 프로필과 가입용 8문항                  |
+| `src/style.css`                  | 기존 다크 팔레트와 Galmuri/JetBrains Mono 디자인 |
+| `data/value-questions.json`      | 전체 가치관 문항 뱅크 80개                       |
+| `dist/`                          | Vite가 생성하는 배포 결과 (직접 편집하지 않음)   |
+
+## 스타일과 포맷
+
+Tailwind CSS 4의 Vite 플러그인을 사용합니다. 색상과 글꼴은 `src/style.css`의
+`@theme`에 정의하며, 레이아웃은 JSX 유틸리티 클래스, 반복되는 버튼과 카드 등은
+`@layer components`의 `@apply`로 관리합니다.
+
+Prettier 설정은 `.prettierrc.json`에 있습니다. Tailwind 플러그인이 클래스 순서를
+정렬합니다. VS Code에서 권장 확장(Prettier, Tailwind CSS IntelliSense)을 설치하면
+저장 시 자동 포맷이 적용됩니다.
 
 ## 배포
 
-루트의 `Dockerfile`로 정적 앱 이미지를 빌드하며, `k8s-manifest.yaml`이
-`devmeet.zmint.dev`의 Deployment, Service, Ingress를 정의합니다.
-
-`main` 브랜치에 푸시하면 GitHub Actions가 정적 파일과 컨테이너 빌드를
-검증한 뒤, 커밋 SHA로 태그한 이미지를 k3s에 자동 배포합니다. 배포 실패 시
-직전 이미지로 자동 롤백합니다.
+저장소 루트의 Dockerfile은 `npm ci`와 `npm run build`를 실행한 다음
+생성된 `dist/`를 nginx 이미지에 복사합니다. 사전 로컬 빌드는 필요 없습니다.
+GitHub Actions는 TypeScript 검사·Vite 빌드와 컨테이너 빌드를 검증하고,
+기존 k3s 배포 흐름을 실행합니다.

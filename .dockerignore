@@ -3,3 +3,6 @@
 backend
 k8s-manifest.yaml
 frontend/README.md
+**/node_modules
+frontend/dist
+**/*.tsbuildinfo
