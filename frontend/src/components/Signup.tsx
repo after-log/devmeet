@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import type { SignupProfile } from '../types';
 import { questions } from '../data/questions';
+import { ChoiceGroup } from './ui/choice-group';
+import { Select } from './ui/select';
 import { ProfilePreview } from './CodeCard';
 export const Option = ({
   symbol,
@@ -133,26 +135,30 @@ const Signup = ({
       else onStep(5);
     } else onStep(position > 0 ? flow[position - 1] : 0);
   };
-  const select = (key: string, label: string, options: string[]) => (
-    <div key={key}>
-      <label className="formlabel" htmlFor={key}>
-        {label}
-      </label>
-      <select
-        className="mt-2"
+  const select = (key: string, label: string, options: string[]) =>
+    options.length === 2 ? (
+      <ChoiceGroup
+        key={key}
         id={key}
+        label={label}
+        options={options}
         value={details[key] || ''}
-        onChange={(e) => setDetail(key, e.target.value)}
-      >
-        <option value="" disabled>
-          선택해주세요
-        </option>
-        {options.map((o) => (
-          <option key={o}>{o}</option>
-        ))}
-      </select>
-    </div>
-  );
+        onValueChange={(value) => setDetail(key, value)}
+      />
+    ) : (
+      <div key={key}>
+        <label className="formlabel" htmlFor={key}>
+          {label}
+        </label>
+        <Select
+          className="mt-2"
+          id={key}
+          value={details[key] || ''}
+          onValueChange={(value) => setDetail(key, value)}
+          options={options}
+        />
+      </div>
+    );
   const input = (key: string, label: string, placeholder: string, numeric = false) => (
     <label className="formlabel" key={key} htmlFor={key}>
       {label}
