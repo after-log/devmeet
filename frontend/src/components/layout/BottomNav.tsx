@@ -1,8 +1,8 @@
 import { NavLink } from 'react-router-dom';
 const tabs = [
   {
-    page: 'discover',
-    label: '발견',
+    page: 'today',
+    label: '추천',
     icon: (
       <>
         <rect x="3" y="3" width="7" height="7" rx="2" />
@@ -14,7 +14,7 @@ const tabs = [
   },
   {
     page: 'likes',
-    label: '호감',
+    label: '좋아요',
     icon: <path d="M20 5c-3-3-6-1-8 1-2-2-5-4-8-1-4 4 1 10 8 15 7-5 12-11 8-15Z" />,
   },
   {
@@ -24,7 +24,7 @@ const tabs = [
   },
   {
     page: 'me',
-    label: '마이',
+    label: '내 정보',
     icon: (
       <>
         <circle cx="12" cy="7" r="4" />
