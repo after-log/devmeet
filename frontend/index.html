@@ -6,6 +6,16 @@
     <meta name="theme-color" content="#1e1f22" />
     <meta name="description" content="취향과 일상의 결이 맞는 사람을 만나는 devmeet 모바일 목업" />
     <title>devmeet — 코드 밖의 연결</title>
+    <script>
+      try {
+        const t =
+          localStorage.getItem('devmeet.theme') ||
+          (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+        document.documentElement.dataset.theme = t;
+        document.querySelector('meta[name=theme-color]').content =
+          t === 'light' ? '#ffffff' : '#1e1f22';
+      } catch (e) {}
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap"

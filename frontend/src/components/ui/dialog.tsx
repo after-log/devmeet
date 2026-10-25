@@ -15,7 +15,7 @@ export const DialogOverlay = ({
 }: ComponentProps<typeof DialogPrimitive.Overlay>) => (
   <DialogPrimitive.Overlay
     data-slot="dialog-overlay"
-    className={cn('fixed inset-0 z-50 bg-[#0d0f14bb] backdrop-blur-[4px]', className)}
+    className={cn('fixed inset-0 z-50 bg-backdrop backdrop-blur-[4px]', className)}
     {...props}
   />
 );
@@ -31,7 +31,7 @@ export const DialogContent = ({
     <DialogPrimitive.Content
       data-slot="dialog-content"
       className={cn(
-        'fixed top-1/2 left-1/2 z-50 max-h-[calc(100dvh-32px)] w-[calc(100%-32px)] max-w-[410px] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-[9px] border border-[#484c55] bg-surface p-[25px] text-[#dfe1e5] shadow-lg outline-none',
+        'fixed top-1/2 left-1/2 z-50 max-h-[calc(100dvh-32px)] w-[calc(100%-32px)] max-w-[410px] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-[9px] border border-line-strong bg-surface p-[25px] text-fg shadow-lg outline-none',
         className,
       )}
       {...props}
@@ -39,7 +39,7 @@ export const DialogContent = ({
       {children}
       {showCloseButton && (
         <DialogClose
-          className="absolute top-3 right-3 rounded-md p-2 text-[#a1a9b6] hover:bg-lift"
+          className="absolute top-3 right-3 rounded-md p-2 text-fg-3 hover:bg-lift"
           aria-label="닫기"
         >
           <X className="size-4" />
@@ -75,7 +75,7 @@ export const DialogDescription = ({
 }: ComponentProps<typeof DialogPrimitive.Description>) => (
   <DialogPrimitive.Description
     data-slot="dialog-description"
-    className={cn('text-[14px] leading-[1.8] text-[#969eab]', className)}
+    className={cn('text-[14px] leading-[1.8] text-fg-3', className)}
     {...props}
   />
 );

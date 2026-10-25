@@ -34,13 +34,13 @@ const tabs = [
   },
 ] as const;
 const BottomNav = () => (
-  <nav className="fixed bottom-0 z-5 flex w-[478px] max-w-full border-t border-[#3a3c41] bg-[#242529f5] px-2 pt-[11px] pb-[max(12px,env(safe-area-inset-bottom))] backdrop-blur-[15px] max-[480px]:w-full">
+  <nav className="fixed bottom-0 z-5 flex w-[478px] max-w-full border-t border-line bg-nav px-2 pt-[11px] pb-[max(12px,env(safe-area-inset-bottom))] backdrop-blur-[15px] max-[480px]:w-full">
     {tabs.map((tab) => (
       <NavLink
         key={tab.page}
         to={`/${tab.page}`}
         className={({ isActive }) =>
-          `flex min-h-[42px] flex-1 flex-col items-center justify-center gap-[6px] text-[11px] ${isActive ? 'text-blue' : 'text-[#797f8b]'}`
+          `flex min-h-[42px] flex-1 flex-col items-center justify-center gap-[6px] text-[11px] ${isActive ? 'text-blue' : 'text-fg-4'}`
         }
         aria-label={tab.label}
       >
