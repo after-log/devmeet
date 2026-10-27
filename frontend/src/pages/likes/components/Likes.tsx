@@ -3,6 +3,7 @@ import { ArrowUpRight, Heart } from 'lucide-react';
 import { profiles } from '@/data/profiles';
 import type { LikeDirection, LikeEntry } from '@/types/likes';
 import LikeListItem from './LikeListItem';
+import { FilterTabs } from '@/components/ui/filter-tabs';
 
 interface LikesProps {
   entries: LikeEntry[];
@@ -45,23 +46,15 @@ const Likes = ({ entries, matchedIds, onOpen, onDiscover }: LikesProps) => {
           </p>
         </div>
       </section>
-      <div className="filter-row mb-0 border-b border-line" aria-label="호감 목록 구분">
-        {(
-          [
-            { value: 'received', label: '받은 호감', count: received.length },
-            { value: 'sent', label: '보낸 호감', count: sent.length },
-          ] as const
-        ).map((tab) => (
-          <button
-            key={tab.value}
-            className={`pill ${direction === tab.value ? 'active' : ''}`}
-            aria-pressed={direction === tab.value}
-            onClick={() => setDirection(tab.value)}
-          >
-            {tab.label} <span className="ml-1 font-mono text-[11px] text-fg-4">{tab.count}</span>
-          </button>
-        ))}
-      </div>
+      <FilterTabs<LikeDirection>
+        label="호감 목록 구분"
+        options={[
+          { value: 'received', label: '받은 호감', count: received.length },
+          { value: 'sent', label: '보낸 호감', count: sent.length },
+        ]}
+        value={direction}
+        onValueChange={setDirection}
+      />
       <div className="flex items-center justify-between py-4 text-[11px]">
         <span className="text-fg-4">{visible.length}명의 인연</span>
         <label className="flex cursor-pointer items-center gap-2 text-fg-3">

@@ -4,6 +4,7 @@ import { ArrowUpRight, MessageSquare, Search, X } from 'lucide-react';
 import { profiles } from '@/data/profiles';
 import { lastActivity } from '@/data/chats';
 import ChatListItem from './ChatListItem';
+import { FilterTabs } from '@/components/ui/filter-tabs';
 
 const ChatList = ({
   rooms,
@@ -93,22 +94,15 @@ const ChatList = ({
           </button>
         )}
       </div>
-      <div className="filter-row mb-0 border-b border-line" aria-label="대화 필터">
-        <button
-          className={`pill ${!unreadOnly ? 'active' : ''}`}
-          aria-pressed={!unreadOnly}
-          onClick={() => setUnreadOnly(false)}
-        >
-          전체 <span className="ml-1 font-mono text-[11px] text-fg-4">{rooms.length}</span>
-        </button>
-        <button
-          className={`pill ${unreadOnly ? 'active' : ''}`}
-          aria-pressed={unreadOnly}
-          onClick={() => setUnreadOnly(true)}
-        >
-          안 읽음 <span className="ml-1 font-mono text-[11px] text-blue">{unreadCount}</span>
-        </button>
-      </div>
+      <FilterTabs
+        label="대화 필터"
+        options={[
+          { value: 'all', label: '전체', count: rooms.length },
+          { value: 'unread', label: '안 읽음', count: unreadCount, countTone: 'accent' },
+        ]}
+        value={unreadOnly ? 'unread' : 'all'}
+        onValueChange={(value) => setUnreadOnly(value === 'unread')}
+      />
       <div aria-label="대화 목록">
         {visibleRooms.map((room) => (
           <ChatListItem
