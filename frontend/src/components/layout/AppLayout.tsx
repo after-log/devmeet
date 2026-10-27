@@ -13,6 +13,7 @@ const AppLayout = () => {
   const step = useDevmeetStore((s) => s.step);
   const setModal = useDevmeetStore((s) => s.setModal);
   const { pathname } = useLocation();
+  const isChatDetail = /^\/chat\/[^/]+\/?$/.test(pathname);
   const [theme, setTheme] = useState(getTheme);
   const toggleTheme = () => {
     const next = theme === 'light' ? 'dark' : 'light';
@@ -28,12 +29,20 @@ const AppLayout = () => {
   return (
     <>
       <div className="mx-auto max-w-[480px] min-[650px]:py-[35px]">
-        <div className="min-h-dvh border-x border-line bg-canvas pb-[94px] max-[480px]:border-0 min-[650px]:min-h-[calc(100dvh-70px)] min-[650px]:overflow-hidden min-[650px]:rounded-xl min-[650px]:border min-[650px]:border-line">
+        <div
+          className={`min-h-dvh border-x border-line bg-canvas max-[480px]:border-0 min-[650px]:min-h-[calc(100dvh-70px)] min-[650px]:overflow-hidden min-[650px]:rounded-xl min-[650px]:border min-[650px]:border-line ${isChatDetail ? 'chat-detail-layout' : 'pb-[94px]'}`}
+        >
           <AppHeader onReplay={replay} theme={theme} onToggleTheme={toggleTheme} />
-          <main className="px-6 pt-7 pb-6 max-[480px]:px-5 max-[480px]:py-[23px] max-[360px]:px-[15px]">
+          <main
+            className={
+              isChatDetail
+                ? 'chat-detail-main'
+                : 'px-6 pt-7 pb-6 max-[480px]:px-5 max-[480px]:py-[23px] max-[360px]:px-[15px]'
+            }
+          >
             <Outlet />
           </main>
-          {pathname !== '/signup' && <BottomNav />}
+          {pathname !== '/signup' && !isChatDetail && <BottomNav />}
         </div>
       </div>
       <AppDialogs />
