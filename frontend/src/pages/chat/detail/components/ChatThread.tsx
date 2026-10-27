@@ -1,8 +1,9 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowUp, ArrowUpRight, Check, Ellipsis, ShieldCheck } from 'lucide-react';
 import { toast } from 'sonner';
-import { chatDate, chatTime, type ChatRoom } from '../../../../data/chats';
+import { chatDate, type ChatRoom } from '../../../../data/chats';
 import type { Profile } from '../../../../types';
+import ChatMessageBubble from './ChatMessageBubble';
 import {
   Dialog,
   DialogContent,
@@ -125,7 +126,6 @@ const ChatThread = ({
         )}
         <div role="log" aria-label="메시지" aria-live="polite" aria-relevant="additions">
           {room.messages.map((message, index) => {
-            const mine = message.sender === 'me';
             const previous = room.messages[index - 1];
             const newDay =
               !previous ||
@@ -137,28 +137,7 @@ const ChatThread = ({
                     <span>{chatDate(message.sentAt)}</span>
                   </div>
                 )}
-                <div className={`chat-message ${mine ? 'is-mine' : ''}`}>
-                  {!mine && (
-                    <span className="small-avatar mt-1 size-7 text-[10px]" aria-hidden="true">
-                      {profile.initial}
-                    </span>
-                  )}
-                  <div className="max-w-[78%] min-w-0">
-                    {!mine && <p className="mt-0 mb-1 text-[10px] text-fg-4">{profile.name}</p>}
-                    <div
-                      className={`chat-bubble ${mine ? 'bg-mine text-mine-fg' : 'border border-line bg-surface text-fg-2'}`}
-                    >
-                      {message.text}
-                    </div>
-                    <time
-                      className={`mt-1 block text-[9px] text-fg-4 ${mine ? 'text-right' : ''}`}
-                      dateTime={message.sentAt}
-                    >
-                      {mine && <span className="mr-1">나 ·</span>}
-                      {chatTime(message.sentAt)}
-                    </time>
-                  </div>
-                </div>
+                <ChatMessageBubble message={message} profile={profile} />
               </Fragment>
             );
           })}

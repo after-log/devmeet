@@ -443,13 +443,13 @@
     @apply shrink-0;
   }
   .chat-detail-main {
-    @apply flex min-h-0 flex-1 flex-col px-6 pt-4 max-[480px]:px-5 max-[360px]:px-[15px];
+    @apply flex min-h-0 min-w-0 flex-1 flex-col px-6 pt-4 max-[480px]:px-5 max-[360px]:px-[15px];
   }
   .chat-thread {
-    @apply relative flex min-h-0 flex-1 flex-col;
+    @apply relative flex min-h-0 min-w-0 flex-1 flex-col;
   }
   .chat-history {
-    @apply min-h-0 flex-1 [scrollbar-width:thin] overflow-y-auto overscroll-contain pt-1 pb-4;
+    @apply min-h-0 min-w-0 flex-1 [scrollbar-width:thin] overflow-x-hidden overflow-y-auto overscroll-contain pt-1 pb-4;
   }
   .chat-date {
     @apply my-6 flex items-center gap-3 text-center text-[10px] text-fg-4 before:h-px before:flex-1 before:bg-line after:h-px after:flex-1 after:bg-line;
