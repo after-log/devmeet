@@ -1,32 +1,45 @@
-import { ArrowLeft, Check, Heart, MessageSquare } from 'lucide-react';
-import type { Profile } from '@/types';
+import { ArrowLeft, Ellipsis, Heart, MessageSquare } from 'lucide-react';
+import type { Person } from '@/types';
 import type { LikeEntry } from '@/types/likes';
-import { chatDate } from '@/data/chats';
+import { CodeLines, personLines } from '@/components/PersonCard';
 
 interface LikeProfileProps {
-  profile: Profile;
+  profile: Person;
   entry: LikeEntry;
   matched: boolean;
+  demo: boolean;
+  reason: string;
+  canAccept: boolean;
+  acceptLabel: string;
   onBack: () => void;
+  onSafety: () => void;
   onChat: () => void;
-  onAccept: () => void;
-  onDismiss: () => void;
+  onAccept: () => Promise<void>;
 }
 
 const LikeProfile = ({
   profile,
   entry,
   matched,
+  demo,
+  reason,
+  canAccept,
+  acceptLabel,
   onBack,
+  onSafety,
   onChat,
   onAccept,
-  onDismiss,
 }: LikeProfileProps) => (
   <>
-    <button className="back flex items-center gap-2" onClick={onBack}>
-      <ArrowLeft size={16} />
-      호감 목록
-    </button>
+    <div className="flex items-center justify-between">
+      <button className="back flex items-center gap-2" onClick={onBack}>
+        <ArrowLeft size={16} />
+        호감 목록
+      </button>
+      <button className="icon grid place-items-center" aria-label="프로필 메뉴" onClick={onSafety}>
+        <Ellipsis size={20} />
+      </button>
+    </div>
     <p className="eyebrow mt-3">
       // {entry.direction === 'received' ? 'someone likes you' : 'a little courage'}
     </p>
@@ -48,63 +61,26 @@ const LikeProfile = ({
     <article className="profile">
       <div className="file-tab">
         <span className="file-icon">ts</span>
-        {profile.initial.toLowerCase()}.profile.ts
+        {profile.name}.profile.ts
         <Heart size={14} className="ml-auto text-purple" />
       </div>
+      <img className="detail-photo" src={profile.photo} alt={`${profile.name} 프로필 사진`} />
       <div className="profile-heading">
         <div className="min-w-0">
           <div className="profile-name">
             {profile.name}
             <span>{profile.age}</span>
-            <Check size={15} className="text-green" aria-label="인증 완료" />
           </div>
           <p>
-            {profile.job} <span>· {profile.place}</span>
+            {profile.job} <span>· {profile.location}</span>
           </p>
         </div>
-        <div className="initial-box">
-          {profile.initial}
-          <span>_</span>
-        </div>
+        <span className="tag">{demo ? '가상 프로필' : '인증 전'}</span>
       </div>
-      <div className="code-block" aria-label="프로필 정보">
-        <div className="code-line">
-          <i>01</i>
-          <code>
-            <span className="keyword">const</span>{' '}
-            <span className="variable">{profile.initial.toLowerCase()}</span>
-            {' = {'}
-          </code>
-        </div>
-        <div className="code-line">
-          <i>02</i>
-          <code>
-            {'  afterWork: '}
-            <span className="string">{JSON.stringify(profile.afterWork)}</span>,
-          </code>
-        </div>
-        <div className="code-line">
-          <i>03</i>
-          <code>
-            {'  lookingFor: '}
-            <span className="string">"진지한 관계"</span>,
-          </code>
-        </div>
-        <div className="code-line">
-          <i>04</i>
-          <code>
-            {'  verified: '}
-            <span className="keyword">true</span>
-          </code>
-        </div>
-        <div className="code-line">
-          <i>05</i>
-          <code>{'};'}</code>
-        </div>
-      </div>
+      <CodeLines lines={personLines(profile, profile.id)} />
       <div className="profile-body">
         <p className="section-comment">// about me</p>
-        <p className="bio">{profile.bio}</p>
+        <p className="bio whitespace-pre-wrap">{profile.intro}</p>
         <div className="chips mt-4">
           {profile.tags.map((tag) => (
             <span key={tag}>{tag}</span>
@@ -113,17 +89,10 @@ const LikeProfile = ({
         <div className="reason">
           <div className="reason-top">
             <span>함께 맞는 점</span>
-            <b>
-              {profile.score}
-              <small>%</small>
-            </b>
           </div>
-          <p>{profile.reason}</p>
+          <p>{reason}</p>
         </div>
-        <div className="verified">
-          <span>✓</span>
-          {/개발|엔지니어/.test(profile.job) ? '회사 이메일 · GitHub 인증' : '회사 이메일 인증'}
-        </div>
+        <div className="verified">{demo ? '가상 프로필' : '본인 입력 정보 · 인증 전'}</div>
       </div>
     </article>
     {matched ? (
@@ -132,24 +101,32 @@ const LikeProfile = ({
         대화 이어가기
       </button>
     ) : entry.direction === 'received' ? (
-      <div className="mt-[18px] grid grid-cols-[1fr_1.5fr] gap-[10px]">
-        <button className="btn secondary" onClick={onDismiss}>
-          넘어가기
-        </button>
-        <button className="btn flex items-center justify-center gap-2" onClick={onAccept}>
-          <Heart size={16} />
-          나도 좋아요
-        </button>
-      </div>
+      <>
+        <div className="mt-[18px] grid grid-cols-[1fr_1.5fr] gap-[10px]">
+          <button className="btn secondary" onClick={onBack}>
+            돌아가기
+          </button>
+          <button
+            className="btn flex items-center justify-center gap-2"
+            disabled={!canAccept}
+            onClick={() => void onAccept()}
+          >
+            <Heart size={16} />
+            나도 좋아요
+          </button>
+        </div>
+        {!canAccept && (
+          <p className="footnote" role="status">
+            {acceptLabel}
+          </p>
+        )}
+      </>
     ) : (
       <button className="btn secondary full" disabled>
         호감을 보냈어요 · 답변 대기 중
       </button>
     )}
-    <p className="footnote">
-      {entry.likedAt ? `${chatDate(entry.likedAt)} · ` : ''}
-      {matched ? '서로 호감을 보내 대화가 열렸어요.' : '서로 좋아요를 보내면 대화가 열려요.'}
-    </p>
+    <p className="footnote">서로 좋아요를 보내면 대화가 열려요. · 하루 최대 3회</p>
     <p className="footnote">목업 화면이에요. 실제 상대에게 전달되지 않아요.</p>
   </>
 );

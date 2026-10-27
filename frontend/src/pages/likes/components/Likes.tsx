@@ -1,18 +1,19 @@
 import { useState } from 'react';
 import { ArrowUpRight, Heart } from 'lucide-react';
-import { profiles } from '@/data/profiles';
+import type { Person } from '@/types';
 import type { LikeDirection, LikeEntry } from '@/types/likes';
 import LikeListItem from './LikeListItem';
 import { FilterTabs } from '@/components/ui/filter-tabs';
 
 interface LikesProps {
   entries: LikeEntry[];
+  profiles: Person[];
   matchedIds: string[];
   onOpen: (profileId: string) => void;
   onDiscover: () => void;
 }
 
-const Likes = ({ entries, matchedIds, onOpen, onDiscover }: LikesProps) => {
+const Likes = ({ entries, profiles, matchedIds, onOpen, onDiscover }: LikesProps) => {
   const [direction, setDirection] = useState<LikeDirection>('received');
   const [matchedOnly, setMatchedOnly] = useState(false);
   const received = entries.filter((entry) => entry.direction === 'received');
@@ -69,7 +70,7 @@ const Likes = ({ entries, matchedIds, onOpen, onDiscover }: LikesProps) => {
       </div>
       <div aria-label={direction === 'received' ? '받은 호감 목록' : '보낸 호감 목록'}>
         {visible.map((entry) => {
-          const profile = profiles.find((profile) => profile.initial === entry.profileId);
+          const profile = profiles.find((profile) => profile.id === entry.profileId);
           return profile ? (
             <LikeListItem
               key={`${entry.direction}-${entry.profileId}`}

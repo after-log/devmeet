@@ -1,76 +1,83 @@
-import type { ChatRoom } from '@/types/chats';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
-import { mockChats } from '@/data/chats';
-import { profiles } from '@/data/profiles';
+import type { Message } from '@/types';
+import { api } from '@/lib/mock-api';
+import { useApp } from '@/stores/app';
 
 interface ChatsState {
-  rooms: ChatRoom[];
-  startChat: (profileId: string) => void;
+  messages: Record<string, Message[]>;
+  readAt: Record<string, number>;
+  loadMessages: (profileId: string) => Promise<void>;
   markRead: (profileId: string) => void;
-  sendMessage: (profileId: string, text: string) => void;
-  disconnect: (profileId: string) => void;
+  sendMessage: (profileId: string, text: string) => Promise<void>;
 }
+
+export const chatKey = (ownerId: string, profileId: string) => `${ownerId}:${profileId}`;
 
 export const useChatsStore = create<ChatsState>()(
   persist(
     (set) => ({
-      rooms: mockChats,
-      startChat: (profileId) => {
-        const profile = profiles.find((profile) => profile.initial === profileId);
-        if (!profile) return;
-        set((state) => {
-          if (state.rooms.some((room) => room.profileId === profileId)) return state;
+      messages: {},
+      readAt: {},
+      loadMessages: async (profileId) => {
+        const { user, demo, connections } = useApp.getState();
+        if (demo || !user || !connections.matches.some((p) => p.id === profileId)) return;
+        const { messages } = await api.messages(profileId);
+        const current = useApp.getState();
+        if (
+          current.demo ||
+          current.user?.id !== user.id ||
+          !current.connections.matches.some((p) => p.id === profileId)
+        )
+          return;
+        const key = chatKey(user.id, profileId);
+        set((s) => {
+          // A send may have completed while this request was in flight.
+          const merged = new Map(messages.map((message) => [message.id, message]));
+          for (const message of s.messages[key] ?? []) merged.set(message.id, message);
           return {
-            rooms: [
-              ...state.rooms,
-              {
-                profileId,
-                matchedAt: new Date().toISOString(),
-                interests: [profile.afterWork, ...profile.tags.slice(1)],
-                starter: `${profile.afterWork} 좋아하신다고 봤어요. 요즘 어떻게 즐기고 계세요?`,
-                unread: 0,
-                messages: [],
-              },
-            ],
+            messages: {
+              ...s.messages,
+              [key]: [...merged.values()].sort((a, b) => a.created - b.created),
+            },
           };
         });
       },
-      markRead: (profileId) =>
-        set((state) => ({
-          rooms: state.rooms.map((room) =>
-            room.profileId === profileId && room.unread > 0 ? { ...room, unread: 0 } : room,
-          ),
-        })),
-      sendMessage: (profileId, text) => {
+      markRead: (profileId) => {
+        const { user, demo } = useApp.getState();
+        const ownerId = demo ? 'demo' : user?.id;
+        if (ownerId)
+          set((s) => ({ readAt: { ...s.readAt, [chatKey(ownerId, profileId)]: Date.now() } }));
+      },
+      sendMessage: async (profileId, text) => {
         const trimmed = text.trim();
         if (!trimmed || trimmed.length > 1000) return;
-        set((state) => ({
-          rooms: state.rooms.map((room) =>
-            room.profileId === profileId
-              ? {
-                  ...room,
-                  messages: [
-                    ...room.messages,
-                    {
-                      id: crypto.randomUUID(),
-                      sender: 'me',
-                      text: trimmed,
-                      sentAt: new Date().toISOString(),
-                    },
-                  ],
-                }
-              : room,
-          ),
+        const { user, demo, demoSend, connections } = useApp.getState();
+        if (!connections.matches.some((p) => p.id === profileId))
+          throw new Error('서로 좋아요를 보낸 상대와만 대화할 수 있어요.');
+        if (demo) {
+          demoSend(profileId, trimmed);
+          return;
+        }
+        if (!user) throw new Error('로그인이 필요해요.');
+        const { message } = await api.send(profileId, trimmed);
+        const current = useApp.getState();
+        if (current.demo || current.user?.id !== user.id) return;
+        const key = chatKey(user.id, profileId);
+        set((s) => ({
+          messages: {
+            ...s.messages,
+            [key]: [...(s.messages[key] ?? []).filter((m) => m.id !== message.id), message].sort(
+              (a, b) => a.created - b.created,
+            ),
+          },
         }));
       },
-      disconnect: (profileId) =>
-        set((state) => ({ rooms: state.rooms.filter((room) => room.profileId !== profileId) })),
     }),
     {
-      name: 'devmeet.mock-chats',
+      name: 'devmeet.chat-read-state',
       storage: createJSONStorage(() => sessionStorage),
-      partialize: (state) => ({ rooms: state.rooms }),
+      partialize: (state) => ({ readAt: state.readAt }),
     },
   ),
 );

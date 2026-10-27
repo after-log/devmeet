@@ -1,17 +1,20 @@
 import type { ChatRoom } from '@/types/chats';
 import { useState } from 'react';
 import { ArrowUpRight, MessageSquare, Search, X } from 'lucide-react';
-import { profiles } from '@/data/profiles';
+import type { Person } from '@/types';
+import { Avatar } from '@/components/PersonCard';
 import { lastActivity } from '@/data/chats';
 import ChatListItem from './ChatListItem';
 import { FilterTabs } from '@/components/ui/filter-tabs';
 
 const ChatList = ({
   rooms,
+  profiles,
   onOpen,
   onDiscover,
 }: {
   rooms: ChatRoom[];
+  profiles: Person[];
   onOpen: (profileId: string) => void;
   onDiscover: () => void;
 }) => {
@@ -21,7 +24,7 @@ const ChatList = ({
   const newMatches = rooms.filter((room) => room.messages.length === 0);
   const visibleRooms = rooms
     .filter((room) => {
-      const profile = profiles.find((profile) => profile.initial === room.profileId);
+      const profile = profiles.find((profile) => profile.id === room.profileId);
       return (
         (!unreadOnly || room.unread > 0) &&
         `${profile?.name} ${profile?.job} ${room.messages.at(-1)?.text ?? ''}`
@@ -29,7 +32,7 @@ const ChatList = ({
           .includes(query.trim().toLowerCase())
       );
     })
-    .sort((a, b) => Date.parse(lastActivity(b)) - Date.parse(lastActivity(a)));
+    .sort((a, b) => (Date.parse(lastActivity(b)) || 0) - (Date.parse(lastActivity(a)) || 0));
 
   return (
     <>
@@ -52,7 +55,7 @@ const ChatList = ({
           </div>
           <div className="mt-4 flex gap-4 overflow-x-auto pb-1">
             {newMatches.map((room) => {
-              const profile = profiles.find((profile) => profile.initial === room.profileId)!;
+              const profile = profiles.find((profile) => profile.id === room.profileId)!;
               return (
                 <button
                   key={room.profileId}
@@ -60,8 +63,8 @@ const ChatList = ({
                   onClick={() => onOpen(room.profileId)}
                   aria-label={`${profile.name}님에게 첫 인사 보내기`}
                 >
-                  <span className="small-avatar relative border-tag-green group-hover:bg-selected">
-                    {profile.initial}
+                  <span className="relative">
+                    <Avatar person={profile} />
                     <span className="absolute -top-1 -right-1 size-2.5 rounded-full border-2 border-surface bg-green" />
                   </span>
                   <span className="text-xs text-fg-2">{profile.name}</span>
@@ -108,7 +111,7 @@ const ChatList = ({
           <ChatListItem
             key={room.profileId}
             room={room}
-            profile={profiles.find((profile) => profile.initial === room.profileId)!}
+            profile={profiles.find((profile) => profile.id === room.profileId)!}
             onOpen={onOpen}
           />
         ))}

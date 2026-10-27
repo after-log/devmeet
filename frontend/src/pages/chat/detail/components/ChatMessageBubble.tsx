@@ -1,10 +1,11 @@
 import type { ChatMessage } from '@/types/chats';
 import { chatTime } from '@/data/chats';
-import type { Profile } from '@/types';
+import type { Person } from '@/types';
+import { Avatar } from '@/components/PersonCard';
 
 interface ChatMessageBubbleProps {
   message: ChatMessage;
-  profile: Pick<Profile, 'name' | 'initial'>;
+  profile: Pick<Person, 'name' | 'photo'>;
 }
 
 const ChatMessageBubble = ({ message, profile }: ChatMessageBubbleProps) => {
@@ -12,11 +13,7 @@ const ChatMessageBubble = ({ message, profile }: ChatMessageBubbleProps) => {
 
   return (
     <div className={`chat-message ${mine ? 'is-mine' : ''}`}>
-      {!mine && (
-        <span className="small-avatar mt-1 size-7 text-[10px]" aria-hidden="true">
-          {profile.initial}
-        </span>
-      )}
+      {!mine && <Avatar person={profile} size={28} />}
       <div className="max-w-[78%] min-w-0">
         {!mine && <p className="mt-0 mb-1 text-[10px] text-fg-4">{profile.name}</p>}
         <div

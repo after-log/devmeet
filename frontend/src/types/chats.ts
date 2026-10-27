@@ -7,7 +7,6 @@ export interface ChatMessage {
 
 export interface ChatRoom {
   profileId: string;
-  matchedAt: string;
   interests: string[];
   starter: string;
   unread: number;

@@ -418,6 +418,51 @@
   .chips span {
     @apply rounded-full border border-line-strong px-3 py-[6px] font-mono text-[11px] leading-[normal] text-fg-2;
   }
+
+  /* MVP flow: photo cards, rows, match, chat suggestions. Same palette and spacing as the code cards. */
+  .card-photo {
+    @apply block aspect-[4/5] w-full overflow-hidden border-b border-border bg-lift p-0;
+  }
+  .card-photo img,
+  .detail-photo {
+    @apply block h-full w-full object-cover;
+  }
+  .detail-photo {
+    @apply aspect-[4/5] border-b border-border;
+  }
+  .avatar-photo {
+    @apply flex-none rounded-md border border-line-strong bg-lift object-cover;
+  }
+  .info-row {
+    @apply flex justify-between gap-4 border-b border-line py-[11px] text-[13px] [&_span]:text-fg-3 [&_strong]:text-right [&_strong]:font-medium;
+  }
+  .info-row:last-of-type {
+    @apply border-b-0;
+  }
+  .demo-banner {
+    @apply flex items-center justify-between gap-3 border-b border-line bg-lift px-6 py-2 font-mono text-[11px] text-fg-3 max-[480px]:px-5 [&_button]:text-blue;
+  }
+  .error {
+    @apply mt-3 mb-0 min-h-5 text-xs text-orange;
+  }
+  .upload-preview {
+    @apply mb-3 aspect-square w-full rounded-md border border-line object-cover;
+  }
+  .match {
+    @apply pt-6 text-center;
+  }
+  .match-pair {
+    @apply my-6 flex items-center justify-center gap-3;
+  }
+  .match-link {
+    @apply h-[2px] w-8 rounded bg-purple;
+  }
+  .merged {
+    @apply -mt-2 mb-2 font-mono text-xs text-purple;
+  }
+  .suggestions {
+    @apply mt-4 flex flex-wrap gap-x-4 gap-y-1;
+  }
 }
 
 @layer components {

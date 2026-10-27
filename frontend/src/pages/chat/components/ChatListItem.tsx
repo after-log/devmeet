@@ -1,11 +1,11 @@
 import type { ChatRoom } from '@/types/chats';
-import { Check } from 'lucide-react';
+import { Avatar } from '@/components/PersonCard';
 import { chatPreviewTime, lastActivity } from '@/data/chats';
-import type { Profile } from '@/types';
+import type { Person } from '@/types';
 
 interface ChatListItemProps {
   room: ChatRoom;
-  profile: Profile;
+  profile: Person;
   onOpen: (profileId: string) => void;
 }
 
@@ -14,11 +14,10 @@ const ChatListItem = ({ room, profile, onOpen }: ChatListItemProps) => {
 
   return (
     <button className="chat-row" onClick={() => onOpen(room.profileId)}>
-      <span className="small-avatar">{profile.initial}</span>
+      <Avatar person={profile} />
       <span className="min-w-0 flex-1">
         <span className="flex items-center gap-1.5 text-sm font-medium">
           {profile.name}
-          <Check size={12} className="text-green" aria-label="인증 완료" />
           <span className="truncate text-[10px] font-normal text-fg-4">{profile.job}</span>
         </span>
         <span
@@ -31,7 +30,7 @@ const ChatListItem = ({ room, profile, onOpen }: ChatListItemProps) => {
       </span>
       <span className="flex shrink-0 flex-col items-end gap-2">
         <time className="font-mono text-[10px] text-fg-4" dateTime={lastActivity(room)}>
-          {chatPreviewTime(lastActivity(room))}
+          {last ? chatPreviewTime(last.sentAt) : 'NEW'}
         </time>
         {room.unread > 0 ? (
           <span className="chat-unread" aria-label={`안 읽은 메시지 ${room.unread}개`}>

@@ -1,11 +1,12 @@
-import { Check, ChevronRight, Heart } from 'lucide-react';
-import type { Profile } from '@/types';
+import { ChevronRight, Heart } from 'lucide-react';
+import type { Person } from '@/types';
+import { Avatar } from '@/components/PersonCard';
 import type { LikeEntry } from '@/types/likes';
 import { chatPreviewTime } from '@/data/chats';
 
 interface LikeListItemProps {
   entry: LikeEntry;
-  profile: Profile;
+  profile: Person;
   matched: boolean;
   onOpen: (profileId: string) => void;
 }
@@ -13,17 +14,16 @@ interface LikeListItemProps {
 const LikeListItem = ({ entry, profile, matched, onOpen }: LikeListItemProps) => (
   <button
     className="flex w-full items-start gap-3 border-b border-line px-2 py-5 text-left transition-colors hover:bg-surface"
-    onClick={() => onOpen(profile.initial)}
+    onClick={() => onOpen(profile.id)}
   >
-    <span className="small-avatar">{profile.initial}</span>
+    <Avatar person={profile} />
     <span className="min-w-0 flex-1">
       <span className="flex items-center gap-1.5 text-sm font-medium">
         {profile.name}
         <span className="font-mono text-xs text-fg-4">{profile.age}</span>
-        <Check size={12} className="text-green" aria-label="인증 완료" />
       </span>
       <span className="mt-1 block truncate text-[11px] text-fg-3">
-        {profile.job} · {profile.place}
+        {profile.job} · {profile.location}
       </span>
       <span className="mt-3 flex items-center gap-1.5 text-[11px]">
         <Heart size={12} className={matched ? 'text-green' : 'text-purple'} />
@@ -42,7 +42,7 @@ const LikeListItem = ({ entry, profile, matched, onOpen }: LikeListItemProps) =>
           {chatPreviewTime(entry.likedAt)}
         </time>
       ) : (
-        <span className="text-[10px] text-fg-4">방금</span>
+        <span className="text-[10px] text-fg-4">호감</span>
       )}
       <ChevronRight size={16} className="text-fg-4" />
     </span>

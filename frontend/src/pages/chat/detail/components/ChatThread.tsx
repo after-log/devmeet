@@ -1,27 +1,32 @@
 import type { ChatRoom } from '@/types/chats';
 import { Fragment, useEffect, useRef, useState } from 'react';
-import { ArrowLeft, ArrowUp, ArrowUpRight, Check, Ellipsis, ShieldCheck } from 'lucide-react';
-import { toast } from 'sonner';
+import { ArrowLeft, ArrowUp, ArrowUpRight, Ellipsis, ShieldCheck } from 'lucide-react';
 import { chatDate } from '@/data/chats';
-import type { Profile } from '@/types';
+import type { Person } from '@/types';
+import { Avatar } from '@/components/PersonCard';
 import ChatMessageBubble from './ChatMessageBubble';
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 
 const ChatThread = ({
   room,
   profile,
   onBack,
   onSend,
-  onDisconnect,
+  onSafety,
+  loading,
+  error,
 }: {
   room: ChatRoom;
-  profile: Profile;
+  profile: Person;
   onBack: () => void;
-  onSend: (message: string) => void;
-  onDisconnect: () => void;
+  onSend: (message: string) => Promise<void>;
+  onSafety: () => void;
+  loading: boolean;
+  error: string;
 }) => {
   const [draft, setDraft] = useState('');
-  const [safetyOpen, setSafetyOpen] = useState(false);
+  const [sending, setSending] = useState(false);
+  const sendingRef = useRef(false);
+  const [sendError, setSendError] = useState('');
   const input = useRef<HTMLTextAreaElement>(null);
   const scrollArea = useRef<HTMLDivElement>(null);
   const [showLatest, setShowLatest] = useState(false);
@@ -34,11 +39,22 @@ const ChatThread = ({
     scrollToLatest();
   }, [room.messages.length]);
 
-  const send = () => {
-    if (!draft.trim()) return;
-    onSend(draft.trim());
-    setDraft('');
-    input.current?.focus();
+  const send = async () => {
+    if (!draft.trim() || sendingRef.current || loading) return;
+    const text = draft.trim();
+    sendingRef.current = true;
+    setSending(true);
+    setSendError('');
+    try {
+      await onSend(text);
+      setDraft('');
+      input.current?.focus();
+    } catch (err) {
+      setSendError(`전송 실패 · ${(err as Error).message} 입력 내용을 유지했어요.`);
+    } finally {
+      sendingRef.current = false;
+      setSending(false);
+    }
   };
 
   return (
@@ -51,19 +67,16 @@ const ChatThread = ({
         >
           <ArrowLeft size={20} />
         </button>
-        <span className="small-avatar size-10 text-xs">{profile.initial}</span>
+        <Avatar person={profile} size={40} />
         <div className="min-w-0 flex-1">
-          <h2 className="flex items-center gap-1.5 text-base">
-            {profile.name}
-            <Check size={13} className="text-green" aria-label="인증 완료" />
-          </h2>
+          <h2 className="flex items-center gap-1.5 text-base">{profile.name}</h2>
           <p className="m-0 truncate text-[11px] text-fg-4">
-            {profile.job} · {profile.place}
+            {profile.job} · {profile.location}
           </p>
         </div>
         <button
           className="icon grid shrink-0 place-items-center"
-          onClick={() => setSafetyOpen(true)}
+          onClick={onSafety}
           aria-label="대화 안전 설정"
         >
           <Ellipsis size={21} />
@@ -80,14 +93,14 @@ const ChatThread = ({
         <p className="tip my-5">
           <span className="text-green">{'{ connected }'}</span>
           <br />
-          {chatDate(room.matchedAt)} · 서로의 마음이 연결되었어요.
+          서로의 마음이 연결되었어요.
         </p>
         <article className="profile mb-6 bg-surface">
           <div className="file-tab h-9">
             <span className="file-icon">&lt;/&gt;</span>our.common.ts
           </div>
           <div className="p-4">
-            <p className="section-comment">// 대화의 시작이 될 공통 관심사</p>
+            <p className="section-comment">// 대화의 시작이 될 상대의 관심사</p>
             <div className="flex flex-wrap gap-2">
               {room.interests.map((interest) => (
                 <span
@@ -110,9 +123,19 @@ const ChatThread = ({
             </button>
           </div>
         </article>
-        {room.messages.length === 0 && (
+        {loading && (
+          <p className="tip" role="status">
+            대화를 불러오는 중…
+          </p>
+        )}
+        {error && (
+          <p className="error" role="alert">
+            {error}
+          </p>
+        )}
+        {!loading && !error && room.messages.length === 0 && (
           <div className="py-7 text-center">
-            <p className="font-mono text-lg text-green">hello, {profile.initial.toLowerCase()}_</p>
+            <p className="font-mono text-lg text-green">hello, {profile.id}_</p>
             <p className="text-xs leading-7 text-fg-4">
               거창한 인사가 아니어도 괜찮아요.
               <br />
@@ -145,16 +168,22 @@ const ChatThread = ({
         </button>
       )}
       <footer className="shrink-0 border-t border-line pt-3 pb-[max(8px,env(safe-area-inset-bottom))]">
+        {sendError && (
+          <p className="error" role="alert">
+            {sendError}
+          </p>
+        )}
         <form
           className="chat-composer"
           onSubmit={(event) => {
             event.preventDefault();
-            send();
+            void send();
           }}
         >
           <textarea
             ref={input}
             rows={2}
+            readOnly={sending}
             aria-label="메시지"
             placeholder="편하게 이야기를 건네보세요"
             maxLength={1000}
@@ -168,11 +197,15 @@ const ChatThread = ({
                 event.keyCode !== 229
               ) {
                 event.preventDefault();
-                send();
+                void send();
               }
             }}
           />
-          <button type="submit" disabled={!draft.trim()} aria-label="메시지 보내기">
+          <button
+            type="submit"
+            disabled={!draft.trim() || sending || loading}
+            aria-label="메시지 보내기"
+          >
             <ArrowUp size={18} />
           </button>
         </form>
@@ -184,27 +217,6 @@ const ChatThread = ({
           <span className="font-mono">{draft.length}/1000</span>
         </div>
       </footer>
-      <Dialog open={safetyOpen} onOpenChange={setSafetyOpen}>
-        <DialogContent>
-          <DialogTitle>{profile.name}님과의 대화 설정</DialogTitle>
-          <DialogDescription>
-            개인 연락처와 금융 정보는 신중하게 공유해 주세요. 연결을 해제하면 이 목업 대화가
-            목록에서 사라져요.
-          </DialogDescription>
-          <button
-            className="btn secondary full"
-            onClick={() => {
-              toast('목업 화면에서는 실제 신고가 접수되지 않아요.');
-              setSafetyOpen(false);
-            }}
-          >
-            신고하기
-          </button>
-          <button className="btn full" onClick={onDisconnect}>
-            대화 연결 해제
-          </button>
-        </DialogContent>
-      </Dialog>
     </section>
   );
 };
