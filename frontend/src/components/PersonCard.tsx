@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import type { Person } from '../types';
+import type { Person } from '@/types';
 
 /** 사진이 없거나 불러오지 못하면 이니셜 박스로 대신한다. */
 export const Avatar = ({

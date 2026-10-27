@@ -1,6 +1,6 @@
 // 서버 연동 전 추천에 쓰는 가상 회원 24명(여 12, 남 12). 실제 인물이 아니며 사진은 Unsplash 자리표시용이다.
 // likesYou가 true인 회원은 내가 좋아요를 보내면 바로 매칭되고, '받은 좋아요'에도 보인다.
-import type { Person, Role } from '../types';
+import type { Person, Role } from '@/types';
 
 const photo = (id: string) =>
   `https://images.unsplash.com/photo-${id}?w=800&q=80&auto=format&fit=crop&crop=faces`;

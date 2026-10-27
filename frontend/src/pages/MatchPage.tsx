@@ -1,6 +1,6 @@
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { findPerson, reasonFor, useApp } from '../stores/app';
-import { Avatar } from '../components/PersonCard';
+import { Avatar } from '@/components/PersonCard';
 
 const MatchPage = () => {
   const { id } = useParams();

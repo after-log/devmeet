@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { api } from '../lib/mock-api';
-import { demoPeople } from '../data/members';
-import type { Connections, Draft, Message, Person, User } from '../types';
+import { demoPeople } from '@/data/members';
+import type { Connections, Draft, Message, Person, User } from '@/types';
 
 export type Sheet =
   | { kind: 'filters' }

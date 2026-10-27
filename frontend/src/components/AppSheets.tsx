@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useApp } from '../stores/app';
 import { api } from '../lib/mock-api';
-import { REPORT_REASONS } from '../data/options';
-import type { Person } from '../types';
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from './ui/dialog';
-import { Select } from './ui/select';
+import { REPORT_REASONS } from '@/data/options';
+import type { Person } from '@/types';
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
+import { Select } from '@/components/ui/select';
 
 const FiltersSheet = ({ close }: { close: () => void }) => {
   const { user, demo, draft, setDraft, setUser } = useApp();

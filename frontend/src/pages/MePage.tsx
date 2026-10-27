@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useApp } from '../stores/app';
-import { Avatar } from '../components/PersonCard';
+import { Avatar } from '@/components/PersonCard';
 
 const MePage = () => {
   const navigate = useNavigate();

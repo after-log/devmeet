@@ -464,3 +464,62 @@
     @apply mt-4 flex flex-wrap gap-x-4 gap-y-1;
   }
 }
+
+@layer components {
+  .chat-matches {
+    @apply mb-6 rounded-[9px] border border-border bg-surface p-4;
+  }
+  .chat-search {
+    @apply mb-4 flex items-center gap-2.5 rounded-md border border-line bg-surface px-3 focus-within:border-blue;
+  }
+  .chat-search input {
+    @apply min-h-11 min-w-0 border-0 bg-transparent px-0 py-2 text-xs outline-none placeholder:text-fg-4 focus-visible:outline-none;
+  }
+  .chat-row {
+    @apply flex w-full items-center gap-3 border-b border-line px-2 py-5 text-left transition-colors hover:bg-surface;
+  }
+  .chat-unread {
+    @apply grid min-h-[19px] min-w-[19px] place-items-center rounded-[5px] bg-blue px-1 font-mono text-[10px] text-on-accent;
+  }
+  .chat-detail-layout {
+    @apply flex h-dvh min-h-0 flex-col overflow-hidden min-[650px]:h-[calc(100dvh-70px)] min-[650px]:min-h-0;
+  }
+  .chat-detail-layout > header {
+    @apply shrink-0;
+  }
+  .chat-detail-main {
+    @apply flex min-h-0 min-w-0 flex-1 flex-col px-6 pt-4 max-[480px]:px-5 max-[360px]:px-[15px];
+  }
+  .chat-thread {
+    @apply relative flex min-h-0 min-w-0 flex-1 flex-col;
+  }
+  .chat-history {
+    @apply min-h-0 min-w-0 flex-1 [scrollbar-width:thin] overflow-x-hidden overflow-y-auto overscroll-contain pt-1 pb-4;
+  }
+  .chat-date {
+    @apply my-6 flex items-center gap-3 text-center text-[10px] text-fg-4 before:h-px before:flex-1 before:bg-line after:h-px after:flex-1 after:bg-line;
+  }
+  .chat-message {
+    @apply mb-4 flex items-start gap-2;
+  }
+  .chat-message.is-mine {
+    @apply justify-end;
+  }
+  .chat-bubble {
+    @apply rounded-lg px-3 py-2.5 text-[13px] leading-[1.9] [overflow-wrap:anywhere] whitespace-pre-wrap;
+  }
+  .chat-composer {
+    @apply flex items-end gap-2 rounded-md border border-line-strong bg-surface p-2 focus-within:border-blue;
+  }
+  .chat-composer textarea {
+    @apply max-h-32 min-h-11 min-w-0 flex-1 resize-none bg-transparent px-1 py-1.5 text-xs leading-[1.8] text-fg outline-none placeholder:text-fg-4 focus-visible:outline-none;
+    font: inherit;
+    font-size: 12px;
+  }
+  .chat-composer button {
+    @apply grid size-9 shrink-0 place-items-center rounded bg-blue text-on-accent disabled:opacity-35;
+  }
+  .chat-latest {
+    @apply absolute right-0 bottom-32 rounded-full border border-line-strong bg-surface px-3 py-2 text-[11px] text-blue shadow-md;
+  }
+}

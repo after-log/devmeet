@@ -1,7 +1,7 @@
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { findPerson, reasonFor, useApp } from '../stores/app';
-import { CodeLines, personLines } from '../components/PersonCard';
+import { CodeLines, personLines } from '@/components/PersonCard';
 
 const PersonPage = () => {
   const { id } = useParams();

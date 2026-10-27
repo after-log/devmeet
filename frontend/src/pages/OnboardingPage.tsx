@@ -13,10 +13,10 @@ import {
   RELIGION,
   SMOKING,
   splitLocation,
-} from '../data/options';
-import { ChoiceGroup } from '../components/ui/choice-group';
-import { Select } from '../components/ui/select';
-import type { Draft, Role } from '../types';
+} from '@/data/options';
+import { ChoiceGroup } from '@/components/ui/choice-group';
+import { Select } from '@/components/ui/select';
+import type { Draft, Role } from '@/types';
 
 const screens: [string, ReactNode, string][] = [
   [

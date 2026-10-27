@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { reasonFor, useApp } from '../stores/app';
-import PersonCard, { Empty } from '../components/PersonCard';
+import PersonCard, { Empty } from '@/components/PersonCard';
 
 const TodayPage = () => {
   const navigate = useNavigate();

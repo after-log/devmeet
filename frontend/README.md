@@ -86,7 +86,7 @@ CI와 Docker 빌드는 Node.js 22를 사용합니다.
 | `src/stores/app.ts`             | 로그인·추천·좋아요·가입 초안·둘러보기 상태         |
 | `src/lib/mock-api.ts`           | 서버 연동 전 목업 API                              |
 | `src/data/`                     | 선택지(지역·학력·음주 등)와 가상 회원              |
-| `src/types.ts`                  | 프로필·회원·메시지 타입                            |
+| `src/types/`                    | 프로필·회원·메시지 타입                            |
 | `src/style.css`                 | 다크·라이트 팔레트와 Galmuri/JetBrains Mono 디자인 |
 | `data/value-questions.json`     | 가치관 문항 뱅크 80개 (현재 화면에서는 쓰지 않음)  |
 

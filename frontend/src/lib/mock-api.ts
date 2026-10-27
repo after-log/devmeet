@@ -1,7 +1,7 @@
 // 서버 연동 전까지 쓰는 목업 API. devmeet-mvp 서버(/api/*)와 같은 이름·규칙을 따르고,
 // 데이터는 이 브라우저의 localStorage에만 저장한다. 실제 서버로 바꿀 때는 이 파일만 교체하면 된다.
-import { members } from '../data/members';
-import type { Connections, Message, Person, Profile, Recommendations, User } from '../types';
+import { members } from '@/data/members';
+import type { Connections, Message, Person, Profile, Recommendations, User } from '@/types';
 
 interface Account {
   id: string;
