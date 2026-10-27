@@ -1,4 +1,4 @@
-import type { Preference, Profile } from '../types';
+import type { Preference, Profile } from '@/types';
 import { useDevmeetStore } from '../stores/devmeet';
 export const isDeveloper = (profile: Profile) => /개발|엔지니어/.test(profile.job);
 const Discover = ({

@@ -1,5 +1,5 @@
-import { profiles } from '../data/profiles';
-import type { Profile } from '../types';
+import { profiles } from '@/data/profiles';
+import type { Profile } from '@/types';
 const Likes = ({
   likes,
   matched,

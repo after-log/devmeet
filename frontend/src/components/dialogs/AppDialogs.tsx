@@ -2,10 +2,10 @@ import { useNavigate } from 'react-router-dom';
 import { useDevmeetStore } from '../../stores/devmeet';
 import { useShallow } from 'zustand/react/shallow';
 import { toast } from 'sonner';
-import { Dialog, DialogContent } from '../ui/dialog';
-import MatchDialog from './MatchDialog';
-import FiltersDialog from './FiltersDialog';
-import SafetyDialog from './SafetyDialog';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import MatchDialog from '@/components/dialogs/MatchDialog';
+import FiltersDialog from '@/components/dialogs/FiltersDialog';
+import SafetyDialog from '@/components/dialogs/SafetyDialog';
 
 const AppDialogs = () => {
   const navigate = useNavigate();

@@ -1,6 +1,7 @@
+import type { ChatRoom } from '@/types/chats';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
-import { mockChats, type ChatRoom } from '../data/chats';
+import { mockChats } from '@/data/chats';
 
 interface ChatsState {
   rooms: ChatRoom[];

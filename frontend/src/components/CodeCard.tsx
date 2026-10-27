@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
-import type { SignupProfile } from '../types';
-import { questions } from '../data/questions';
+import type { SignupProfile } from '@/types';
+import { questions } from '@/data/questions';
 export const valueTags = (profile: SignupProfile) => {
   return profile.ans.flatMap((answer, i) =>
     answer === null || !questions[i] ? [] : [answer ? questions[i].o : questions[i].x],

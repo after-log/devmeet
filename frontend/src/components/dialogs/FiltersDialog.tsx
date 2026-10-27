@@ -1,7 +1,7 @@
 import { useDevmeetStore } from '../../stores/devmeet';
-import { Select } from '../ui/select';
-import type { Preference } from '../../types';
-import { DialogTitle, DialogDescription } from '../ui/dialog';
+import { Select } from '@/components/ui/select';
+import type { Preference } from '@/types';
+import { DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
 const FiltersDialog = ({
   filter,

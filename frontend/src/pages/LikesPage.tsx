@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { useDevmeetStore } from '../stores/devmeet';
 import { useShallow } from 'zustand/react/shallow';
-import { profiles } from '../data/profiles';
-import Likes from '../components/Likes';
+import { profiles } from '@/data/profiles';
+import Likes from '@/components/Likes';
 
 const LikesPage = () => {
   const { likes, matched, setFilter, setIndex } = useDevmeetStore(

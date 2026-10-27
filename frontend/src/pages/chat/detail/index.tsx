@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { useChatsStore } from '../../../stores/chats';
-import { profiles } from '../../../data/profiles';
+import { profiles } from '@/data/profiles';
 import ChatThread from './components/ChatThread';
 
 const ChatPage = () => {

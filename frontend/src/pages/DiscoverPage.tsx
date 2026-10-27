@@ -1,6 +1,6 @@
 import { useDevmeetStore, selectProfiles } from '../stores/devmeet';
 import { useShallow } from 'zustand/react/shallow';
-import Discover from '../components/Discover';
+import Discover from '@/components/Discover';
 
 const DiscoverPage = () => {
   const { index, setIndex, filter, setFilter, likes, like, settings } = useDevmeetStore(

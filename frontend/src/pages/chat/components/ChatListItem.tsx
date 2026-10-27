@@ -1,6 +1,7 @@
+import type { ChatRoom } from '@/types/chats';
 import { Check } from 'lucide-react';
-import { chatPreviewTime, lastActivity, type ChatRoom } from '../../../data/chats';
-import type { Profile } from '../../../types';
+import { chatPreviewTime, lastActivity } from '@/data/chats';
+import type { Profile } from '@/types';
 
 interface ChatListItemProps {
   room: ChatRoom;

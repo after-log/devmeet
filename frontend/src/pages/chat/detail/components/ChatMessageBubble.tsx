@@ -1,5 +1,6 @@
-import { chatTime, type ChatMessage } from '../../../../data/chats';
-import type { Profile } from '../../../../types';
+import type { ChatMessage } from '@/types/chats';
+import { chatTime } from '@/data/chats';
+import type { Profile } from '@/types';
 
 interface ChatMessageBubbleProps {
   message: ChatMessage;

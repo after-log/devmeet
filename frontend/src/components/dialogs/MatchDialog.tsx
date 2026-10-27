@@ -1,4 +1,4 @@
-import { DialogTitle, DialogDescription } from '../ui/dialog';
+import { DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
 const MatchDialog = ({ onChat, onContinue }: { onChat: () => void; onContinue: () => void }) => (
   <>

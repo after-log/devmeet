@@ -1,5 +1,5 @@
-import type { SignupProfile } from '../types';
-import { emptyProfile } from '../types';
+import type { SignupProfile } from '@/types';
+import { emptyProfile } from '@/types';
 export const onboarded = () => {
   try {
     return localStorage.getItem('devmeet.onboarded') === '1';

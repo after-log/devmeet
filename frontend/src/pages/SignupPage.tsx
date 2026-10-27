@@ -2,7 +2,7 @@ import { toast } from 'sonner';
 import { useProfileActions } from '../hooks/useProfileActions';
 import { useDevmeetStore } from '../stores/devmeet';
 import { useShallow } from 'zustand/react/shallow';
-import Signup from '../components/Signup';
+import Signup from '@/components/Signup';
 
 const SignupPage = () => {
   const { profile, setProfile, step, setStep } = useDevmeetStore(

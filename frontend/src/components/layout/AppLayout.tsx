@@ -2,10 +2,10 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useDevmeetStore } from '../../stores/devmeet';
 import { useProfileActions } from '../../hooks/useProfileActions';
-import AppHeader from './AppHeader';
-import BottomNav from './BottomNav';
-import AppDialogs from '../dialogs/AppDialogs';
-import { Toaster } from '../ui/sonner';
+import AppHeader from '@/components/layout/AppHeader';
+import BottomNav from '@/components/layout/BottomNav';
+import AppDialogs from '@/components/dialogs/AppDialogs';
+import { Toaster } from '@/components/ui/sonner';
 import { applyTheme, getTheme } from '../../lib/theme';
 
 const AppLayout = () => {

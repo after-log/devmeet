@@ -1,4 +1,4 @@
-import { DialogTitle, DialogDescription } from '../ui/dialog';
+import { DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
 const SafetyDialog = ({
   onReport,

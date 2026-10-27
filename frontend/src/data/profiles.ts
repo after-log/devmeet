@@ -1,4 +1,4 @@
-import type { Profile } from '../types';
+import type { Profile } from '@/types';
 export const profiles: Profile[] = [
   {
     name: '민준',

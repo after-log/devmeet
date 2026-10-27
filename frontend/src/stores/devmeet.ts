@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 import { toast } from 'sonner';
-import type { Preference, SignupProfile } from '../types';
-import { emptyProfile } from '../types';
-import { profiles } from '../data/profiles';
+import type { Preference, SignupProfile } from '@/types';
+import { emptyProfile } from '@/types';
+import { profiles } from '@/data/profiles';
 import { savedProfile } from '../lib/profile-storage';
 import { savedSession, saveSession } from '../lib/session-storage';
 

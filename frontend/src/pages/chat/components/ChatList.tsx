@@ -1,7 +1,8 @@
+import type { ChatRoom } from '@/types/chats';
 import { useState } from 'react';
 import { ArrowUpRight, MessageSquare, Search, X } from 'lucide-react';
-import { profiles } from '../../../data/profiles';
-import { lastActivity, type ChatRoom } from '../../../data/chats';
+import { profiles } from '@/data/profiles';
+import { lastActivity } from '@/data/chats';
 import ChatListItem from './ChatListItem';
 
 const ChatList = ({

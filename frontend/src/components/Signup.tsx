@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import type { SignupProfile } from '../types';
-import { questions } from '../data/questions';
-import { ChoiceGroup } from './ui/choice-group';
-import { Select } from './ui/select';
-import { ProfilePreview } from './CodeCard';
+import type { SignupProfile } from '@/types';
+import { questions } from '@/data/questions';
+import { ChoiceGroup } from '@/components/ui/choice-group';
+import { Select } from '@/components/ui/select';
+import { ProfilePreview } from '@/components/CodeCard';
 export const Option = ({
   symbol,
   title,

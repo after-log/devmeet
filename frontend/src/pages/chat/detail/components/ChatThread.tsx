@@ -1,15 +1,11 @@
+import type { ChatRoom } from '@/types/chats';
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowUp, ArrowUpRight, Check, Ellipsis, ShieldCheck } from 'lucide-react';
 import { toast } from 'sonner';
-import { chatDate, type ChatRoom } from '../../../../data/chats';
-import type { Profile } from '../../../../types';
+import { chatDate } from '@/data/chats';
+import type { Profile } from '@/types';
 import ChatMessageBubble from './ChatMessageBubble';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-} from '../../../../components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 
 const ChatThread = ({
   room,

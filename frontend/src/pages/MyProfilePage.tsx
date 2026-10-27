@@ -1,7 +1,7 @@
 import { useProfileActions } from '../hooks/useProfileActions';
 import { useDevmeetStore } from '../stores/devmeet';
 import { useShallow } from 'zustand/react/shallow';
-import MyProfile from '../components/MyProfile';
+import MyProfile from '@/components/MyProfile';
 
 const MyProfilePage = () => {
   const { profile, settings } = useDevmeetStore(

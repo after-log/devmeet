@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
-import AppLayout from './components/layout/AppLayout';
+import AppLayout from '@/components/layout/AppLayout';
 import { onboarded } from './lib/profile-storage';
 import SignupPage from './pages/SignupPage';
 import DiscoverPage from './pages/DiscoverPage';

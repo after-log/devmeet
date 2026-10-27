@@ -1,4 +1,4 @@
-import { profiles } from '../data/profiles';
+import { profiles } from '@/data/profiles';
 
 type Session = { likes: string[]; matched: boolean; messages: string[] };
 export const savedSession = (): Session => {

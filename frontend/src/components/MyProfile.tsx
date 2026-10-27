@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useDevmeetStore } from '../stores/devmeet';
 import { Link } from 'react-router-dom';
-import type { SignupProfile } from '../types';
-import { valueTags } from './CodeCard';
+import type { SignupProfile } from '@/types';
+import { valueTags } from '@/components/CodeCard';
 const MyProfile = ({
   profile,
   onJump,
