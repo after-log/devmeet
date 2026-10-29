@@ -107,6 +107,51 @@
 
 /* Shared controls and code cards keep a single styling definition. */
 @layer components {
+  .values-entry {
+    @apply my-6 flex items-center gap-4 rounded-xl border border-line-strong bg-surface p-5 transition-colors hover:border-blue;
+  }
+  .values-entry-icon {
+    @apply grid size-11 shrink-0 place-items-center rounded-full bg-selected text-2xl text-purple;
+  }
+  .values-total {
+    @apply mt-6 shrink-0 rounded-full border border-line bg-surface px-3 py-1.5 font-mono text-xs text-blue;
+  }
+  .values-tabs {
+    @apply sticky top-0 z-10 -mx-6 flex overflow-x-auto border-b border-line bg-canvas px-3 max-[480px]:-mx-5 max-[360px]:-mx-[15px];
+  }
+  .values-tab {
+    @apply relative flex min-h-16 flex-1 shrink-0 flex-col items-center justify-center gap-1 border-b-2 border-transparent px-3 py-3 text-xs whitespace-nowrap text-fg-4 transition-colors hover:text-fg;
+  }
+  .values-tab > span {
+    @apply font-mono text-[9px] opacity-70;
+  }
+  .values-tab.is-active {
+    @apply border-blue text-blue;
+  }
+  .values-panel {
+    @apply scroll-mt-16;
+  }
+  .values-section-heading {
+    @apply border-b border-line py-6 text-center;
+  }
+  .values-option {
+    @apply relative flex min-h-11 cursor-pointer items-center gap-3 rounded-lg border border-line bg-surface px-3.5 py-3 text-xs leading-5 text-fg-3 transition-colors hover:border-hover-line has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-blue;
+  }
+  .values-option.is-selected {
+    @apply border-blue bg-selected text-fg;
+  }
+  .values-radio {
+    @apply grid size-4 shrink-0 place-items-center rounded-full border border-line-strong;
+  }
+  .is-selected .values-radio {
+    @apply border-blue bg-blue text-on-accent;
+  }
+  .values-next {
+    @apply mb-6 flex w-full items-center justify-between rounded-lg border border-line-strong bg-surface px-4 py-4 text-xs text-fg-2 hover:border-blue;
+  }
+  .values-save {
+    @apply sticky bottom-0 z-20 -mx-6 border-t border-line bg-canvas px-6 py-4 max-[480px]:-mx-5 max-[480px]:px-5 max-[360px]:-mx-[15px] max-[360px]:px-[15px];
+  }
   .logo {
     @apply font-mono text-[21px] leading-[normal] font-semibold tracking-[-1px] [&_span]:text-green;
   }

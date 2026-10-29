@@ -1,7 +1,14 @@
 // 화면과 목업 API가 함께 쓰는 타입. 서버 연동 시 응답 형태도 이 타입을 따른다.
 export type Role = 'developer' | 'non-developer';
 
+export interface ValueAnswer {
+  choice: string | null;
+  private: boolean;
+}
+export type ValueAnswers = Record<string, ValueAnswer>;
+
 export interface Profile {
+  valueAnswers?: ValueAnswers;
   name: string;
   age: number;
   height: number;

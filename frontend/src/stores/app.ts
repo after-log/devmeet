@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { api } from '../lib/mock-api';
 import { demoPeople } from '@/data/members';
-import type { Connections, Draft, Message, Person, User } from '@/types';
+import type { Connections, Draft, Message, Person, User, ValueAnswers } from '@/types';
 
 export type Sheet =
   | { kind: 'filters' }
@@ -27,6 +27,8 @@ export const freshDraft = (): Draft => ({
 });
 
 interface AppState {
+  demoValueAnswers: ValueAnswers;
+  setDemoValueAnswers: (answers: ValueAnswers) => void;
   booted: boolean;
   user: User | null;
   demo: boolean;
@@ -56,6 +58,8 @@ interface AppState {
 }
 
 export const useApp = create<AppState>()((set, get) => ({
+  demoValueAnswers: {},
+  setDemoValueAnswers: (demoValueAnswers) => set({ demoValueAnswers }),
   booted: false,
   user: null,
   demo: false,
@@ -113,6 +117,7 @@ export const useApp = create<AppState>()((set, get) => ({
   },
   startDemo: () =>
     set({
+      demoValueAnswers: {},
       demo: true,
       people: demoPeople,
       liked: [],

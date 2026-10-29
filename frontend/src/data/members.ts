@@ -4,6 +4,7 @@ import type { Person, Role } from '@/types';
 
 const photo = (id: string) =>
   `https://images.unsplash.com/photo-${id}?w=800&q=80&auto=format&fit=crop&crop=faces`;
+export const demoProfilePhoto = photo('1535713875002-d1d0cf377fde');
 const W = [
   '1494790108377-be9c29b29330',
   '1534528741775-53994a69daeb',

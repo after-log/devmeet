@@ -1,6 +1,8 @@
 // 서버 연동 전까지 쓰는 목업 API. devmeet-mvp 서버(/api/*)와 같은 이름·규칙을 따르고,
 // 데이터는 이 브라우저의 localStorage에만 저장한다. 실제 서버로 바꿀 때는 이 파일만 교체하면 된다.
 import { members } from '@/data/members';
+import { normalizeValueAnswers as cleanValueAnswers } from '@/lib/value-answers';
+import type { ValueAnswers } from '@/types';
 import type { Connections, Message, Person, Profile, Recommendations, User } from '@/types';
 
 interface Account {
@@ -158,6 +160,7 @@ export const api = {
     const db = load();
     const account = currentAccount(db);
     const p: Profile = {
+      valueAnswers: cleanValueAnswers(input.valueAnswers ?? account.profile?.valueAnswers),
       name: clean(input.name, 30),
       age: Number(input.age),
       height: Number(input.height),
@@ -207,6 +210,18 @@ export const api = {
   },
 
   /** 사진을 640px JPEG로 줄여 data URL로 돌려준다. 서버 연동 시 업로드 주소로 바뀐다. */
+  async saveValues(answers: ValueAnswers): Promise<{ profile: Profile }> {
+    await wait();
+    const db = load();
+    const account = withProfile(db);
+    const profile = { ...account.profile, valueAnswers: cleanValueAnswers(answers) };
+    save({
+      ...db,
+      accounts: db.accounts.map((a) => (a.id === account.id ? { ...a, profile } : a)),
+    });
+    return { profile };
+  },
+
   async photo(file: File): Promise<{ photo: string }> {
     if (!/^image\/(jpeg|png|webp)$/.test(file.type) || file.size > 10 * 1024 * 1024)
       fail(400, '10MB 이하의 JPEG·PNG·WebP 사진을 선택해 주세요.');
