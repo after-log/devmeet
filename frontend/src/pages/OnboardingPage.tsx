@@ -156,6 +156,7 @@ const OnboardingPage = () => {
   const valid = [
     !!draft.role,
     !!draft.name?.trim() &&
+      Number.isInteger(Number(draft.age)) &&
       Number(draft.age) >= 19 &&
       Number(draft.age) <= 80 &&
       Number(draft.height) >= 100 &&
@@ -172,6 +173,7 @@ const OnboardingPage = () => {
     setError('');
     if (step < 3) return setStep(step + 1);
     if (!draft.photo) return setError('프로필 사진을 먼저 등록해 주세요.');
+    if (!draft.intro?.trim()) return setError('자기소개를 입력해 주세요.');
     try {
       const tags = (draft.tagsText ?? (draft.tags ?? []).join(', '))
         .split(',')

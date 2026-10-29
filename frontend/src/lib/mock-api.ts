@@ -184,21 +184,18 @@ export const api = {
       maxAge: Number(input.maxAge) || 60,
       region: clean(input.region, 40),
     };
-    if (
-      !p.name ||
-      !Number.isInteger(p.age) ||
-      p.age < 19 ||
-      p.age > 80 ||
-      !p.location ||
-      !p.job ||
-      !p.education ||
-      p.height < 100 ||
-      p.height > 250 ||
-      !p.intro ||
-      !p.meeting ||
-      !p.contact
-    )
-      fail(400, '필수 정보와 나이(19~80세), 키(100~250cm)를 확인해 주세요.');
+    if (!p.name) fail(400, '프로필 이름을 입력해 주세요.');
+    if (!Number.isInteger(p.age) || p.age < 19 || p.age > 80)
+      fail(400, '나이는 19~80세 사이의 정수로 입력해 주세요.');
+    if (!Number.isFinite(p.height) || p.height < 100 || p.height > 250)
+      fail(400, '키는 100~250cm 사이로 입력해 주세요.');
+    if (!p.location || p.location.includes('undefined'))
+      fail(400, '사는 지역의 시·도와 구·시를 선택해 주세요.');
+    if (!p.job) fail(400, '하는 일을 입력해 주세요.');
+    if (!p.education) fail(400, '최종 학력을 선택해 주세요.');
+    if (!p.meeting) fail(400, '만남 빈도를 선택해 주세요.');
+    if (!p.contact) fail(400, '연락 빈도를 선택해 주세요.');
+    if (!p.intro) fail(400, '자기소개를 입력해 주세요.');
     if (!p.photo) fail(400, '프로필 사진을 등록해 주세요.');
     if (p.minAge < 19 || p.maxAge > 80 || p.minAge > p.maxAge)
       fail(400, '추천 나이 범위를 확인해 주세요.');
