@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: ${TEST_DB_URL:jdbc:mysql://127.0.0.1:3307/devmeet_test?connectionTimeZone=UTC}
+    username: ${TEST_DB_USERNAME:devmeet}
+    password: ${TEST_DB_PASSWORD}
