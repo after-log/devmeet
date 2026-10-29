@@ -13,6 +13,7 @@ import LikeDetailPage from './pages/likes/detail';
 import ChatsPage from './pages/chat';
 import ChatPage from './pages/chat/detail';
 import MePage from './pages/MePage';
+import ValuesPage from './pages/ValuesPage';
 import AdminPage from './pages/AdminPage';
 import NotFoundPage from './pages/NotFoundPage';
 
@@ -92,6 +93,14 @@ const App = () => (
         element={
           <Member>
             <MePage />
+          </Member>
+        }
+      />
+      <Route
+        path="me/values"
+        element={
+          <Member>
+            <ValuesPage />
           </Member>
         }
       />

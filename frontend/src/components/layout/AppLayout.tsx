@@ -14,6 +14,7 @@ const AppLayout = () => {
   const { booted, boot, demo, exitDemo, step, openSheet, refresh } = useApp();
   const { pathname } = useLocation();
   const isChatDetail = /^\/chat\/[^/]+\/?$/.test(pathname);
+  const isValuesPage = pathname === '/me/values';
   const [theme, setTheme] = useState(getTheme);
   const toggleTheme = () => {
     const next = theme === 'light' ? 'dark' : 'light';
@@ -33,7 +34,7 @@ const AppLayout = () => {
     <>
       <div className="mx-auto max-w-[480px] min-[650px]:py-[35px]">
         <div
-          className={`min-h-dvh border-x border-line bg-canvas max-[480px]:border-0 min-[650px]:min-h-[calc(100dvh-70px)] min-[650px]:overflow-hidden min-[650px]:rounded-xl min-[650px]:border min-[650px]:border-line ${isChatDetail ? 'chat-detail-layout' : 'pb-[94px]'}`}
+          className={`min-h-dvh border-x border-line bg-canvas max-[480px]:border-0 min-[650px]:min-h-[calc(100dvh-70px)] min-[650px]:rounded-xl min-[650px]:border min-[650px]:border-line ${isValuesPage ? 'min-[650px]:overflow-clip' : 'min-[650px]:overflow-hidden'} ${isChatDetail ? 'chat-detail-layout' : 'pb-[94px]'}`}
         >
           <AppHeader theme={theme} onToggleTheme={toggleTheme} />
           {demo && (
