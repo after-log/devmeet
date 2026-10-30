@@ -29,21 +29,40 @@ export default function SocialButtons({ link = false }: { link?: boolean }) {
   };
   return (
     <div className="mt-4 space-y-2">
-      {(['kakao', 'github'] as const).map(
+      {(link ? (['kakao', 'github'] as const) : (['kakao'] as const)).map(
         (provider) =>
           providers?.[provider] && (
             <button
               key={provider}
-              className="btn secondary full"
+              type="button"
+              className={
+                provider === 'kakao'
+                  ? 'relative flex min-h-12 w-full items-center justify-center rounded-md bg-[#FEE500] px-12 py-3 text-[15px] font-semibold text-black/85 transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#FEE500]'
+                  : 'btn secondary full'
+              }
               onClick={() => void connect(provider)}
             >
-              {provider === 'github' ? 'GitHub' : '카카오'}로 {link ? '계정 연결' : '계속하기'}
+              {provider === 'kakao' && (
+                <svg
+                  className="absolute left-5 h-5 w-5 text-black"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path d="M12 3C5.925 3 1 6.82 1 11.532c0 3.067 2.085 5.755 5.215 7.26-.23.843-.832 3.055-.952 3.53-.148.588.216.58.454.422.187-.125 2.985-2.028 4.193-2.85.681.105 1.38.16 2.09.16 6.075 0 11-3.82 11-8.522S18.075 3 12 3Z" />
+                </svg>
+              )}
+              {provider === 'kakao'
+                ? link
+                  ? '카카오 계정 연결'
+                  : '카카오 로그인'
+                : 'GitHub 계정 연결'}
             </button>
           ),
       )}
-      {providers && !providers.github && !providers.kakao && (
+      {providers && !(link ? providers.github || providers.kakao : providers.kakao) && (
         <p className="text-xs text-fg-3">
-          소셜 로그인은 현재 준비 중이에요. 이메일로 시작해 주세요.
+          카카오 로그인은 현재 준비 중이에요. 잠시 후 다시 이용해 주세요.
         </p>
       )}
       {error && (

@@ -32,8 +32,8 @@ const App = () => (
     <Route element={<AppLayout />}>
       <Route index element={<WelcomePage />} />
       <Route path="auth/:mode" element={<AuthPage />} />
-      <Route path="auth/forgot" element={<RecoveryPage />} />
-      <Route path="auth/reset" element={<RecoveryPage />} />
+      <Route path="auth/forgot" element={<Navigate to="/auth/login" replace />} />
+      <Route path="auth/reset" element={<Navigate to="/auth/login" replace />} />
       <Route path="auth/verify" element={<RecoveryPage />} />
       <Route path="onboarding" element={<OnboardingPage />} />
       <Route

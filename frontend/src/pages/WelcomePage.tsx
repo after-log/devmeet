@@ -1,5 +1,6 @@
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useApp } from '../stores/app';
+import SocialButtons from '@/components/SocialButtons';
 
 const WelcomePage = () => {
   const navigate = useNavigate();
@@ -33,12 +34,7 @@ const WelcomePage = () => {
           <b>03</b>서로 좋아요를 보냈을 때만 대화가 열려요
         </li>
       </ul>
-      <button className="btn full" onClick={() => navigate('/auth/register')}>
-        이메일로 시작하기 →
-      </button>
-      <button className="btn secondary mt-[10px] w-full" onClick={() => navigate('/auth/login')}>
-        이미 계정이 있어요
-      </button>
+      <SocialButtons />
       <button
         className="skip"
         onClick={() => {
@@ -55,7 +51,7 @@ const WelcomePage = () => {
           className="underline underline-offset-2"
           onClick={() => openSheet({ kind: 'social' })}
         >
-          카카오 · GitHub 연결 안내
+          카카오 로그인 안내
         </button>
       </p>
     </>

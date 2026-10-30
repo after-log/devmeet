@@ -40,7 +40,6 @@ public class OAuthClients implements ClientRegistrationRepository {
               .tokenUri("https://kauth.kakao.com/oauth/token")
               .userInfoUri("https://kapi.kakao.com/v2/user/me")
               .userNameAttributeName("id")
-              .scope("profile_nickname")
               .clientName("카카오")
               .build());
   }
