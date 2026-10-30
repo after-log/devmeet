@@ -30,7 +30,8 @@ public class AdminController {
 
   public record PhotoReview(
       @NotNull @Pattern(regexp = "APPROVED|REJECTED") String status,
-      @NotNull @Size(max = 500) String reason) {}
+      @NotNull @Size(max = 500) String reason,
+      @NotNull @Size(min = 1, max = 6) List<String> photos) {}
 
   public record ReportReview(
       @NotNull @Pattern(regexp = "VALID|DISMISSED") String status,
@@ -51,12 +52,31 @@ public class AdminController {
         "counts",
         counts,
         "photos",
-        jdbc.queryForList(
-            """
-            SELECT BIN_TO_UUID(account_id) id,name,photo,photo_status status FROM profiles
-            WHERE photo_status='PENDING' ORDER BY account_id LIMIT 50 OFFSET ?
-            """,
-            offset),
+        jdbc
+            .queryForList(
+                """
+                SELECT BIN_TO_UUID(account_id) FROM profiles
+                WHERE photo_status='PENDING' ORDER BY account_id LIMIT 50 OFFSET ?
+                """,
+                String.class,
+                offset)
+            .stream()
+            .map(
+                id -> {
+                  var p = profiles.findById(UUID.fromString(id)).orElseThrow();
+                  return Map.of(
+                      "id",
+                      id,
+                      "name",
+                      p.view().name(),
+                      "photo",
+                      p.view().photo(),
+                      "photos",
+                      p.getPhotos(),
+                      "status",
+                      p.getPhotoStatus());
+                })
+            .toList(),
         "reports",
         jdbc.queryForList(
             """
@@ -80,6 +100,10 @@ public class AdminController {
             .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "프로필을 찾을 수 없어요."));
     if (review.status().equals("REJECTED") && review.reason().isBlank())
       throw new ApiException(HttpStatus.BAD_REQUEST, "반려 사유를 입력해 주세요.");
+    if (!p.getPhotos().equals(review.photos()))
+      throw new ApiException(HttpStatus.CONFLICT, "사진이 변경됐어요. 새로고침 후 다시 검수해 주세요.");
+    if (review.status().equals("APPROVED") && p.getPhotos().size() < 3)
+      throw new ApiException(HttpStatus.BAD_REQUEST, "사진이 최소 3장 등록돼야 승인할 수 있어요.");
     p.reviewPhoto(review.status(), review.reason().strip());
     profiles.saveAndFlush(p);
     audit(principal, "PHOTO_" + review.status(), id, review.reason());

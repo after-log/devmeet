@@ -120,6 +120,18 @@ class CommunityHttpIntegrationTest {
 
   Actor member(String group, String role) throws Exception {
     Actor actor = register(UUID.randomUUID() + "@example.test");
+    Map<String, Object> body = profileBody(group, role);
+    body.put("photos", List.of(actor.upload(), actor.upload(), actor.upload()));
+    actor.ok("PUT", "/profile", body);
+    assertThat(actor.ok("GET", "/recommendations", null).get("people").size()).isZero();
+    admin.ok(
+        "PUT",
+        "/admin/photos/" + actor.id,
+        Map.of("status", "APPROVED", "reason", "통합 테스트 승인", "photos", body.get("photos")));
+    return actor;
+  }
+
+  Map<String, Object> profileBody(String group, String role) {
     Map<String, Object> body = new LinkedHashMap<>();
     body.put("name", "테스트");
     body.put("age", 29);
@@ -136,15 +148,10 @@ class CommunityHttpIntegrationTest {
     body.put("religion", "무교");
     body.put("intro", "테스트 프로필");
     body.put("tags", List.of("산책"));
-    body.put("photo", actor.upload());
     body.put("minAge", 19);
     body.put("maxAge", 60);
     body.put("region", group);
-    actor.ok("PUT", "/profile", body);
-    assertThat(actor.ok("GET", "/recommendations", null).get("people").size()).isZero();
-    admin.ok(
-        "PUT", "/admin/photos/" + actor.id, Map.of("status", "APPROVED", "reason", "통합 테스트 승인"));
-    return actor;
+    return body;
   }
 
   @BeforeAll
@@ -192,6 +199,80 @@ class CommunityHttpIntegrationTest {
     assertThat(a.ok("GET", "/connections", null).get("matches").size()).isZero();
     assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM SPRING_SESSION", Integer.class))
         .isPositive();
+  }
+
+  @Test
+  void galleryRequiresThreeOwnedPhotosAndFreshApprovalBeforePublicAccess() throws Exception {
+    Actor owner = register(UUID.randomUUID() + "@example.test");
+    Actor viewer = register(UUID.randomUUID() + "@example.test");
+    var body = profileBody("사진 테스트", "non-developer");
+    String first = owner.upload(), second = owner.upload(), third = owner.upload();
+    body.put("photos", List.of(first, second, third, first, second, third, first));
+    assertThat(owner.call("PUT", "/profile", body).statusCode()).isEqualTo(400);
+    body.put("photos", List.of(first, second));
+    assertThat(owner.call("PUT", "/profile", body).statusCode()).isEqualTo(400);
+    body.put("photos", List.of(first, first, second));
+    assertThat(owner.call("PUT", "/profile", body).statusCode()).isEqualTo(400);
+    body.put("photos", List.of(first, second, viewer.upload()));
+    assertThat(owner.call("PUT", "/profile", body).statusCode()).isEqualTo(403);
+    var original = List.of(first, second, third);
+    body.put("photos", original);
+    var saved = owner.ok("PUT", "/profile", body).get("profile");
+    assertThat(saved.get("photos").size()).isEqualTo(3);
+    assertThat(saved.get("photo").asText()).isEqualTo(first);
+    assertThat(viewer.call("GET", "/people/" + owner.id, null).statusCode()).isEqualTo(404);
+    assertThat(viewer.call("GET", third.substring(4), null).statusCode()).isEqualTo(404);
+    admin.ok(
+        "PUT",
+        "/admin/photos/" + owner.id,
+        Map.of("status", "APPROVED", "reason", "", "photos", original));
+    assertThat(viewer.ok("GET", "/people/" + owner.id, null).get("person").get("photos").size())
+        .isEqualTo(3);
+    assertThat(viewer.call("GET", third.substring(4), null).statusCode()).isEqualTo(200);
+    body.put("intro", "사진 외 소개만 변경");
+    owner.ok("PUT", "/profile", body);
+    assertThat(
+            owner
+                .ok("GET", "/me", null)
+                .get("user")
+                .get("verification")
+                .get("photoStatus")
+                .asText())
+        .isEqualTo("APPROVED");
+    String replacement = owner.upload();
+    var changed = List.of(first, second, replacement);
+    body.put("photos", changed);
+    owner.ok("PUT", "/profile", body);
+    assertThat(
+            owner
+                .ok("GET", "/me", null)
+                .get("user")
+                .get("verification")
+                .get("photoStatus")
+                .asText())
+        .isEqualTo("PENDING");
+    assertThat(viewer.call("GET", first.substring(4), null).statusCode()).isEqualTo(404);
+    assertThat(
+            admin
+                .call(
+                    "PUT",
+                    "/admin/photos/" + owner.id,
+                    Map.of("status", "APPROVED", "reason", "", "photos", original))
+                .statusCode())
+        .isEqualTo(409);
+    admin.ok(
+        "PUT",
+        "/admin/photos/" + owner.id,
+        Map.of("status", "REJECTED", "reason", "얼굴이 보이도록 등록해 주세요", "photos", changed));
+    assertThat(viewer.call("GET", replacement.substring(4), null).statusCode()).isEqualTo(404);
+    admin.ok(
+        "PUT",
+        "/admin/photos/" + owner.id,
+        Map.of("status", "APPROVED", "reason", "", "photos", changed));
+    assertThat(viewer.call("GET", replacement.substring(4), null).statusCode()).isEqualTo(200);
+    assertThat(viewer.call("GET", third.substring(4), null).statusCode()).isEqualTo(404);
+    viewer.ok("POST", "/block", Map.of("id", owner.id));
+    assertThat(viewer.call("GET", replacement.substring(4), null).statusCode()).isEqualTo(404);
   }
 
   @Test

@@ -62,6 +62,14 @@ public class Profile {
   @Column(nullable = false, columnDefinition = "mediumtext")
   private String photo;
 
+  @JdbcTypeCode(SqlTypes.JSON)
+  @Column(nullable = false, columnDefinition = "json")
+  private List<String> photos = List.of();
+
+  public List<String> getPhotos() {
+    return List.copyOf(photos);
+  }
+
   @Column(nullable = false)
   private Integer minAge;
 
@@ -113,7 +121,7 @@ public class Profile {
   }
 
   public void update(ProfileRequest request, Map<String, ValueAnswer> answers) {
-    if (!java.util.Objects.equals(photo, request.photo().strip())) {
+    if (!photos.equals(request.photos())) {
       photoStatus = "PENDING";
       photoReviewReason = "";
     }
@@ -132,7 +140,8 @@ public class Profile {
     religion = request.religion().strip();
     intro = request.intro().strip();
     tags = request.tags().stream().map(String::strip).toList();
-    photo = request.photo().strip();
+    photos = List.copyOf(request.photos());
+    photo = photos.getFirst();
     minAge = request.minAge();
     maxAge = request.maxAge();
     region = request.region().strip();
@@ -157,6 +166,7 @@ public class Profile {
         intro,
         tags,
         photo,
+        getPhotos(),
         minAge,
         maxAge,
         region,
@@ -181,6 +191,7 @@ public class Profile {
     result.put("intro", intro);
     result.put("tags", tags);
     result.put("photo", photo);
+    result.put("photos", getPhotos());
     Map<String, ValueAnswer> visible = new LinkedHashMap<>();
     valueAnswers.forEach(
         (id, answer) -> {

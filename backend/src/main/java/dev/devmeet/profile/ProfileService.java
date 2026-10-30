@@ -70,7 +70,8 @@ public class ProfileService {
   @Transactional
   public ProfileRequest save(String email, ProfileRequest request) {
     Account account = lockAccount(email);
-    photos.validateOwner(account.getId(), request.photo());
+    if (new java.util.HashSet<>(request.photos()).size() != request.photos().size())
+      throw new ApiException(HttpStatus.BAD_REQUEST, "서로 다른 사진을 최소 3장 등록해 주세요.");
     if (request.minAge() > request.maxAge()) {
       throw new ApiException(HttpStatus.BAD_REQUEST, "추천 나이 범위를 확인해 주세요.");
     }
@@ -80,6 +81,7 @@ public class ProfileService {
         request.valueAnswers() == null
             ? profile.getValueAnswers()
             : catalog.validate(request.valueAnswers());
+    request.photos().forEach(photo -> photos.validateOwner(account.getId(), photo));
     profile.update(request, answers);
     return profiles.saveAndFlush(profile).view();
   }
@@ -104,7 +106,7 @@ public class ProfileService {
             .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "프로필을 찾을 수 없어요."));
     if (!me.getId().equals(id)
         && !admins.isAdmin(email)
-        && !profile.getPhotoStatus().equals("APPROVED"))
+        && (!profile.getPhotoStatus().equals("APPROVED") || profile.getPhotos().size() < 3))
       throw new ApiException(HttpStatus.NOT_FOUND, "프로필을 찾을 수 없어요.");
     var result = profile.publicView();
     result.put("githubVerified", matching.github(id));

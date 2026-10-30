@@ -2,6 +2,7 @@ import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { findPerson, reasonFor, useApp } from '../stores/app';
 import { CodeLines, personLines } from '@/components/PersonCard';
+import PhotoGallery from '@/components/PhotoGallery';
 import { publicValueAnswers } from '@/lib/value-answers';
 
 const PersonPage = () => {
@@ -42,7 +43,7 @@ const PersonPage = () => {
           <span className="file-icon">ts</span>
           {p.name}.profile.ts<span className="tab-end">{demo ? 'demo' : '•'}</span>
         </div>
-        <img className="detail-photo" src={p.photo} alt={`${p.name} 프로필 사진`} />
+        <PhotoGallery photos={p.photos} photo={p.photo} name={p.name} />
         <div className="profile-heading">
           <div>
             <p className="section-comment !mb-1">// {p.location}</p>

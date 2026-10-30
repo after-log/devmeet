@@ -70,7 +70,12 @@ class AccountProfileIntegrationTest {
     profile.put("religion", "무교");
     profile.put("intro", "산책과 커피를 좋아해요.");
     profile.put("tags", java.util.List.of("산책"));
-    profile.put("photo", "https://example.test/photo.jpg");
+    profile.put(
+        "photos",
+        java.util.List.of(
+            "/api/photos/" + UUID.randomUUID(),
+            "/api/photos/" + UUID.randomUUID(),
+            "/api/photos/" + UUID.randomUUID()));
     profile.put("minAge", 19);
     profile.put("maxAge", 60);
     profile.put("region", "");
@@ -167,12 +172,26 @@ class AccountProfileIntegrationTest {
     var viewer = register(email());
     var me = mvc.perform(get("/api/me").session(owner)).andReturn();
     String id = json.readTree(me.getResponse().getContentAsString()).get("user").get("id").asText();
+    var savedProfile = profile();
+    var ownedPhotos =
+        java.util.stream.IntStream.range(0, 3)
+            .mapToObj(
+                i -> {
+                  String photoId = UUID.randomUUID().toString();
+                  jdbc.update(
+                      "INSERT INTO photos(id,owner_id) VALUES(UUID_TO_BIN(?),UUID_TO_BIN(?))",
+                      photoId,
+                      id);
+                  return "/api/photos/" + photoId;
+                })
+            .toList();
+    savedProfile.put("photos", ownedPhotos);
     mvc.perform(
             put("/api/profile")
                 .session(owner)
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(json.writeValueAsString(profile())))
+                .content(json.writeValueAsString(savedProfile)))
         .andExpect(status().isOk());
     jdbc.update("UPDATE profiles SET photo_status='APPROVED' WHERE account_id=UUID_TO_BIN(?)", id);
     Map<String, ValueAnswer> answers = new LinkedHashMap<>();
@@ -221,7 +240,7 @@ class AccountProfileIntegrationTest {
                 .session(owner)
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(json.writeValueAsString(profile())))
+                .content(json.writeValueAsString(savedProfile)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.profile.valueAnswers.length()").value(80));
 

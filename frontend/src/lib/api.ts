@@ -94,6 +94,7 @@ const profileKeys: (keyof Profile)[] = [
   'intro',
   'tags',
   'photo',
+  'photos',
   'minAge',
   'maxAge',
   'region',

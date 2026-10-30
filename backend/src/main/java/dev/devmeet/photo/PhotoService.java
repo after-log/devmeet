@@ -96,7 +96,7 @@ public class PhotoService {
 
   public void validateOwner(UUID owner, String photo) {
     if (!photo.startsWith("/api/photos/"))
-      return; // Existing HTTPS/data URL profiles remain compatible.
+      throw new ApiException(HttpStatus.BAD_REQUEST, "직접 업로드한 사진을 등록해 주세요.");
     UUID id;
     try {
       id = UUID.fromString(photo.substring("/api/photos/".length()));
@@ -124,8 +124,9 @@ public class PhotoService {
     if (!admin && !me.equals(owner)) {
       access.visible(me, owner);
       var profile = access.profile(owner);
-      if (!profile.getPhotoStatus().equals("APPROVED")
-          || !profile.view().photo().equals("/api/photos/" + id))
+      if (profile.getPhotos().size() < 3
+          || !profile.getPhotoStatus().equals("APPROVED")
+          || !profile.getPhotos().contains("/api/photos/" + id))
         throw new ApiException(HttpStatus.NOT_FOUND, "사진을 찾을 수 없어요.");
     }
     Path path = directory.resolve(id + ".jpg");

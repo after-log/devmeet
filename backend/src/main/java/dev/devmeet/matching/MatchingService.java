@@ -65,7 +65,8 @@ public class MatchingService {
   }
 
   private boolean eligible(Profile profile) {
-    return profile.getPhotoStatus().equals("APPROVED")
+    return profile.getPhotos().size() >= 3
+        && profile.getPhotoStatus().equals("APPROVED")
         && (!requireGithub
             || !profile.view().role().equals("developer")
             || github(profile.getAccountId()));
@@ -119,9 +120,11 @@ public class MatchingService {
           "day",
           day,
           "notice",
-          mine.getPhotoStatus().equals("APPROVED")
-              ? "GitHub 계정을 연결해 주세요."
-              : "사진 검수가 끝나면 추천을 받을 수 있어요.");
+          mine.getPhotos().size() < 3
+              ? "프로필 사진을 최소 3장 등록한 뒤 검수를 받아 주세요."
+              : mine.getPhotoStatus().equals("APPROVED")
+                  ? "GitHub 계정을 연결해 주세요."
+                  : "사진 검수가 끝나면 추천을 받을 수 있어요.");
     if (jdbc.queryForObject(
             "SELECT COUNT(*) FROM recommendation_batches WHERE owner_id=UUID_TO_BIN(?) AND day=?",
             Integer.class,

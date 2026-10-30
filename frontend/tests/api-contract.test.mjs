@@ -30,7 +30,14 @@ test('onboarding sends required defaults and excludes UI-only draft fields', asy
   };
   try {
     const { api } = await client();
-    await api.saveProfile({ name: '지원', city: '서울시', district: '성동구', tagsText: '산책' });
+    await api.saveProfile({
+      name: '지원',
+      city: '서울시',
+      district: '성동구',
+      tagsText: '산책',
+      photos: ['/api/photos/first', '/api/photos/second', '/api/photos/third'],
+    });
+    assert.deepEqual(sent.photos, ['/api/photos/first', '/api/photos/second', '/api/photos/third']);
     assert.equal(sent.region, '');
     assert.equal(sent.minAge, 19);
     assert.equal(sent.maxAge, 60);

@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 
 type Dashboard = {
   counts: Record<string, number>;
-  photos: { id: string; name: string; photo: string; status: string }[];
+  photos: { id: string; name: string; photo: string; photos: string[]; status: string }[];
   reports: { id: string; senderId: string; targetId: string; reason: string; status: string }[];
   pool: { role: string; count: number }[];
 };
@@ -89,11 +89,20 @@ const AdminPage = () => {
             {!data.photos.length && <p className="muted">대기 중인 사진이 없어요.</p>}
             {data.photos.map((person) => (
               <div className="mb-6 space-y-3" key={person.id}>
-                <img
-                  className="h-48 w-full rounded-lg object-cover"
-                  src={person.photo}
-                  alt={person.name + ' 검수 사진'}
-                />
+                <div className="grid grid-cols-3 gap-2">
+                  {person.photos.map((src, index) => (
+                    <a href={src} target="_blank" rel="noreferrer" key={src}>
+                      <img
+                        className="aspect-[3/4] w-full rounded-lg object-cover"
+                        src={src}
+                        alt={`${person.name} 검수 사진 ${index + 1}`}
+                      />
+                    </a>
+                  ))}
+                </div>
+                <p className="text-xs text-fg-3">
+                  사진 {person.photos.length}장 · 전체 확인 후 승인해 주세요.
+                </p>
                 <strong>{person.name}</strong>
                 <p className="text-[10px] break-all text-fg-4">{person.id}</p>
                 <input
@@ -105,10 +114,11 @@ const AdminPage = () => {
                 <div className="flex gap-2">
                   <button
                     className="btn flex-1"
-                    disabled={busy}
+                    disabled={busy || person.photos.length < 3}
                     onClick={() =>
                       void act('/admin/photos/' + person.id, {
                         status: 'APPROVED',
+                        photos: person.photos,
                         reason: notes[person.id] ?? '',
                       })
                     }
@@ -121,6 +131,7 @@ const AdminPage = () => {
                     onClick={() =>
                       void act('/admin/photos/' + person.id, {
                         status: 'REJECTED',
+                        photos: person.photos,
                         reason: notes[person.id],
                       })
                     }

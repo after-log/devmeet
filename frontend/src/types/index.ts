@@ -25,6 +25,7 @@ export interface Profile {
   intro: string;
   tags: string[];
   photo: string;
+  photos?: string[];
   minAge: number;
   maxAge: number;
   region: string; // 추천 조건. 비우면 전체
@@ -51,6 +52,7 @@ export interface Person {
   intro: string;
   tags: string[];
   photo: string;
+  photos?: string[];
 }
 
 export interface User {

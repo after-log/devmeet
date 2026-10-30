@@ -5,6 +5,7 @@ import valueSections from '@/data/value-questions.json';
 import { demoProfilePhoto } from '@/data/members';
 import { publicValueAnswers, PUBLIC_VALUE_LIMIT } from '@/lib/value-answers';
 import { request } from '@/lib/api';
+import PhotoGallery from '@/components/PhotoGallery';
 import { toast } from 'sonner';
 
 const MePage = () => {
@@ -32,6 +33,24 @@ const MePage = () => {
           {p ? `${p.location} · ${p.job}` : '가입 없이 둘러보는 중이에요'}
         </span>
       </div>
+      {p && <PhotoGallery photos={p.photos} photo={p.photo} name={name} />}
+      {p && (p.photos?.length ?? 1) < 3 && (
+        <div className="panel">
+          <p className="text-sm">
+            프로필 사진을 최소 3장 등록해 주세요. 사진 승인 후 다른 회원에게 공개돼요.
+          </p>
+          <button
+            className="btn full"
+            onClick={() => {
+              resetDraft({ ...p, tagsText: p.tags.join(', ') });
+              useApp.getState().setStep(3);
+              navigate('/onboarding');
+            }}
+          >
+            사진 추가하기
+          </button>
+        </div>
+      )}
       <Link className="values-entry" to="/me/values">
         <span className="values-entry-icon" aria-hidden="true">
           ♡
