@@ -49,7 +49,7 @@ const WelcomePage = () => {
         가입 없이 화면 둘러보기
       </button>
       <p className="footnote">
-        만 19세 이상 이용 가능 · 서버 연동 전 UI 체험
+        만 19세 이상 이용 가능
         <br />
         <button
           className="underline underline-offset-2"

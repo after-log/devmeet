@@ -86,6 +86,27 @@ spec:
     - host: devmeet.zmint.dev
       http:
         paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: devmeet-backend
+                port:
+                  number: 8080
+          - path: /oauth2
+            pathType: Prefix
+            backend:
+              service:
+                name: devmeet-backend
+                port:
+                  number: 8080
+          - path: /login/oauth2
+            pathType: Prefix
+            backend:
+              service:
+                name: devmeet-backend
+                port:
+                  number: 8080
           - path: /
             pathType: Prefix
             backend:

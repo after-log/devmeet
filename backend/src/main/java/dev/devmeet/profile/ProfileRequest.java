@@ -20,9 +20,13 @@ public record ProfileRequest(
     @NotBlank @Size(max = 30) String religion,
     @NotBlank(message = "자기소개를 입력해 주세요.") @Size(max = 1000) String intro,
     @NotNull @Size(max = 5) List<@NotBlank @Size(max = 20) String> tags,
-    @NotBlank @Size(max = 2000000) @Pattern(regexp = "https://[^\\s]+|data:image/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+") String photo,
+    @NotBlank
+        @Size(max = 2000000)
+        @Pattern(
+            regexp =
+                "https://[^\\s]+|/api/photos/[0-9a-fA-F-]{36}|data:image/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+")
+        String photo,
     @NotNull @Min(19) @Max(80) Integer minAge,
     @NotNull @Min(19) @Max(80) Integer maxAge,
     @NotNull @Size(max = 40) String region,
-    @Size(max = 80) Map<String, ValueAnswer> valueAnswers
-) {}
+    @Size(max = 80) Map<String, ValueAnswer> valueAnswers) {}

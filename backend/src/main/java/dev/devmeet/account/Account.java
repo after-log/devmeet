@@ -10,25 +10,49 @@ import java.util.UUID;
 @Entity
 @Table(name = "accounts")
 public class Account {
-    @Id
-    private UUID id;
-    @Column(nullable = false, unique = true, length = 254)
-    private String email;
-    @Column(nullable = false, length = 100)
-    private String passwordHash;
-    @Column(nullable = false)
-    private Instant createdAt;
+  @Id private UUID id;
 
-    protected Account() {}
+  @Column(nullable = false, unique = true, length = 254)
+  private String email;
 
-    public Account(String email, String passwordHash) {
-        this.id = UUID.randomUUID();
-        this.email = email;
-        this.passwordHash = passwordHash;
-        this.createdAt = Instant.now();
-    }
+  @Column(nullable = false, length = 100)
+  private String passwordHash;
 
-    public UUID getId() { return id; }
-    public String getEmail() { return email; }
-    public String getPasswordHash() { return passwordHash; }
+  @Column(nullable = false)
+  private Instant createdAt;
+
+  @Column(nullable = false)
+  private boolean suspended;
+
+  @Column(nullable = false)
+  private boolean emailVerified;
+
+  protected Account() {}
+
+  public Account(String email, String passwordHash) {
+    this.id = UUID.randomUUID();
+    this.email = email;
+    this.passwordHash = passwordHash;
+    this.createdAt = Instant.now();
+  }
+
+  public UUID getId() {
+    return id;
+  }
+
+  public String getEmail() {
+    return email;
+  }
+
+  public String getPasswordHash() {
+    return passwordHash;
+  }
+
+  public boolean isSuspended() {
+    return suspended;
+  }
+
+  public boolean isEmailVerified() {
+    return emailVerified;
+  }
 }

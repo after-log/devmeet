@@ -8,10 +8,15 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 
 public interface AccountRepository extends JpaRepository<Account, UUID> {
-    Optional<Account> findByEmail(String email);
-    boolean existsByEmail(String email);
+  Optional<Account> findByEmail(String email);
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("select a from Account a where a.email = :email")
-    Optional<Account> lockByEmail(String email);
+  boolean existsByEmail(String email);
+
+  @Lock(LockModeType.PESSIMISTIC_WRITE)
+  @Query("select a from Account a where a.email = :email")
+  Optional<Account> lockByEmail(String email);
+
+  @Lock(LockModeType.PESSIMISTIC_WRITE)
+  @Query("select a from Account a where a.id = :id")
+  Optional<Account> lockById(UUID id);
 }

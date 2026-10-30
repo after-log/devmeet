@@ -3,6 +3,8 @@ spring:
     url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
+app:
+  require-github: ${REQUIRE_GITHUB:true}
 server:
   address: ${SERVER_ADDRESS:0.0.0.0}
   servlet:

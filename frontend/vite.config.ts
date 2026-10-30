@@ -14,6 +14,8 @@ export default defineConfig({
     host: '127.0.0.1',
     proxy: {
       '/api': 'http://127.0.0.1:8080',
+      '/oauth2': 'http://127.0.0.1:8080',
+      '/login/oauth2': 'http://127.0.0.1:8080',
     },
   },
   preview: { port: 4173 },

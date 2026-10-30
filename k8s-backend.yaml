@@ -1,0 +1,101 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: devmeet-photos
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devmeet-backend
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: devmeet-backend
+  template:
+    metadata:
+      labels:
+        app: devmeet-backend
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: devmeet-backend
+          image: docker.io/library/devmeet-backend:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - secretRef:
+                name: devmeet-backend
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: prod
+            - name: PUBLIC_URL
+              value: https://devmeet.zmint.dev
+            - name: PHOTO_DIRECTORY
+              value: /app/data/photos
+            - name: JAVA_TOOL_OPTIONS
+              value: -XX:MaxRAMPercentage=65.0
+          resources:
+            requests:
+              cpu: 100m
+              memory: 384Mi
+            limits:
+              cpu: "1"
+              memory: 768Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: [ALL]
+          startupProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            periodSeconds: 3
+            failureThreshold: 60
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            periodSeconds: 20
+          volumeMounts:
+            - name: photos
+              mountPath: /app/data/photos
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: photos
+          persistentVolumeClaim:
+            claimName: devmeet-photos
+        - name: tmp
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: devmeet-backend
+spec:
+  selector:
+    app: devmeet-backend
+  ports:
+    - port: 8080
+      targetPort: 8080

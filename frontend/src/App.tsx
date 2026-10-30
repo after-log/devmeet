@@ -4,6 +4,7 @@ import AppLayout from '@/components/layout/AppLayout';
 import { useApp } from './stores/app';
 import WelcomePage from './pages/WelcomePage';
 import AuthPage from './pages/AuthPage';
+import RecoveryPage from './pages/RecoveryPage';
 import OnboardingPage from './pages/OnboardingPage';
 import TodayPage from './pages/TodayPage';
 import PersonPage from './pages/PersonPage';
@@ -31,6 +32,9 @@ const App = () => (
     <Route element={<AppLayout />}>
       <Route index element={<WelcomePage />} />
       <Route path="auth/:mode" element={<AuthPage />} />
+      <Route path="auth/forgot" element={<RecoveryPage />} />
+      <Route path="auth/reset" element={<RecoveryPage />} />
+      <Route path="auth/verify" element={<RecoveryPage />} />
       <Route path="onboarding" element={<OnboardingPage />} />
       <Route
         path="today"

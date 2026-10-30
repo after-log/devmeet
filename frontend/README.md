@@ -1,7 +1,7 @@
 # devmeet
 
 검증된 개발자와, 개발자를 만나고 싶은 사람을 연결하는 소개팅 앱 프로토타입.
-Vite + React + TypeScript + Tailwind CSS로 구성한 모바일 정적 목업입니다.
+Vite + React + TypeScript + Tailwind CSS 프론트엔드와 Spring Boot + MySQL API로 구성합니다.
 
 ## 로컬 실행
 
@@ -40,23 +40,21 @@ CI와 Docker 빌드는 Node.js 22를 사용합니다.
 - 대화·프로필 메뉴에서 신고와 차단을, 내 정보에서 추천 조건(지역·나이)과 차단 해제를 할 수 있어요.
 - 시작 화면의 '가입 없이 화면 둘러보기'는 가상 인물 세 명으로 흐름만 보여 줘요.
 
-## 서버 연동 전 목업 API
+## 실제 API 연결
 
-백엔드는 아직 연결하지 않았습니다. `src/lib/mock-api.ts`가 devmeet-mvp 서버(`/api/*`)와 같은 이름과 규칙으로 동작하고, 데이터는 이 브라우저의 localStorage(`devmeet.mock.v1`)에만 저장합니다.
+먼저 [BE 실행 문서](../backend/README.md)에 따라 서버를 실행합니다.
+FE는 기본적으로 `/api/*`를 호출하며 Vite가 `127.0.0.1:8080`으로 프록시합니다.
+`/oauth2/*`, `/login/oauth2/*`도 같은 서버로 전달합니다.
 
-| 함수                          | 대응하는 서버 API              | 하는 일                                        |
-| ----------------------------- | ------------------------------ | ---------------------------------------------- |
-| `me`                          | `GET /api/me`                  | 로그인 상태 확인                               |
-| `register`, `login`, `logout` | `POST /api/register` 등        | 이메일·비밀번호 계정. 비밀번호는 해시로만 저장 |
-| `saveProfile`                 | `PUT /api/profile`             | 프로필·추천 조건 저장과 필수값 검사            |
-| `photo`                       | `POST /api/photo`              | 사진을 640px JPEG로 줄여 data URL로 저장       |
-| `recommendations`             | `GET /api/recommendations`     | 하루 세 명 배정과 남은 좋아요                  |
-| `like`                        | `POST /api/likes`              | 좋아요, 하루 3회 제한, 매칭 여부               |
-| `connections`                 | `GET /api/connections`         | 보낸·받은 좋아요와 매칭 목록                   |
-| `messages`, `send`            | `/api/messages/:id`            | 매칭 상대와의 대화                             |
-| `report`, `block`, `blocks`   | `/api/report`, `/api/block(s)` | 신고 기록, 차단·해제                           |
-
-추천 대상은 `src/data/members.ts`의 가상 회원 24명(여 12, 남 12)입니다. 이 중 일부는 이미 나에게 좋아요를 보낸 것으로 되어 있어, 좋아요를 보내면 바로 매칭돼요. 사진은 Unsplash 자리표시용입니다. 서버를 붙일 때는 `mock-api.ts`를 같은 함수 이름의 fetch 구현으로 바꾸면 화면 코드는 그대로 쓸 수 있습니다.
+- 계정·프로필·좋아요·매칭·대화·신고·차단은 원격 MySQL에 저장합니다.
+- 사진은 서버에 업로드하며 운영자 승인 후 추천 대상에 포함됩니다.
+- 가치관은 기본 비공개이며 공개 답변은 최대 10개입니다.
+- 새 메시지·매칭은 SSE로 갱신하고, 연결 복구를 위해 30초 간격으로도 동기화합니다.
+- 과거 대화는 커서 기반으로 100개씩 불러옵니다.
+- 로그인은 HttpOnly 세션 쿠키를 사용하고 변경 요청에는 CSRF 토큰을 보냅니다.
+- 카카오·GitHub, 이메일 인증·비밀번호 재설정은 BE의 OAuth/SMTP 설정이 필요합니다.
+- **가입 없이 둘러보기**만 가상 인물과 메모리 상태를 사용하며 실제 요청을 전송하지 않습니다.
+- 기존 localStorage 목업 계정은 자동 이전하지 않습니다. 서버에 새로 가입해야 합니다.
 
 ## 라우트
 
@@ -72,7 +70,7 @@ CI와 Docker 빌드는 Node.js 22를 사용합니다.
 | `/chat`, `/chat/:id`            | 대화 목록·대화                                    |
 | `/me`                           | 내 정보                                           |
 | `/me/values`                    | 가치관 선택·편집 (5개 섹션, 80문항)               |
-| `/admin`                        | 운영자 검수·풀·퍼널 데모                          |
+| `/admin`                        | 운영자 검수·신고·풀·통계 (관리자 전용)            |
 
 예전 주소 `/discover`, `/signup`은 새 화면으로 이동합니다. 알 수 없는 URL은 404 화면을 표시합니다.
 
@@ -85,7 +83,7 @@ CI와 Docker 빌드는 Node.js 22를 사용합니다.
 | `src/components/PersonCard.tsx` | 사진을 넣은 코드 카드, 목록 행, 빈 화면            |
 | `src/components/AppSheets.tsx`  | 추천 조건·안전·신고·차단·안내 시트                 |
 | `src/stores/app.ts`             | 로그인·추천·좋아요·가입 초안·둘러보기 상태         |
-| `src/lib/mock-api.ts`           | 서버 연동 전 목업 API                              |
+| `src/lib/api.ts`                | 서버 HTTP API 클라이언트                           |
 | `src/data/`                     | 선택지(지역·학력·음주 등)와 가상 회원              |
 | `src/types/`                    | 프로필·회원·메시지 타입                            |
 | `src/style.css`                 | 다크·라이트 팔레트와 Galmuri/JetBrains Mono 디자인 |

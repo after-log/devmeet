@@ -35,7 +35,9 @@ jobs:
 
       - name: Typecheck and build React app
         working-directory: frontend
-        run: npm run build
+        run: |
+          npm test
+          npm run build
 
   backend-check:
     name: Spring Boot and MySQL checks

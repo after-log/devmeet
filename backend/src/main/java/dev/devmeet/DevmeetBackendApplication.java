@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class DevmeetBackendApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(DevmeetBackendApplication.class, args);
-	}
-
+  public static void main(String[] args) {
+    SpringApplication.run(DevmeetBackendApplication.class, args);
+  }
 }

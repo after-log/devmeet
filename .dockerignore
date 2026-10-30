@@ -6,8 +6,10 @@ backend/README.md
 backend/HELP.md
 backend/src/main/resources/application-local.yml
 backend/.local
+backend/data
 .env
 .env.*
+**/*.log
 k8s-manifest.yaml
 frontend/README.md
 **/node_modules

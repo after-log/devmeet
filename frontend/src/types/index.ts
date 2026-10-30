@@ -1,4 +1,4 @@
-// 화면과 목업 API가 함께 쓰는 타입. 서버 연동 시 응답 형태도 이 타입을 따른다.
+// 화면과 서버 API가 함께 쓰는 타입.
 export type Role = 'developer' | 'non-developer';
 
 export interface ValueAnswer {
@@ -32,6 +32,9 @@ export interface Profile {
 
 /** 다른 회원에게 공개되는 정보 */
 export interface Person {
+  githubVerified?: boolean;
+  valueAnswers?: ValueAnswers;
+  photoStatus?: string;
   id: string;
   name: string;
   age: number;
@@ -51,6 +54,13 @@ export interface Person {
 }
 
 export interface User {
+  admin?: boolean;
+  verification?: {
+    email?: boolean;
+    github: boolean;
+    photoStatus: string;
+    photoReviewReason: string;
+  };
   id: string;
   email: string;
   profile: Profile | null;
@@ -64,6 +74,7 @@ export interface Message {
 }
 
 export interface Recommendations {
+  notice?: string;
   people: Person[];
   liked: string[];
   remaining: number;

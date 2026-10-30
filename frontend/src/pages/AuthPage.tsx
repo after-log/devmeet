@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
-import { api } from '../lib/mock-api';
+import { api } from '../lib/api';
 import { useApp } from '../stores/app';
+import SocialButtons from '@/components/SocialButtons';
 
 const AuthPage = () => {
   const { mode } = useParams();
@@ -80,7 +81,7 @@ const AuthPage = () => {
             type="password"
             required
             minLength={10}
-            maxLength={128}
+            maxLength={72}
             autoComplete={register ? 'new-password' : 'current-password'}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -88,9 +89,7 @@ const AuthPage = () => {
         </label>
         {register && (
           <p className="secure mt-4">
-            서버 연동 전이라 계정은 이 브라우저에만 저장돼요.
-            <br />
-            이메일 수신 인증과 비밀번호 찾기는 아직 없어요.
+            비밀번호는 암호화된 해시로 저장돼요. 다른 서비스와 다른 비밀번호를 사용해 주세요.
           </p>
         )}
         <p className="error" role="alert">
@@ -100,6 +99,12 @@ const AuthPage = () => {
           {register ? '계정 만들기 →' : '로그인 →'}
         </button>
       </form>
+      <SocialButtons />
+      {!register && (
+        <Link className="skip block text-center" to="/auth/forgot">
+          비밀번호를 잊었어요
+        </Link>
+      )}
       <Link className="skip text-center" to={register ? '/auth/login' : '/auth/register'}>
         {register ? '이미 계정이 있어요' : '새 계정 만들기'}
       </Link>
