@@ -2,11 +2,12 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useApp } from '../stores/app';
-import { api } from '../lib/mock-api';
+import { api } from '../lib/api';
 import { REPORT_REASONS } from '@/data/options';
 import type { Person } from '@/types';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Select } from '@/components/ui/select';
+import SocialButtons from '@/components/SocialButtons';
 
 const FiltersSheet = ({ close }: { close: () => void }) => {
   const { user, demo, draft, setDraft, setUser } = useApp();
@@ -15,15 +16,19 @@ const FiltersSheet = ({ close }: { close: () => void }) => {
   const [minAge, setMinAge] = useState(String(p.minAge ?? 19));
   const [maxAge, setMaxAge] = useState(String(p.maxAge ?? 60));
   const save = async () => {
-    if (Number(minAge) > Number(maxAge)) return toast('최소 나이는 최대 나이보다 작아야 해요.');
-    const patch = { region, minAge: Number(minAge), maxAge: Number(maxAge) };
-    if (demo || !user?.profile) setDraft(patch);
-    else {
-      const { profile } = await api.saveProfile({ ...user.profile, ...patch });
-      setUser({ ...user, profile });
+    try {
+      if (Number(minAge) > Number(maxAge)) return toast('최소 나이는 최대 나이보다 작아야 해요.');
+      const patch = { region, minAge: Number(minAge), maxAge: Number(maxAge) };
+      if (demo || !user?.profile) setDraft(patch);
+      else {
+        const { profile } = await api.saveProfile({ ...user.profile, ...patch });
+        setUser({ ...user, profile });
+      }
+      close();
+      toast('추천 조건을 저장했어요.');
+    } catch (err) {
+      toast((err as Error).message);
     }
-    close();
-    toast('추천 조건을 저장했어요.');
   };
   return (
     <>
@@ -92,14 +97,18 @@ const SafetySheet = ({ id, close }: { id: string; close: () => void }) => {
       <button
         className="btn secondary mt-[10px] w-full"
         onClick={async () => {
-          if (demo) demoBlock(id);
-          else {
-            await api.block(id);
-            await refresh();
+          try {
+            if (demo) demoBlock(id);
+            else {
+              await api.block(id);
+              await refresh();
+            }
+            close();
+            navigate('/chat');
+            toast('차단했어요. 추천과 대화 목록에서 서로 보이지 않아요.');
+          } catch (err) {
+            toast((err as Error).message);
           }
-          close();
-          navigate('/chat');
-          toast('차단했어요. 추천과 대화 목록에서 서로 보이지 않아요.');
         }}
       >
         차단하기
@@ -128,16 +137,23 @@ const ReportSheet = ({ id, close }: { id: string; close: () => void }) => {
       <button
         className="btn full"
         onClick={async () => {
-          close();
-          if (demo) return toast('둘러보기에서는 실제 신고가 접수되지 않아요.');
-          const r = await api.report(id, reason);
-          toast(`신고를 기록했어요 · ${r.id.slice(0, 8)}`);
+          if (demo) {
+            close();
+            return toast('둘러보기에서는 실제 신고가 접수되지 않아요.');
+          }
+          try {
+            const r = await api.report(id, reason);
+            close();
+            toast(`신고를 기록했어요 · ${r.id.slice(0, 8)}`);
+          } catch (err) {
+            toast((err as Error).message);
+          }
         }}
       >
         신고 기록하기
       </button>
       <p className="footnote">
-        서버 연동 전이라 이 브라우저에만 기록돼요. 운영자 검토는 아직 없어요.
+        신고는 운영자가 검토하며, 신고자의 정보는 상대에게 공개되지 않아요.
       </p>
     </>
   );
@@ -149,7 +165,14 @@ const BlockedSheet = () => {
   const [people, setPeople] = useState<Person[] | null>(null);
   const load = () => {
     if (demo) setPeople([]);
-    else void api.blocks().then((r) => setPeople(r.people));
+    else
+      void api
+        .blocks()
+        .then((r) => setPeople(r.people))
+        .catch((err: Error) => {
+          setPeople([]);
+          toast(err.message);
+        });
   };
   useEffect(load, [demo]);
   return (
@@ -165,10 +188,14 @@ const BlockedSheet = () => {
             <button
               className="tag"
               onClick={async () => {
-                await api.block(p.id, true);
-                await refresh();
-                load();
-                toast('차단을 해제했어요.');
+                try {
+                  await api.block(p.id, true);
+                  await refresh();
+                  load();
+                  toast('차단을 해제했어요.');
+                } catch (err) {
+                  toast((err as Error).message);
+                }
               }}
             >
               차단 해제
@@ -182,18 +209,20 @@ const BlockedSheet = () => {
   );
 };
 
-const InfoSheet = ({ kind }: { kind: 'social' | 'privacy' }) =>
-  kind === 'social' ? (
+const InfoSheet = ({ kind }: { kind: 'social' | 'privacy' }) => {
+  const { user, demo } = useApp();
+  return kind === 'social' ? (
     <>
       <p className="eyebrow">// auth.providers</p>
       <DialogTitle>카카오 · GitHub 연결 안내</DialogTitle>
       <DialogDescription>
-        카카오 로그인과 GitHub 계정 소유 확인은 서비스 앱 키를 등록한 뒤 제공돼요.
+        내 계정에 소셜 계정을 연결하거나 소셜 로그인으로 시작할 수 있어요.
       </DialogDescription>
-      <p className="muted">
-        지금은 이메일과 비밀번호로 가입할 수 있어요. GitHub 연결·회사 재직·사진 검토가 끝난 것처럼
-        표시하지 않아요.
-      </p>
+      {demo ? (
+        <p className="muted">계정 연결은 둘러보기를 종료하고 로그인한 뒤 이용해 주세요.</p>
+      ) : (
+        <SocialButtons link={!!user} />
+      )}
     </>
   ) : (
     <>
@@ -203,11 +232,12 @@ const InfoSheet = ({ kind }: { kind: 'social' | 'privacy' }) =>
         입력한 이름, 나이, 지역, 직업, 자기소개, 사진은 추천과 매칭 상대에게 보여요.
       </DialogDescription>
       <p className="muted">
-        지금은 서버 연동 전이라 가입 정보와 좋아요, 대화, 차단, 신고 기록이 모두 이 브라우저에만
-        저장돼요. 비밀번호는 해시로만 저장해요. 브라우저 데이터를 지우면 함께 사라져요.
+        가입 정보, 좋아요, 대화, 차단, 신고 기록은 서버에 저장돼요. 비밀번호는 해시로 저장하며
+        비공개 가치관 답변과 신고자 정보는 다른 회원에게 공개하지 않아요.
       </p>
     </>
   );
+};
 
 const AppSheets = () => {
   const { sheet, openSheet } = useApp();

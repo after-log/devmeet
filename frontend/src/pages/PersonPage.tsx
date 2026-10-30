@@ -2,6 +2,7 @@ import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { findPerson, reasonFor, useApp } from '../stores/app';
 import { CodeLines, personLines } from '@/components/PersonCard';
+import { publicValueAnswers } from '@/lib/value-answers';
 
 const PersonPage = () => {
   const { id } = useParams();
@@ -51,7 +52,15 @@ const PersonPage = () => {
             </div>
             <p>{p.job}</p>
           </div>
-          <span className="tag">{demo ? '가상 프로필' : '인증 전'}</span>
+          <span className="tag">
+            {demo
+              ? '가상 프로필'
+              : p.photoStatus === 'APPROVED'
+                ? p.githubVerified
+                  ? 'GitHub 연결 · 사진 검수 완료'
+                  : '사진 검수 완료'
+                : '검수 중'}
+          </span>
         </div>
         <CodeLines lines={personLines(p, p.id)} />
         <div className="profile-body">
@@ -64,6 +73,12 @@ const PersonPage = () => {
             <p>{reasonFor(p)}</p>
           </div>
           <p className="section-comment">// rhythm</p>
+          {publicValueAnswers(p.valueAnswers ?? {}).map((answer) => (
+            <div className="mb-5" key={answer.id}>
+              <p className="mb-1 text-xs text-fg-3">{answer.text}</p>
+              <p className="m-0 text-sm">{answer.choice}</p>
+            </div>
+          ))}
           {rows.map(([k, v]) => (
             <div className="info-row" key={k}>
               <span>{k}</span>

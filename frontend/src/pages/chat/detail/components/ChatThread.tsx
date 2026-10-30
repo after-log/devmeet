@@ -14,6 +14,8 @@ const ChatThread = ({
   onSafety,
   loading,
   error,
+  hasOlder,
+  onLoadOlder,
 }: {
   room: ChatRoom;
   profile: Person;
@@ -22,8 +24,12 @@ const ChatThread = ({
   onSafety: () => void;
   loading: boolean;
   error: string;
+  hasOlder: boolean;
+  onLoadOlder: () => Promise<void>;
 }) => {
   const [draft, setDraft] = useState('');
+  const [loadingOlder, setLoadingOlder] = useState(false);
+  const preserveScroll = useRef(false);
   const [sending, setSending] = useState(false);
   const sendingRef = useRef(false);
   const [sendError, setSendError] = useState('');
@@ -36,6 +42,10 @@ const ChatThread = ({
     setShowLatest(false);
   };
   useEffect(() => {
+    if (preserveScroll.current) {
+      preserveScroll.current = false;
+      return;
+    }
     scrollToLatest();
   }, [room.messages.length]);
 
@@ -90,6 +100,32 @@ const ChatThread = ({
           if (area) setShowLatest(area.scrollHeight - area.scrollTop - area.clientHeight > 100);
         }}
       >
+        {hasOlder && (
+          <button
+            className="btn secondary full my-4"
+            disabled={loadingOlder}
+            onClick={async () => {
+              setLoadingOlder(true);
+              setSendError('');
+              const area = scrollArea.current;
+              const before = area?.scrollHeight ?? 0;
+              preserveScroll.current = true;
+              try {
+                await onLoadOlder();
+                requestAnimationFrame(() => {
+                  if (area) area.scrollTop += area.scrollHeight - before;
+                });
+              } catch (err) {
+                setSendError((err as Error).message);
+                preserveScroll.current = false;
+              } finally {
+                setLoadingOlder(false);
+              }
+            }}
+          >
+            {loadingOlder ? '불러오는 중…' : '이전 대화 불러오기'}
+          </button>
+        )}
         <p className="tip my-5">
           <span className="text-green">{'{ connected }'}</span>
           <br />

@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { api } from '../lib/mock-api';
+import { api } from '../lib/api';
 import { useApp } from '../stores/app';
 import {
   CONTACT,
@@ -156,6 +156,7 @@ const OnboardingPage = () => {
   const valid = [
     !!draft.role,
     !!draft.name?.trim() &&
+      Number.isInteger(Number(draft.age)) &&
       Number(draft.age) >= 19 &&
       Number(draft.age) <= 80 &&
       Number(draft.height) >= 100 &&
@@ -172,6 +173,7 @@ const OnboardingPage = () => {
     setError('');
     if (step < 3) return setStep(step + 1);
     if (!draft.photo) return setError('프로필 사진을 먼저 등록해 주세요.');
+    if (!draft.intro?.trim()) return setError('자기소개를 입력해 주세요.');
     try {
       const tags = (draft.tagsText ?? (draft.tags ?? []).join(', '))
         .split(',')
@@ -349,7 +351,7 @@ const OnboardingPage = () => {
             />
           </label>
           <p className="footnote">
-            서버 연동 전이라 사진은 이 브라우저에만 저장돼요. 인증 완료 표시는 붙이지 않아요.
+            등록한 사진은 검수를 거쳐 추천에 표시돼요. 검수 결과는 내 정보에서 확인할 수 있어요.
           </p>
         </>
       )}

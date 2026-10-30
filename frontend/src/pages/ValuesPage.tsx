@@ -4,7 +4,7 @@ import { Check, ChevronLeft, Eye, LockKeyhole } from 'lucide-react';
 import { toast } from 'sonner';
 import sections from '@/data/value-questions.json';
 import { useApp } from '@/stores/app';
-import { api } from '@/lib/mock-api';
+import { api } from '@/lib/api';
 import type { ValueAnswer, ValueAnswers } from '@/types';
 import { normalizeValueAnswers, publicValueAnswers, PUBLIC_VALUE_LIMIT } from '@/lib/value-answers';
 

@@ -1,12 +1,14 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import type { Message } from '@/types';
-import { api } from '@/lib/mock-api';
+import { api } from '@/lib/api';
 import { useApp } from '@/stores/app';
 
 interface ChatsState {
   messages: Record<string, Message[]>;
   readAt: Record<string, number>;
+  cursors: Record<string, string | null>;
+  loadOlder: (profileId: string) => Promise<void>;
   loadMessages: (profileId: string) => Promise<void>;
   markRead: (profileId: string) => void;
   sendMessage: (profileId: string, text: string) => Promise<void>;
@@ -16,13 +18,14 @@ export const chatKey = (ownerId: string, profileId: string) => `${ownerId}:${pro
 
 export const useChatsStore = create<ChatsState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       messages: {},
       readAt: {},
+      cursors: {},
       loadMessages: async (profileId) => {
         const { user, demo, connections } = useApp.getState();
         if (demo || !user || !connections.matches.some((p) => p.id === profileId)) return;
-        const { messages } = await api.messages(profileId);
+        const { messages, nextCursor } = await api.messages(profileId);
         const current = useApp.getState();
         if (
           current.demo ||
@@ -36,12 +39,39 @@ export const useChatsStore = create<ChatsState>()(
           const merged = new Map(messages.map((message) => [message.id, message]));
           for (const message of s.messages[key] ?? []) merged.set(message.id, message);
           return {
+            cursors: { ...s.cursors, [key]: key in s.cursors ? s.cursors[key] : nextCursor },
             messages: {
               ...s.messages,
               [key]: [...merged.values()].sort((a, b) => a.created - b.created),
             },
           };
         });
+      },
+      loadOlder: async (profileId) => {
+        const { user, demo, connections } = useApp.getState();
+        if (demo || !user || !connections.matches.some((p) => p.id === profileId)) return;
+        const key = chatKey(user.id, profileId),
+          cursor = get().cursors[key];
+        if (!cursor) return;
+        const result = await api.messages(profileId, cursor);
+        const current = useApp.getState();
+        if (
+          current.demo ||
+          current.user?.id !== user.id ||
+          !current.connections.matches.some((p) => p.id === profileId)
+        )
+          return;
+        set((state) => ({
+          cursors: { ...state.cursors, [key]: result.nextCursor },
+          messages: {
+            ...state.messages,
+            [key]: [
+              ...new Map(
+                [...result.messages, ...(state.messages[key] ?? [])].map((m) => [m.id, m]),
+              ).values(),
+            ].sort((a, b) => a.created - b.created),
+          },
+        }));
       },
       markRead: (profileId) => {
         const { user, demo } = useApp.getState();

@@ -5,8 +5,19 @@ import PersonCard, { Empty } from '@/components/PersonCard';
 
 const TodayPage = () => {
   const navigate = useNavigate();
-  const { people, index, setIndex, liked, remaining, like, demo, user, openSheet, refresh } =
-    useApp();
+  const {
+    people,
+    index,
+    setIndex,
+    liked,
+    remaining,
+    like,
+    demo,
+    user,
+    openSheet,
+    refresh,
+    notice,
+  } = useApp();
   const p = people[index];
   const dev = (user?.profile?.role ?? 'developer') === 'developer';
   const sent = !!p && liked.includes(p.id);
@@ -56,7 +67,7 @@ const TodayPage = () => {
             </button>
           }
         >
-          조건에 맞는 회원이 아직 충분하지 않아요.
+          {notice || '조건에 맞는 회원이 아직 충분하지 않아요.'}
           <br />
           회원이 모이면 최대 세 사람을 소개해요.
         </Empty>

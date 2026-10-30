@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { api } from '../lib/mock-api';
+import { api, ApiError } from '../lib/api';
 import { demoPeople } from '@/data/members';
 import type { Connections, Draft, Message, Person, User, ValueAnswers } from '@/types';
 
@@ -24,9 +24,12 @@ export const freshDraft = (): Draft => ({
   education: '대학교 졸업',
   minAge: 19,
   maxAge: 60,
+  region: '',
 });
 
 interface AppState {
+  error: string;
+  notice: string;
   demoValueAnswers: ValueAnswers;
   setDemoValueAnswers: (answers: ValueAnswers) => void;
   booted: boolean;
@@ -58,6 +61,8 @@ interface AppState {
 }
 
 export const useApp = create<AppState>()((set, get) => ({
+  error: '',
+  notice: '',
   demoValueAnswers: {},
   setDemoValueAnswers: (demoValueAnswers) => set({ demoValueAnswers }),
   booted: false,
@@ -73,26 +78,45 @@ export const useApp = create<AppState>()((set, get) => ({
   step: 0,
   sheet: null,
   boot: async () => {
-    const { user } = await api.me();
-    set({ user });
-    // 추천·매칭을 먼저 불러온 뒤 화면을 그려야 /chat/:id 같은 주소로 바로 들어와도 튕기지 않는다
-    if (user?.profile)
-      await get()
-        .refresh()
-        .catch(() => undefined);
-    set({ booted: true });
+    try {
+      const { user } = await api.me();
+      set({ user, error: '' });
+      // 추천·매칭을 먼저 불러온 뒤 화면을 그려야 /chat/:id 같은 주소로 바로 들어와도 튕기지 않는다
+      if (user?.profile)
+        await get()
+          .refresh()
+          .catch(() => undefined);
+    } catch (error) {
+      set({ error: (error as Error).message });
+    } finally {
+      set({ booted: true });
+    }
   },
   setUser: (user) => set({ user }),
   refresh: async () => {
     if (get().demo || !get().user?.profile) return;
-    const [r, connections] = await Promise.all([api.recommendations(), api.connections()]);
-    set((s) => ({
-      people: r.people,
-      liked: r.liked,
-      remaining: r.remaining,
-      connections,
-      index: Math.min(s.index, Math.max(0, r.people.length - 1)),
-    }));
+    try {
+      const [r, connections, me] = await Promise.all([
+        api.recommendations(),
+        api.connections(),
+        api.me(),
+      ]);
+      set((s) => ({
+        people: r.people,
+        liked: r.liked,
+        remaining: r.remaining,
+        connections,
+        index: Math.min(s.index, Math.max(0, r.people.length - 1)),
+        user: me.user,
+        notice: r.notice ?? '',
+        error: '',
+      }));
+    } catch (error) {
+      set({ error: (error as Error).message });
+      if (error instanceof ApiError && [401, 403].includes(error.status)) {
+        set({ user: null, people: [], connections: emptyConnections() });
+      }
+    }
   },
   setIndex: (index) => set({ index }),
   like: async (person) => {
@@ -125,6 +149,8 @@ export const useApp = create<AppState>()((set, get) => ({
       index: 0,
       connections: emptyConnections(),
       demoMessages: {},
+      error: '',
+      notice: '',
     }),
   exitDemo: () => {
     set({
