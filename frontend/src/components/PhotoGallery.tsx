@@ -21,17 +21,20 @@ export default function PhotoGallery({
         alt={`${name} 프로필 사진 ${items.indexOf(current) + 1}`}
       />
       {items.length > 1 && (
-        <div className="flex gap-2 overflow-x-auto p-3" aria-label="사진 선택">
+        <div className="flex items-center justify-center gap-1 py-2" aria-label="사진 선택">
           {items.map((src, index) => (
             <button
               key={src}
               type="button"
-              className={`h-20 w-16 shrink-0 overflow-hidden rounded-md border-2 ${src === current ? 'border-blue' : 'border-transparent'}`}
+              className="flex h-8 w-8 items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-blue"
               aria-label={`프로필 사진 ${index + 1} 보기`}
               aria-pressed={src === current}
               onClick={() => setSelected(src)}
             >
-              <img className="h-full w-full object-cover" src={src} alt="" loading="lazy" />
+              <span
+                className={`h-2 w-2 rounded-full ${src === current ? 'bg-blue' : 'bg-line-strong'}`}
+                aria-hidden="true"
+              />
             </button>
           ))}
         </div>

@@ -22,9 +22,13 @@ const MePage = () => {
       <p className="eyebrow">// my.profile</p>
       <h2>나의 프로필</h2>
       <div className="profile-self">
-        <div className="flex justify-center">
-          <Avatar person={{ name, photo: demo ? demoProfilePhoto : (p?.photo ?? '') }} size={72} />
-        </div>
+        {p ? (
+          <PhotoGallery photos={p.photos} photo={p.photo} name={name} />
+        ) : (
+          <div className="flex justify-center">
+            <Avatar person={{ name, photo: demo ? demoProfilePhoto : '' }} size={72} />
+          </div>
+        )}
         <h3>
           {name}
           {p ? <span className="ml-2 font-mono text-[14px] text-fg-3">{p.age}</span> : null}
@@ -33,7 +37,6 @@ const MePage = () => {
           {p ? `${p.location} · ${p.job}` : '가입 없이 둘러보는 중이에요'}
         </span>
       </div>
-      {p && <PhotoGallery photos={p.photos} photo={p.photo} name={name} />}
       {p && (p.photos?.length ?? 1) < 3 && (
         <div className="panel">
           <p className="text-sm">
