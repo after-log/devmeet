@@ -104,9 +104,14 @@ const AppLayout = () => {
             {booted ? (
               <Outlet />
             ) : (
-              <p className="prompt">
+              <p className="prompt flex items-center" role="status">
                 loading
                 <i className="cursor" />
+                <span className="pixel-dots" aria-hidden="true">
+                  <i />
+                  <i />
+                  <i />
+                </span>
               </p>
             )}
           </main>

@@ -1,23 +1,14 @@
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
 import { reasonFor, useApp } from '../stores/app';
 import PersonCard, { Empty } from '@/components/PersonCard';
+import LikeButton from '@/components/LikeButton';
+import PixelCountdown from '@/components/pixel/PixelCountdown';
+import PixelHearts from '@/components/pixel/PixelHearts';
 
 const TodayPage = () => {
   const navigate = useNavigate();
-  const {
-    people,
-    index,
-    setIndex,
-    liked,
-    remaining,
-    like,
-    demo,
-    user,
-    openSheet,
-    refresh,
-    notice,
-  } = useApp();
+  const { people, index, setIndex, liked, remaining, demo, user, openSheet, refresh, notice } =
+    useApp();
   const p = people[index];
   const dev = (user?.profile?.role ?? 'developer') === 'developer';
   const sent = !!p && liked.includes(p.id);
@@ -62,9 +53,12 @@ const TodayPage = () => {
           mark="// waiting"
           title="좋은 만남을 준비하고 있어요"
           action={
-            <button className="btn secondary full" onClick={() => void refresh()}>
-              다시 확인하기
-            </button>
+            <>
+              <button className="btn secondary full" onClick={() => void refresh()}>
+                다시 확인하기
+              </button>
+              <PixelCountdown label="새 추천까지" />
+            </>
           }
         >
           {notice || '조건에 맞는 회원이 아직 충분하지 않아요.'}
@@ -83,30 +77,18 @@ const TodayPage = () => {
             <button className="btn secondary" onClick={() => navigate(`/people/${p.id}`)}>
               프로필 보기 <span>→</span>
             </button>
-            <button
-              className="btn"
-              disabled={sent || remaining <= 0}
-              onClick={async () => {
-                try {
-                  const matched = await like(p);
-                  if (matched) navigate(`/match/${p.id}`);
-                  else toast('좋아요를 보냈어요. 서로의 마음이 닿으면 알려드려요.');
-                } catch (err) {
-                  toast((err as Error).message);
-                }
-              }}
-            >
-              {sent ? '✓ 보냈어요' : dev ? '♡ LGTM! · 좋아요' : '♡ 좋아요'}
-            </button>
+            <LikeButton person={p} />
           </div>
-          <p className="footnote">
-            {remaining <= 0
-              ? '오늘의 좋아요를 모두 사용했어요.'
-              : `오늘 남은 좋아요 ${remaining} / 3`}
-            {dev && !sent && remaining > 0
-              ? ' · LGTM!은 마음에 드는 프로필에 보내는 좋아요예요.'
-              : ''}
+          <div className="likes-left">
+            <span>오늘 남은 좋아요</span>
+            <PixelHearts remaining={remaining} />
+            <b>{Math.max(0, remaining)} / 3</b>
+          </div>
+          <p className="footnote !mt-1">
+            {remaining <= 0 ? '오늘의 좋아요를 모두 사용했어요.' : ''}
+            {dev && !sent && remaining > 0 ? 'LGTM!은 마음에 드는 프로필에 보내는 좋아요예요.' : ''}
           </p>
+          {remaining <= 0 && <PixelCountdown />}
         </>
       )}
     </>
