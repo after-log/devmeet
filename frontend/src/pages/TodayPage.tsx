@@ -3,6 +3,7 @@ import { reasonFor, useApp } from '../stores/app';
 import PersonCard, { Empty } from '@/components/PersonCard';
 import LikeButton from '@/components/LikeButton';
 import PixelCountdown from '@/components/pixel/PixelCountdown';
+import PixelHearts from '@/components/pixel/PixelHearts';
 
 const TodayPage = () => {
   const navigate = useNavigate();
@@ -78,13 +79,14 @@ const TodayPage = () => {
             </button>
             <LikeButton person={p} />
           </div>
-          <p className="footnote">
-            {remaining <= 0
-              ? '오늘의 좋아요를 모두 사용했어요.'
-              : `오늘 남은 좋아요 ${remaining} / 3`}
-            {dev && !sent && remaining > 0
-              ? ' · LGTM!은 마음에 드는 프로필에 보내는 좋아요예요.'
-              : ''}
+          <div className="likes-left">
+            <span>오늘 남은 좋아요</span>
+            <PixelHearts remaining={remaining} />
+            <b>{Math.max(0, remaining)} / 3</b>
+          </div>
+          <p className="footnote !mt-1">
+            {remaining <= 0 ? '오늘의 좋아요를 모두 사용했어요.' : ''}
+            {dev && !sent && remaining > 0 ? 'LGTM!은 마음에 드는 프로필에 보내는 좋아요예요.' : ''}
           </p>
           {remaining <= 0 && <PixelCountdown />}
         </>

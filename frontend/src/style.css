@@ -39,6 +39,11 @@
       opacity: 1;
     }
   }
+  @keyframes pixel-blink {
+    50% {
+      opacity: 0;
+    }
+  }
   @keyframes pixel-stepin {
     from {
       opacity: 0;
@@ -608,20 +613,35 @@
   .pixel-loader {
     @apply inline-flex items-center gap-2;
   }
-  .pixel-loader > span {
-    @apply inline-flex gap-[3px];
+  .pixel-dots {
+    @apply ml-2 inline-flex gap-[3px];
   }
-  .pixel-loader i {
+  .pixel-loader .pixel-dots {
+    @apply ml-0;
+  }
+  .pixel-dots i {
     @apply block h-[6px] w-[6px] bg-current opacity-25 motion-safe:animate-[pixel-load_.9s_steps(1,end)_infinite];
   }
-  .pixel-loader i:nth-child(2) {
+  .prompt .pixel-dots i {
+    @apply bg-green;
+  }
+  .pixel-dots i:nth-child(2) {
     animation-delay: 0.3s;
   }
-  .pixel-loader i:nth-child(3) {
+  .pixel-dots i:nth-child(3) {
     animation-delay: 0.6s;
   }
+  .pixel-broken {
+    @apply mx-auto mb-5 block h-[80px] w-[88px] [image-rendering:pixelated];
+  }
+  .pixel-new-dot {
+    @apply absolute -top-[2px] -right-[5px] block h-[6px] w-[6px] bg-purple motion-safe:animate-[pixel-blink_.24s_steps(1,end)_4];
+  }
   .pixel-countdown {
-    @apply mt-6 text-center;
+    @apply mx-auto mt-6 flex w-full flex-col items-center text-center;
+  }
+  .pixel-plane {
+    @apply pointer-events-none absolute bottom-full left-0 h-[160px] w-[384px] max-w-full [image-rendering:pixelated];
   }
   .pixel-countdown canvas {
     @apply mx-auto block h-[36px] w-[164px] [image-rendering:pixelated];
@@ -649,6 +669,27 @@
   .pixel-steps i::before {
     content: '';
     @apply absolute inset-0 z-1 bg-[repeating-linear-gradient(90deg,transparent_0_calc(100%/6-2px),var(--color-canvas)_calc(100%/6-2px)_calc(100%/6))];
+  }
+  .likes-left {
+    @apply mt-[13px] flex items-center justify-center gap-2 font-mono text-[11px] text-fg-4 [&_b]:font-normal [&_b]:text-fg-3;
+  }
+  .likes-left span {
+    @apply font-sans;
+  }
+  .pixel-hearts {
+    @apply h-4 w-[62px] [image-rendering:pixelated];
+  }
+  .signup-log {
+    @apply mt-5 w-full font-mono text-xs leading-[2] text-fg-3;
+  }
+  .signup-log div {
+    @apply flex justify-between;
+  }
+  .signup-log b {
+    @apply font-medium text-green;
+  }
+  .signup-bar {
+    @apply mt-3 mb-6 block h-[6px] w-full [image-rendering:pixelated];
   }
   .built-photo {
     @apply block aspect-[4/3] w-full border-b border-border;

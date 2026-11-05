@@ -2,6 +2,7 @@ import { useState, type ReactNode } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import ProfileBuilt from '@/components/pixel/ProfileBuilt';
+import SignupBuildLog from '@/components/pixel/SignupBuildLog';
 import { api } from '../lib/api';
 import { useApp } from '../stores/app';
 import {
@@ -91,7 +92,30 @@ const OnboardingPage = () => {
   const [error, setError] = useState('');
   const [uploading, setUploading] = useState(false);
   const [built, setBuilt] = useState<Profile | null>(null);
+  const welcomeKey = user ? `devmeet.welcomed.${user.id}` : '';
+  const [welcome, setWelcome] = useState(() => {
+    try {
+      return !!user && !user.profile && !sessionStorage.getItem(welcomeKey);
+    } catch {
+      return false;
+    }
+  });
   if (!user) return <Navigate to="/" replace />;
+  // 카카오로 처음 가입해 들어왔을 때 '가입 완료' 빌드 로그를 한 번 보여 준다
+  if (welcome && !user.profile && step === 0)
+    return (
+      <SignupBuildLog
+        name={draft.name}
+        onContinue={() => {
+          try {
+            sessionStorage.setItem(welcomeKey, '1');
+          } catch {
+            // 저장 공간이 없으면 이번 화면에서만 닫는다
+          }
+          setWelcome(false);
+        }}
+      />
+    );
   // 처음 가입한 회원이 저장을 마치면 '빌드 완료' 화면을 한 번 보여 준다
   if (built) return <ProfileBuilt profile={built} onContinue={() => navigate('/today')} />;
   const editing = !!user.profile;
