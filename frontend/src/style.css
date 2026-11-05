@@ -30,6 +30,26 @@
   --font-mono: 'JetBrains Mono', monospace;
   --animate-cursor: blink 1.1s steps(1, end) infinite;
 
+  @keyframes pixel-load {
+    0%,
+    66% {
+      opacity: 0.25;
+    }
+    33% {
+      opacity: 1;
+    }
+  }
+  @keyframes pixel-stepin {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
   @keyframes blink {
     50% {
       opacity: 0;
@@ -566,5 +586,80 @@
   }
   .chat-latest {
     @apply absolute right-0 bottom-32 rounded-full border border-line-strong bg-surface px-3 py-2 text-[11px] text-blue shadow-md;
+  }
+
+  /* Pixel interactions: stepped motion only, 4 accent colors, end state when motion is reduced. */
+  .pixel-photo {
+    @apply relative block h-full w-full;
+  }
+  .pixel-photo img,
+  .pixel-photo canvas {
+    @apply block h-full w-full object-cover;
+  }
+  .pixel-photo canvas {
+    @apply absolute inset-0 [image-rendering:pixelated];
+  }
+  .like-wrap {
+    @apply relative block;
+  }
+  .pixel-heart-pop {
+    @apply pointer-events-none absolute -top-[92px] left-1/2 h-[96px] w-[120px] -translate-x-1/2 [image-rendering:pixelated];
+  }
+  .pixel-loader {
+    @apply inline-flex items-center gap-2;
+  }
+  .pixel-loader > span {
+    @apply inline-flex gap-[3px];
+  }
+  .pixel-loader i {
+    @apply block h-[6px] w-[6px] bg-current opacity-25 motion-safe:animate-[pixel-load_.9s_steps(1,end)_infinite];
+  }
+  .pixel-loader i:nth-child(2) {
+    animation-delay: 0.3s;
+  }
+  .pixel-loader i:nth-child(3) {
+    animation-delay: 0.6s;
+  }
+  .pixel-countdown {
+    @apply mt-6 text-center;
+  }
+  .pixel-countdown canvas {
+    @apply mx-auto block h-[36px] w-[164px] [image-rendering:pixelated];
+  }
+  .pixel-merge {
+    @apply mx-auto my-3 block aspect-[60/40] w-full max-w-[360px] [image-rendering:pixelated];
+  }
+  .pixel-stepin {
+    @apply motion-safe:animate-[pixel-stepin_.32s_steps(4,end)_both];
+  }
+  .pixel-steps {
+    @apply mt-[10px] mb-[35px] grid grid-cols-4 gap-[5px];
+  }
+  .pixel-steps i {
+    @apply relative block h-[6px] overflow-hidden bg-line;
+  }
+  .pixel-steps i::after {
+    content: '';
+    @apply absolute inset-y-0 left-0 w-0 bg-blue transition-[width] duration-300 [transition-timing-function:steps(6,end)] motion-reduce:transition-none;
+  }
+  .pixel-steps i.done::after {
+    @apply w-full;
+  }
+  /* 칸 사이 틈으로 픽셀 블록처럼 보이게 */
+  .pixel-steps i::before {
+    content: '';
+    @apply absolute inset-0 z-1 bg-[repeating-linear-gradient(90deg,transparent_0_calc(100%/6-2px),var(--color-canvas)_calc(100%/6-2px)_calc(100%/6))];
+  }
+  .built-photo {
+    @apply block aspect-[4/3] w-full border-b border-border;
+  }
+  .built-status {
+    @apply flex items-center gap-2 border-t border-line px-5 py-3 font-mono text-[11px] whitespace-nowrap text-fg-3;
+  }
+  .built-status canvas {
+    @apply h-2 w-[120px] flex-none [image-rendering:pixelated];
+  }
+  .built-burst {
+    @apply pointer-events-none absolute top-[92px] right-0 h-[180px] w-[180px] [image-rendering:pixelated];
   }
 }
