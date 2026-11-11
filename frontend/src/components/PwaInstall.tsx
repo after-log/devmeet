@@ -87,7 +87,6 @@ export const PwaInstallBanner = ({ state }: { state: InstallState }) => {
       <img src="/icons/icon-192.png" alt="" className="size-10 shrink-0 rounded-lg" />
       <div className="min-w-0 flex-1">
         <p className="m-0 text-xs font-semibold">devmeet을 홈 화면에 추가해 보세요</p>
-        <p className="m-0 mt-1 text-[11px] text-fg-3">앱 아이콘으로 더 편하게 만나요.</p>
       </div>
       <PwaInstallButton state={state} />
       <button
