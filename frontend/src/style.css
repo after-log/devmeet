@@ -397,13 +397,13 @@
     @apply text-[13px] leading-[1.9] text-fg-3;
   }
   .profile-self {
-    @apply py-6 text-center;
+    @apply flex items-center gap-4 py-5 text-left;
   }
   .profile-self .small-avatar {
-    @apply m-auto h-16 w-16 text-xl;
+    @apply text-xl;
   }
   .profile-self h3 {
-    @apply text-[17px] font-medium;
+    @apply mt-0 mb-1 text-[17px] font-medium;
   }
   .settings-row {
     @apply flex w-full justify-between gap-[10px] border-b border-line py-[19px] text-left text-[13px] [&_span]:text-fg-3;

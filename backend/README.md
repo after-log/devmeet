@@ -113,6 +113,28 @@ app:
   mail-from: "인증된 발신 이메일"
 ```
 
+### 회사 이메일 확인
+
+내 정보에서 회사명과 회사 이메일을 입력하고 메일로 받은 6자리 번호를 확인합니다.
+카카오 로그인 이메일과 별도로 저장하며 로그인 이메일을 변경하지 않습니다.
+현재는 메일 소유 확인 단계이며, 회사 도메인 승인·직장/직무 인증은 포함하지 않습니다.
+
+- `GET /api/work-email`: 발송 가능 여부, 확인된 이메일, 유효한 진행 중 요청 조회
+- `POST /api/work-email/request`: `{ "company": "회사명", "email": "name@company.com" }`
+- `POST /api/work-email/verify`: `{ "code": "123456" }`
+
+모든 API는 로그인, 변경 요청은 CSRF 토큰이 필요합니다. 인증번호는 10분 유효하며
+재발송하면 이전 번호가 무효화됩니다. 1분 간격, 회원당 24시간 10회·수신 이메일당
+24시간 5회로 발송을 제한하고, 번호를 5회 틀리면 새 번호를 받아야 합니다.
+인증번호는 BCrypt 해시로 저장하고 응답에 노출하지 않습니다. 메일 발송이 실패하면
+요청을 롤백하며, 이미 확인한 이메일은 새 이메일의 확인을 마칠 때까지 유지됩니다.
+같은 이메일을 여러 회원이 확인 완료 상태로 등록할 수 없습니다.
+
+운영에서는 Secret에 `SPRING_MAIL_HOST`, `SPRING_MAIL_PORT`, `SPRING_MAIL_USERNAME`,
+`SPRING_MAIL_PASSWORD`, `MAIL_FROM`을 설정하고 백엔드를 재시작합니다.
+기본 메일 전송은 SMTP 인증과 STARTTLS를 사용합니다. 설정하지 않은 경우 화면에
+발송 준비 중으로 표시하며 확인 완료 상태를 만들지 않습니다.
+
 운영은 `SPRING_MAIL_HOST`, `SPRING_MAIL_PORT`, `SPRING_MAIL_USERNAME`,
 `SPRING_MAIL_PASSWORD`, `MAIL_FROM`을 주입합니다. SMTP는 기본 STARTTLS를 사용합니다.
 설정이 없으면 메일 기능은 503으로 명확히 안내합니다. 토큰은 일회용이고 DB에는 해시만

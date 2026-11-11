@@ -4,7 +4,7 @@ import { Avatar } from '@/components/PersonCard';
 import valueSections from '@/data/value-questions.json';
 import { demoProfilePhoto } from '@/data/members';
 import { publicValueAnswers, PUBLIC_VALUE_LIMIT } from '@/lib/value-answers';
-import PhotoGallery from '@/components/PhotoGallery';
+import WorkEmailVerification from '@/components/WorkEmailVerification';
 
 const MePage = () => {
   const navigate = useNavigate();
@@ -20,20 +20,21 @@ const MePage = () => {
       <p className="eyebrow">// my.profile</p>
       <h2>나의 프로필</h2>
       <div className="profile-self">
-        {p ? (
-          <PhotoGallery photos={p.photos} photo={p.photo} name={name} />
-        ) : (
-          <div className="flex justify-center">
-            <Avatar person={{ name, photo: demo ? demoProfilePhoto : '' }} size={72} />
-          </div>
-        )}
-        <h3>
-          {name}
-          {p ? <span className="ml-2 font-mono text-[14px] text-fg-3">{p.age}</span> : null}
-        </h3>
-        <span className="muted">
-          {p ? `${p.location} · ${p.job}` : '가입 없이 둘러보는 중이에요'}
-        </span>
+        <div className="shrink-0">
+          <Avatar
+            person={{ name, photo: p?.photos?.[0] || p?.photo || (demo ? demoProfilePhoto : '') }}
+            size={56}
+          />
+        </div>
+        <div className="min-w-0">
+          <h3>
+            {name}
+            {p ? <span className="ml-2 font-mono text-[14px] text-fg-3">{p.age}</span> : null}
+          </h3>
+          <p className="m-0 text-xs leading-relaxed break-words text-fg-3">
+            {p ? `${p.location} · ${p.job}` : '가입 없이 둘러보는 중이에요'}
+          </p>
+        </div>
       </div>
       {p && (p.photos?.length ?? 1) < 3 && (
         <div className="panel">
@@ -103,6 +104,7 @@ const MePage = () => {
           <p className="footnote text-left">{user.verification.photoReviewReason}</p>
         )}
       </div>
+      {!demo && user && <WorkEmailVerification key={user.id} />}
       <div className="panel">
         <h3>개발자 인증</h3>
         <p className="muted">본인 소유의 GitHub 계정으로 인증해 주세요.</p>
