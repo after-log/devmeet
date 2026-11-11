@@ -33,20 +33,6 @@ const Likes = ({ entries, profiles, matchedIds, onOpen, onDiscover }: LikesProps
         </span>
       </div>
       <p className="intro">작은 관심이 모여, 새로운 인연이 시작돼요.</p>
-      <section
-        className="mb-6 rounded-[9px] border border-border bg-surface p-4"
-        aria-label="호감 안내"
-      >
-        <p className="section-comment">// a little courage, a new connection</p>
-        <div className="flex items-start gap-3">
-          <Heart size={20} className="mt-1 shrink-0 text-purple" />
-          <p className="m-0 text-xs leading-[1.9] text-fg-2">
-            나를 궁금해하는 사람이 있어요.
-            <br />
-            <span className="text-fg-4">서로 호감을 보내면 둘만의 대화가 열려요.</span>
-          </p>
-        </div>
-      </section>
       <FilterTabs<LikeDirection>
         label="호감 목록 구분"
         options={[
