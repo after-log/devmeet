@@ -1,46 +1,29 @@
-import { Navigate } from 'react-router-dom';
-import WorkEmailVerification from '@/components/WorkEmailVerification';
-import SocialButtons from '@/components/SocialButtons';
-import { useApp } from '@/stores/app';
+import { Link } from 'react-router-dom';
 
-const VerificationPage = () => {
-  const { user, demo } = useApp();
-
-  if (!demo && !user) return <Navigate to="/me" replace />;
-
-  return (
-    <>
-      <p className="eyebrow">// my.verification</p>
-      <h2>인증 관리</h2>
-      {demo ? (
-        <section className="panel" aria-labelledby="work-email-heading">
-          <h3 id="work-email-heading">회사 이메일 확인</h3>
-          <p className="muted">
-            회사 인증은 둘러보기를 종료하고 카카오로 로그인한 뒤 이용해 주세요.
-          </p>
-        </section>
-      ) : (
-        user && <WorkEmailVerification key={user.id} />
-      )}
-      <section className="panel" aria-labelledby="github-heading">
-        <h3 id="github-heading">GitHub 인증</h3>
-        <p className="muted">
-          본인 소유의 GitHub 계정인지 확인해요. 개발 경력이나 재직 여부를 증명하지는 않아요.
+const VerificationPage = () => (
+  <>
+    <p className="eyebrow">// my.verification</p>
+    <h2>인증 관리</h2>
+    <p className="intro">진행할 인증을 선택해 주세요.</p>
+    <Link className="settings-row gap-4" to="/me/verification/company">
+      <div className="min-w-0">
+        <strong className="block text-sm">회사 인증</strong>
+        <p className="mt-2 mb-0 text-xs leading-relaxed text-fg-3">
+          회사 이메일로 인증번호를 받아 확인해요.
         </p>
-        {demo ? (
-          <p className="muted">
-            GitHub 인증은 둘러보기를 종료하고 카카오로 로그인한 뒤 이용해 주세요.
-          </p>
-        ) : user?.verification?.github ? (
-          <p className="text-sm text-green" role="status">
-            GitHub 인증 완료
-          </p>
-        ) : (
-          <SocialButtons link />
-        )}
-      </section>
-    </>
-  );
-};
+      </div>
+      <span aria-hidden="true">›</span>
+    </Link>
+    <Link className="settings-row gap-4" to="/me/verification/github">
+      <div className="min-w-0">
+        <strong className="block text-sm">GitHub 인증</strong>
+        <p className="mt-2 mb-0 text-xs leading-relaxed text-fg-3">
+          GitHub 계정을 연결해 본인 소유인지 확인해요.
+        </p>
+      </div>
+      <span aria-hidden="true">›</span>
+    </Link>
+  </>
+);
 
 export default VerificationPage;

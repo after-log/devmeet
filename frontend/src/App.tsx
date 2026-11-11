@@ -15,6 +15,8 @@ import ChatsPage from './pages/chat';
 import ChatPage from './pages/chat/detail';
 import MePage from './pages/MePage';
 import VerificationPage from './pages/VerificationPage';
+import CompanyVerificationPage from './pages/CompanyVerificationPage';
+import GithubVerificationPage from './pages/GithubVerificationPage';
 import ValuesPage from './pages/ValuesPage';
 import AdminPage from './pages/AdminPage';
 import NotFoundPage from './pages/NotFoundPage';
@@ -110,6 +112,22 @@ const App = () => (
         }
       />
       <Route
+        path="me/verification/company"
+        element={
+          <Member>
+            <CompanyVerificationPage />
+          </Member>
+        }
+      />
+      <Route
+        path="me/verification/github"
+        element={
+          <Member>
+            <GithubVerificationPage />
+          </Member>
+        }
+      />
+      <Route
         path="me/values"
         element={
           <Member>
@@ -119,7 +137,7 @@ const App = () => (
       />
       <Route path="admin" element={<AdminPage />} />
       {/* 예전 주소 호환 */}
-      <Route path="me/work-email" element={<Navigate to="/me/verification" replace />} />
+      <Route path="me/work-email" element={<Navigate to="/me/verification/company" replace />} />
       <Route path="discover" element={<Navigate to="/today" replace />} />
       <Route path="signup" element={<Navigate to="/" replace />} />
       <Route path="*" element={<NotFoundPage />} />

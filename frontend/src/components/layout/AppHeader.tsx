@@ -21,6 +21,10 @@ const AppHeader = ({ theme, onToggleTheme }: { theme: Theme; onToggleTheme: () =
   else if (isChat) detail = { title: person?.name ?? '대화', parent: '/chat' };
   else if (matchPath('/match/:id', pathname)) detail = { title: '매칭', parent: '/today' };
   else if (pathname === '/me/verification') detail = { title: '인증 관리', parent: '/me' };
+  else if (pathname === '/me/verification/company')
+    detail = { title: '회사 인증', parent: '/me/verification' };
+  else if (pathname === '/me/verification/github')
+    detail = { title: 'GitHub 인증', parent: '/me/verification' };
   else if (pathname === '/me/values') detail = { title: '나의 가치관', parent: '/me' };
   else if (pathname === '/admin') detail = { title: '운영자 관리', parent: '/me' };
   else if (isOnboarding)
