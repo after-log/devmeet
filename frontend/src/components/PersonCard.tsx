@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import type { Person } from '@/types';
+import PixelPhoto from './pixel/PixelPhoto';
 
 /** 사진이 없거나 불러오지 못하면 이니셜 박스로 대신한다. */
 export const Avatar = ({
@@ -84,7 +85,7 @@ const PersonCard = ({
       onClick={onOpen}
       aria-label={`${person.name} 프로필 자세히 보기`}
     >
-      <img src={person.photo} alt={`${person.name} 프로필 사진`} />
+      <PixelPhoto src={person.photo} alt={`${person.name} 프로필 사진`} />
     </button>
     <div className="profile-heading">
       <div>

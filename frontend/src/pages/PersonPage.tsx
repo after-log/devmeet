@@ -1,14 +1,14 @@
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
-import { toast } from 'sonner';
 import { findPerson, reasonFor, useApp } from '../stores/app';
 import { CodeLines, personLines } from '@/components/PersonCard';
 import PhotoGallery from '@/components/PhotoGallery';
+import LikeButton from '@/components/LikeButton';
 import { publicValueAnswers } from '@/lib/value-answers';
 
 const PersonPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { people, liked, remaining, like, demo, user, openSheet, connections } = useApp();
+  const { people, liked, demo, user, openSheet, connections } = useApp();
   const p = findPerson(id);
   if (!p) return <Navigate to="/today" replace />;
   const inToday = people.some((x) => x.id === p.id);
@@ -100,20 +100,13 @@ const PersonPage = () => {
           대화하기 →
         </button>
       ) : (
-        <button
-          className="btn full"
-          disabled={sent || !inToday || remaining <= 0}
-          onClick={async () => {
-            try {
-              if (await like(p)) navigate(`/match/${p.id}`);
-              else toast('좋아요를 보냈어요. 서로의 마음이 닿으면 알려드려요.');
-            } catch (err) {
-              toast((err as Error).message);
-            }
-          }}
-        >
-          {sent ? '✓ 보냈어요' : dev ? '♡ LGTM! · 좋아요 보내기' : '♡ 좋아요 보내기'}
-        </button>
+        <span className="mt-6 block">
+          <LikeButton
+            person={p}
+            disabled={sent || !inToday}
+            label={dev ? '♡ LGTM! · 좋아요 보내기' : '♡ 좋아요 보내기'}
+          />
+        </span>
       )}
       {!inToday && !sent && !matched && (
         <p className="footnote">오늘의 추천에 포함된 사람에게만 좋아요를 보낼 수 있어요.</p>

@@ -5,6 +5,7 @@ import { chatDate } from '@/data/chats';
 import type { Person } from '@/types';
 import { Avatar } from '@/components/PersonCard';
 import ChatMessageBubble from './ChatMessageBubble';
+import PixelPlane from '@/components/pixel/PixelPlane';
 
 const ChatThread = ({
   room,
@@ -33,6 +34,7 @@ const ChatThread = ({
   const [sending, setSending] = useState(false);
   const sendingRef = useRef(false);
   const [sendError, setSendError] = useState('');
+  const [plane, setPlane] = useState(0);
   const input = useRef<HTMLTextAreaElement>(null);
   const scrollArea = useRef<HTMLDivElement>(null);
   const [showLatest, setShowLatest] = useState(false);
@@ -52,11 +54,14 @@ const ChatThread = ({
   const send = async () => {
     if (!draft.trim() || sendingRef.current || loading) return;
     const text = draft.trim();
+    // 대화방의 첫 메시지일 때만 종이비행기를 띄운다
+    const first = room.messages.length === 0;
     sendingRef.current = true;
     setSending(true);
     setSendError('');
     try {
       await onSend(text);
+      if (first) setPlane((n) => n + 1);
       setDraft('');
       input.current?.focus();
     } catch (err) {
@@ -203,7 +208,8 @@ const ChatThread = ({
           최근 메시지로 이동 ↓
         </button>
       )}
-      <footer className="shrink-0 border-t border-line pt-3 pb-[max(8px,env(safe-area-inset-bottom))]">
+      <footer className="relative shrink-0 border-t border-line pt-3 pb-[max(8px,env(safe-area-inset-bottom))]">
+        <PixelPlane trigger={plane} />
         {sendError && (
           <p className="error" role="alert">
             {sendError}

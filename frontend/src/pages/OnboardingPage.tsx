@@ -1,6 +1,8 @@
 import { useState, type ReactNode } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import ProfileBuilt from '@/components/pixel/ProfileBuilt';
+import SignupBuildLog from '@/components/pixel/SignupBuildLog';
 import { api } from '../lib/api';
 import { useApp } from '../stores/app';
 import {
@@ -16,7 +18,7 @@ import {
 } from '@/data/options';
 import { ChoiceGroup } from '@/components/ui/choice-group';
 import { Select } from '@/components/ui/select';
-import type { Draft, Role } from '@/types';
+import type { Draft, Profile, Role } from '@/types';
 
 const screens: [string, ReactNode, string][] = [
   [
@@ -92,7 +94,33 @@ const OnboardingPage = () => {
   const [saving, setSaving] = useState(false);
   const photos = draft.photos ?? (draft.photo ? [draft.photo] : []);
   const updatePhotos = (photos: string[]) => setDraft({ photos, photo: photos[0] ?? '' });
+  const [built, setBuilt] = useState<Profile | null>(null);
+  const welcomeKey = user ? `devmeet.welcomed.${user.id}` : '';
+  const [welcome, setWelcome] = useState(() => {
+    try {
+      return !!user && !user.profile && !sessionStorage.getItem(welcomeKey);
+    } catch {
+      return false;
+    }
+  });
   if (!user) return <Navigate to="/" replace />;
+  // 카카오로 처음 가입해 들어왔을 때 '가입 완료' 빌드 로그를 한 번 보여 준다
+  if (welcome && !user.profile && step === 0)
+    return (
+      <SignupBuildLog
+        name={draft.name}
+        onContinue={() => {
+          try {
+            sessionStorage.setItem(welcomeKey, '1');
+          } catch {
+            // 저장 공간이 없으면 이번 화면에서만 닫는다
+          }
+          setWelcome(false);
+        }}
+      />
+    );
+  // 처음 가입한 회원이 저장을 마치면 '빌드 완료' 화면을 한 번 보여 준다
+  if (built) return <ProfileBuilt profile={built} onContinue={() => navigate('/today')} />;
   const editing = !!user.profile;
 
   // 예전 형식("서울 성동구")도 드롭다운에서 고른 상태로 보이게 한다
@@ -194,8 +222,13 @@ const OnboardingPage = () => {
       });
       setUser({ ...user, profile });
       await refresh();
-      navigate(editing ? '/me' : '/today');
-      toast(editing ? '프로필을 저장했어요.' : '가입이 완료됐어요. 사진 승인 후 추천이 시작돼요.');
+      if (editing) {
+        navigate('/me');
+        toast('프로필을 저장했어요.');
+      } else {
+        setBuilt(profile);
+        toast('가입이 완료됐어요. 사진 승인 후 추천이 시작돼요.');
+      }
     } catch (err) {
       setError((err as Error).message);
     } finally {
@@ -211,7 +244,14 @@ const OnboardingPage = () => {
       >
         ← {step ? '이전' : editing ? '내 정보' : '처음으로'}
       </button>
-      <div className="step">
+      <div
+        className="pixel-steps"
+        role="progressbar"
+        aria-valuemin={1}
+        aria-valuemax={screens.length}
+        aria-valuenow={step + 1}
+        aria-label="프로필 작성 단계"
+      >
         {screens.map((_, i) => (
           <i key={i} className={i <= step ? 'done' : ''} />
         ))}
