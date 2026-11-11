@@ -38,6 +38,7 @@ jobs:
         run: |
           npm test
           npm run build
+          npm run test:pwa
 
   backend-check:
     name: Spring Boot and MySQL checks

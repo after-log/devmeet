@@ -7,11 +7,15 @@ import AppSheets from '@/components/AppSheets';
 import { Toaster } from '@/components/ui/sonner';
 import { applyTheme, getTheme } from '../../lib/theme';
 import { useChatsStore } from '@/stores/chats';
+import { usePwaInstall } from '@/hooks/usePwaInstall';
+import { PwaInstallBanner, PwaInstallButton } from '@/components/PwaInstall';
+import PwaUpdate from '@/components/PwaUpdate';
 
 const TABS = ['/today', '/likes', '/chat', '/me'];
 
 const AppLayout = () => {
   const navigate = useNavigate();
+  const installState = usePwaInstall();
   const { booted, boot, demo, user, error, exitDemo, step, openSheet, refresh } = useApp();
   const { pathname } = useLocation();
   const isChatDetail = /^\/chat\/[^/]+\/?$/.test(pathname);
@@ -69,7 +73,14 @@ const AppLayout = () => {
         <div
           className={`min-h-dvh border-x border-line bg-canvas max-[480px]:border-0 min-[650px]:min-h-[calc(100dvh-70px)] min-[650px]:rounded-xl min-[650px]:border min-[650px]:border-line ${isValuesPage ? 'min-[650px]:overflow-clip' : 'min-[650px]:overflow-hidden'} ${isChatDetail ? 'chat-detail-layout' : 'pb-[94px]'}`}
         >
-          <AppHeader theme={theme} onToggleTheme={toggleTheme} />
+          <AppHeader
+            theme={theme}
+            onToggleTheme={toggleTheme}
+            installAction={<PwaInstallButton state={installState} />}
+          />
+          {(pathname === '/' || TABS.includes(pathname)) && (
+            <PwaInstallBanner state={installState} />
+          )}
           {demo && (
             <div className="demo-banner">
               <span>// demo · 가상 인물 · 실제 전송 안 됨</span>
@@ -119,6 +130,7 @@ const AppLayout = () => {
         </div>
       </div>
       <AppSheets />
+      <PwaUpdate />
       <Toaster theme={theme} />
     </>
   );
