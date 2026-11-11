@@ -14,6 +14,7 @@ import LikeDetailPage from './pages/likes/detail';
 import ChatsPage from './pages/chat';
 import ChatPage from './pages/chat/detail';
 import MePage from './pages/MePage';
+import VerificationPage from './pages/VerificationPage';
 import ValuesPage from './pages/ValuesPage';
 import AdminPage from './pages/AdminPage';
 import NotFoundPage from './pages/NotFoundPage';
@@ -101,6 +102,14 @@ const App = () => (
         }
       />
       <Route
+        path="me/verification"
+        element={
+          <Member>
+            <VerificationPage />
+          </Member>
+        }
+      />
+      <Route
         path="me/values"
         element={
           <Member>
@@ -110,6 +119,7 @@ const App = () => (
       />
       <Route path="admin" element={<AdminPage />} />
       {/* 예전 주소 호환 */}
+      <Route path="me/work-email" element={<Navigate to="/me/verification" replace />} />
       <Route path="discover" element={<Navigate to="/today" replace />} />
       <Route path="signup" element={<Navigate to="/" replace />} />
       <Route path="*" element={<NotFoundPage />} />

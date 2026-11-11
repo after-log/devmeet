@@ -4,7 +4,6 @@ import { Avatar } from '@/components/PersonCard';
 import valueSections from '@/data/value-questions.json';
 import { demoProfilePhoto } from '@/data/members';
 import { publicValueAnswers, PUBLIC_VALUE_LIMIT } from '@/lib/value-answers';
-import WorkEmailVerification from '@/components/WorkEmailVerification';
 
 const MePage = () => {
   const navigate = useNavigate();
@@ -104,20 +103,9 @@ const MePage = () => {
           <p className="footnote text-left">{user.verification.photoReviewReason}</p>
         )}
       </div>
-      {!demo && user && <WorkEmailVerification key={user.id} />}
-      <div className="panel">
-        <h3>개발자 인증</h3>
-        <p className="muted">본인 소유의 GitHub 계정으로 인증해 주세요.</p>
-        {!demo && user?.verification?.github ? (
-          <p className="text-sm text-green" role="status">
-            GitHub 인증 완료
-          </p>
-        ) : (
-          <button className="btn secondary full" onClick={() => openSheet({ kind: 'social' })}>
-            GitHub로 인증하기
-          </button>
-        )}
-      </div>
+      <Link className="settings-row" to="/me/verification">
+        인증 관리<span>회사 · GitHub ›</span>
+      </Link>
       {!demo && (
         <div className="info-row">
           <span>로그인 수단</span>
