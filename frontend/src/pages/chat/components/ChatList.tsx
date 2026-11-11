@@ -1,6 +1,6 @@
 import type { ChatRoom } from '@/types/chats';
 import { useState } from 'react';
-import { ArrowUpRight, MessageSquare, Search, X } from 'lucide-react';
+import { ArrowUpRight, MessageSquare } from 'lucide-react';
 import type { Person } from '@/types';
 import { Avatar } from '@/components/PersonCard';
 import { lastActivity } from '@/data/chats';
@@ -18,20 +18,11 @@ const ChatList = ({
   onOpen: (profileId: string) => void;
   onDiscover: () => void;
 }) => {
-  const [query, setQuery] = useState('');
   const [unreadOnly, setUnreadOnly] = useState(false);
   const unreadCount = rooms.filter((room) => room.unread > 0).length;
   const newMatches = rooms.filter((room) => room.messages.length === 0);
   const visibleRooms = rooms
-    .filter((room) => {
-      const profile = profiles.find((profile) => profile.id === room.profileId);
-      return (
-        (!unreadOnly || room.unread > 0) &&
-        `${profile?.name} ${profile?.job} ${room.messages.at(-1)?.text ?? ''}`
-          .toLowerCase()
-          .includes(query.trim().toLowerCase())
-      );
-    })
+    .filter((room) => !unreadOnly || room.unread > 0)
     .sort((a, b) => (Date.parse(lastActivity(b)) || 0) - (Date.parse(lastActivity(a)) || 0));
 
   return (
@@ -79,24 +70,6 @@ const ChatList = ({
           </div>
         </section>
       )}
-      <div className="chat-search">
-        <Search size={16} className="shrink-0 text-fg-4" />
-        <input
-          aria-label="대화 검색"
-          placeholder="이름이나 대화 내용 검색"
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-        />
-        {query && (
-          <button
-            className="rounded p-1 text-fg-3"
-            onClick={() => setQuery('')}
-            aria-label="검색어 지우기"
-          >
-            <X size={16} />
-          </button>
-        )}
-      </div>
       <FilterTabs
         label="대화 필터"
         options={[
@@ -119,28 +92,14 @@ const ChatList = ({
       {visibleRooms.length === 0 && (
         <div className="empty" role="status">
           <MessageSquare size={30} className="mx-auto mb-6 text-green" />
-          <h3>
-            {query.trim()
-              ? '검색 결과가 없어요'
-              : unreadOnly
-                ? '모든 대화를 읽었어요'
-                : '아직은, 첫 인사 전'}
-          </h3>
+          <h3>{unreadOnly ? '모든 대화를 읽었어요' : '아직은, 첫 인사 전'}</h3>
           <p>
-            {query.trim()
-              ? '다른 이름이나 대화 내용으로 검색해 보세요.'
-              : unreadOnly
-                ? '새로운 메시지가 오면 이곳에서 확인해요.'
-                : '서로 호감을 보내면 대화를 시작할 수 있어요.'}
+            {unreadOnly
+              ? '새로운 메시지가 오면 이곳에서 확인해요.'
+              : '서로 호감을 보내면 대화를 시작할 수 있어요.'}
           </p>
-          {query.trim() || unreadOnly ? (
-            <button
-              className="btn secondary full"
-              onClick={() => {
-                setQuery('');
-                setUnreadOnly(false);
-              }}
-            >
+          {unreadOnly ? (
+            <button className="btn secondary full" onClick={() => setUnreadOnly(false)}>
               전체 대화 보기
             </button>
           ) : (

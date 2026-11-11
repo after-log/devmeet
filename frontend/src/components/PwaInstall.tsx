@@ -92,7 +92,8 @@ export const PwaInstallBanner = ({ state }: { state: InstallState }) => {
       <PwaInstallButton state={state} />
       <button
         onClick={state.dismiss}
-        aria-label="설치 안내 일주일간 닫기"
+        aria-label="설치 안내 하루 동안 닫기"
+        title="하루 동안 닫기"
         className="grid min-h-10 min-w-8 place-items-center text-fg-3"
       >
         <X size={16} aria-hidden="true" />

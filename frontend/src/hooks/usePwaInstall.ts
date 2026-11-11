@@ -6,7 +6,7 @@ interface InstallPromptEvent extends Event {
 }
 
 const DISMISS_KEY = 'devmeet.installDismissedAt';
-const WEEK = 7 * 24 * 60 * 60 * 1000;
+const DAY = 24 * 60 * 60 * 1000;
 
 export const isIosDevice = (agent: string, platform: string, touchPoints: number) =>
   /iPad|iPhone|iPod/.test(agent) || (platform === 'MacIntel' && touchPoints > 1);
@@ -19,15 +19,24 @@ const isStandalone = () =>
 export const usePwaInstall = () => {
   const [installed, setInstalled] = useState(isStandalone);
   const [prompt, setPrompt] = useState<InstallPromptEvent | null>(null);
-  const [dismissed, setDismissed] = useState(() => {
+  const [dismissedAt, setDismissedAt] = useState(() => {
     try {
       const timestamp = Number(localStorage.getItem(DISMISS_KEY));
-      return timestamp > 0 && Date.now() - timestamp < WEEK;
+      return timestamp > 0 && Date.now() - timestamp < DAY ? timestamp : 0;
     } catch {
-      return false;
+      return 0;
     }
   });
   const ios = isIosDevice(navigator.userAgent, navigator.platform, navigator.maxTouchPoints);
+
+  useEffect(() => {
+    if (!dismissedAt) return;
+    const timer = window.setTimeout(
+      () => setDismissedAt(0),
+      Math.max(0, dismissedAt + DAY - Date.now()),
+    );
+    return () => window.clearTimeout(timer);
+  }, [dismissedAt]);
 
   useEffect(() => {
     const onPrompt = (event: Event) => {
@@ -51,9 +60,10 @@ export const usePwaInstall = () => {
   }, []);
 
   const dismiss = () => {
-    setDismissed(true);
+    const timestamp = Date.now();
+    setDismissedAt(timestamp);
     try {
-      localStorage.setItem(DISMISS_KEY, String(Date.now()));
+      localStorage.setItem(DISMISS_KEY, String(timestamp));
     } catch {
       // Dismissal still works for this visit when storage is unavailable.
     }
@@ -74,7 +84,7 @@ export const usePwaInstall = () => {
     installed,
     ios,
     canPrompt: prompt !== null,
-    showBanner: !installed && !dismissed && (ios || prompt !== null),
+    showBanner: !installed && !dismissedAt && (ios || prompt !== null),
     dismiss,
     install,
   };

@@ -8,7 +8,7 @@ import { Toaster } from '@/components/ui/sonner';
 import { applyTheme, getTheme } from '../../lib/theme';
 import { useChatsStore } from '@/stores/chats';
 import { usePwaInstall } from '@/hooks/usePwaInstall';
-import { PwaInstallBanner, PwaInstallButton } from '@/components/PwaInstall';
+import { PwaInstallBanner } from '@/components/PwaInstall';
 import PwaUpdate from '@/components/PwaUpdate';
 
 const TABS = ['/today', '/likes', '/chat', '/me'];
@@ -73,11 +73,7 @@ const AppLayout = () => {
         <div
           className={`min-h-dvh border-x border-line bg-canvas max-[480px]:border-0 min-[650px]:min-h-[calc(100dvh-70px)] min-[650px]:rounded-xl min-[650px]:border min-[650px]:border-line ${isValuesPage ? 'min-[650px]:overflow-clip' : 'min-[650px]:overflow-hidden'} ${isChatDetail ? 'chat-detail-layout' : 'pb-[94px]'}`}
         >
-          <AppHeader
-            theme={theme}
-            onToggleTheme={toggleTheme}
-            installAction={<PwaInstallButton state={installState} />}
-          />
+          <AppHeader theme={theme} onToggleTheme={toggleTheme} />
           {(pathname === '/' || TABS.includes(pathname)) && (
             <PwaInstallBanner state={installState} />
           )}
