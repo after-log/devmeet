@@ -279,7 +279,7 @@ const OnboardingPage = () => {
             pick={(role) => setDraft({ role, preference: '개발자' })}
           />
           <p className="footnote">
-            GitHub 소유 확인은 준비 중이에요. 지금은 본인이 고른 역할을 그대로 보여 줘요.
+            개발자는 내 정보에서 GitHub 인증을 진행해 주세요. 본인 소유의 계정인지 확인해요.
           </p>
         </>
       )}

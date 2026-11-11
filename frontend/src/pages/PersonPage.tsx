@@ -58,7 +58,7 @@ const PersonPage = () => {
               ? '가상 프로필'
               : p.photoStatus === 'APPROVED'
                 ? p.githubVerified
-                  ? 'GitHub 연결 · 사진 검수 완료'
+                  ? 'GitHub 인증 완료 · 사진 검수 완료'
                   : '사진 검수 완료'
                 : '검수 중'}
           </span>

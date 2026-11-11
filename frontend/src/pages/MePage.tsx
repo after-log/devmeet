@@ -4,9 +4,7 @@ import { Avatar } from '@/components/PersonCard';
 import valueSections from '@/data/value-questions.json';
 import { demoProfilePhoto } from '@/data/members';
 import { publicValueAnswers, PUBLIC_VALUE_LIMIT } from '@/lib/value-answers';
-import { request } from '@/lib/api';
 import PhotoGallery from '@/components/PhotoGallery';
-import { toast } from 'sonner';
 
 const MePage = () => {
   const navigate = useNavigate();
@@ -87,8 +85,6 @@ const MePage = () => {
       <div className="panel">
         <h3>인증 정보</h3>
         {[
-          ['이메일', !demo && user?.verification?.email ? '수신 확인 완료' : '수신 미인증'],
-          ['GitHub 연결', !demo && user?.verification?.github ? '연결 완료' : '미연결'],
           [
             '사진 확인',
             demo
@@ -106,22 +102,26 @@ const MePage = () => {
         {user?.verification?.photoReviewReason && (
           <p className="footnote text-left">{user.verification.photoReviewReason}</p>
         )}
-        {!demo && !user?.verification?.email && (
-          <button
-            className="mt-3 text-xs text-blue"
-            onClick={async () => {
-              try {
-                await request('/auth/email/request', 'POST');
-                toast('인증 메일을 보냈어요.');
-              } catch (err) {
-                toast((err as Error).message);
-              }
-            }}
-          >
-            이메일 인증 메일 받기
+      </div>
+      <div className="panel">
+        <h3>개발자 인증</h3>
+        <p className="muted">본인 소유의 GitHub 계정으로 인증해 주세요.</p>
+        {!demo && user?.verification?.github ? (
+          <p className="text-sm text-green" role="status">
+            GitHub 인증 완료
+          </p>
+        ) : (
+          <button className="btn secondary full" onClick={() => openSheet({ kind: 'social' })}>
+            GitHub로 인증하기
           </button>
         )}
       </div>
+      {!demo && (
+        <div className="info-row">
+          <span>로그인 수단</span>
+          <strong>카카오</strong>
+        </div>
+      )}
       {!demo && p && (
         <button
           className="settings-row"
@@ -142,9 +142,6 @@ const MePage = () => {
       </button>
       <button className="settings-row" onClick={() => openSheet({ kind: 'blocked' })}>
         차단한 프로필<span>›</span>
-      </button>
-      <button className="settings-row" onClick={() => openSheet({ kind: 'social' })}>
-        카카오 · GitHub 연결<span>›</span>
       </button>
       <button className="settings-row" onClick={() => openSheet({ kind: 'privacy' })}>
         개인정보 안내<span>›</span>

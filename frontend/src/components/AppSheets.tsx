@@ -213,15 +213,23 @@ const InfoSheet = ({ kind }: { kind: 'social' | 'privacy' }) => {
   const { user, demo } = useApp();
   return kind === 'social' ? (
     <>
-      <p className="eyebrow">// auth.providers</p>
-      <DialogTitle>카카오 · GitHub 연결 안내</DialogTitle>
+      <p className="eyebrow">// developer.verification</p>
+      <DialogTitle>개발자 인증</DialogTitle>
       <DialogDescription>
-        내 계정에 소셜 계정을 연결하거나 소셜 로그인으로 시작할 수 있어요.
+        GitHub 인증으로 본인 소유의 계정인지 확인해요. 개발 경력이나 재직 여부를 증명하지는 않아요.
       </DialogDescription>
       {demo ? (
-        <p className="muted">계정 연결은 둘러보기를 종료하고 로그인한 뒤 이용해 주세요.</p>
+        <p className="muted">
+          GitHub 인증은 둘러보기를 종료하고 카카오로 로그인한 뒤 이용해 주세요.
+        </p>
+      ) : user?.verification?.github ? (
+        <p className="text-sm text-green" role="status">
+          GitHub 인증 완료
+        </p>
+      ) : user ? (
+        <SocialButtons link />
       ) : (
-        <SocialButtons link={!!user} />
+        <p className="muted">카카오로 로그인한 뒤 GitHub 인증을 진행해 주세요.</p>
       )}
     </>
   ) : (
