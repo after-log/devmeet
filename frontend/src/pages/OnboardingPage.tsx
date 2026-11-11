@@ -238,12 +238,6 @@ const OnboardingPage = () => {
 
   return (
     <>
-      <button
-        className="back"
-        onClick={() => (step ? setStep(step - 1) : navigate(editing ? '/me' : '/'))}
-      >
-        ← {step ? '이전' : editing ? '내 정보' : '처음으로'}
-      </button>
       <div
         className="pixel-steps"
         role="progressbar"

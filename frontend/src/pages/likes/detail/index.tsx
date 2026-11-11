@@ -9,7 +9,7 @@ const LikeDetailPage = () => {
   const { profileId } = useParams();
   const navigate = useNavigate();
   const entries = useLikes();
-  const { connections, people, liked, remaining, like, demo, openSheet } = useApp();
+  const { connections, people, liked, remaining, like, demo } = useApp();
   const [pending, setPending] = useState(false);
   const profile = findPerson(profileId);
   const entry = entries.find((entry) => entry.profileId === profileId);
@@ -39,7 +39,6 @@ const LikeDetailPage = () => {
                 : '나도 좋아요'
       }
       onBack={() => navigate('/likes')}
-      onSafety={() => openSheet({ kind: 'safety', id: profile.id })}
       onChat={() => navigate(`/chat/${profile.id}`)}
       onAccept={async () => {
         if (pending || sent || !inToday || remaining <= 0) return;

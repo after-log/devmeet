@@ -8,7 +8,7 @@ import { publicValueAnswers } from '@/lib/value-answers';
 const PersonPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { people, liked, demo, user, openSheet, connections } = useApp();
+  const { people, liked, demo, user, connections } = useApp();
   const p = findPerson(id);
   if (!p) return <Navigate to="/today" replace />;
   const inToday = people.some((x) => x.id === p.id);
@@ -26,18 +26,6 @@ const PersonPage = () => {
   ];
   return (
     <>
-      <div className="flex items-center justify-between">
-        <button className="back" onClick={() => navigate(-1)}>
-          ← 뒤로
-        </button>
-        <button
-          className="icon !ml-0"
-          aria-label="프로필 메뉴"
-          onClick={() => openSheet({ kind: 'safety', id: p.id })}
-        >
-          ⋯
-        </button>
-      </div>
       <article className="profile">
         <div className="file-tab">
           <span className="file-icon">ts</span>

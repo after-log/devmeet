@@ -1,4 +1,4 @@
-import { Link, Navigate, useSearchParams } from 'react-router-dom';
+import { Navigate, useSearchParams } from 'react-router-dom';
 import { useApp } from '../stores/app';
 import SocialButtons from '@/components/SocialButtons';
 
@@ -8,9 +8,6 @@ const AuthPage = () => {
   if (user) return <Navigate to={user.profile ? '/today' : '/onboarding'} replace />;
   return (
     <>
-      <Link className="back block" to="/">
-        ← 처음으로
-      </Link>
       <p className="eyebrow">$ devmeet login</p>
       <h2 className="onboard-hero">
         오늘의 인연이

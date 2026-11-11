@@ -1,18 +1,15 @@
 import type { ChatRoom } from '@/types/chats';
 import { Fragment, useEffect, useRef, useState } from 'react';
-import { ArrowLeft, ArrowUp, ArrowUpRight, Ellipsis, ShieldCheck } from 'lucide-react';
+import { ArrowUp, ArrowUpRight, ShieldCheck } from 'lucide-react';
 import { chatDate } from '@/data/chats';
 import type { Person } from '@/types';
-import { Avatar } from '@/components/PersonCard';
 import ChatMessageBubble from './ChatMessageBubble';
 import PixelPlane from '@/components/pixel/PixelPlane';
 
 const ChatThread = ({
   room,
   profile,
-  onBack,
   onSend,
-  onSafety,
   loading,
   error,
   hasOlder,
@@ -20,9 +17,7 @@ const ChatThread = ({
 }: {
   room: ChatRoom;
   profile: Person;
-  onBack: () => void;
   onSend: (message: string) => Promise<void>;
-  onSafety: () => void;
   loading: boolean;
   error: string;
   hasOlder: boolean;
@@ -74,29 +69,6 @@ const ChatThread = ({
 
   return (
     <section className="chat-thread" aria-label={`${profile.name}님과의 대화`}>
-      <header className="flex shrink-0 items-center gap-3 border-b border-line pb-4">
-        <button
-          onClick={onBack}
-          className="grid size-9 shrink-0 place-items-center rounded-md text-fg-3 hover:bg-lift"
-          aria-label="대화 목록으로 돌아가기"
-        >
-          <ArrowLeft size={20} />
-        </button>
-        <Avatar person={profile} size={40} />
-        <div className="min-w-0 flex-1">
-          <h2 className="flex items-center gap-1.5 text-base">{profile.name}</h2>
-          <p className="m-0 truncate text-[11px] text-fg-4">
-            {profile.job} · {profile.location}
-          </p>
-        </div>
-        <button
-          className="icon grid shrink-0 place-items-center"
-          onClick={onSafety}
-          aria-label="대화 안전 설정"
-        >
-          <Ellipsis size={21} />
-        </button>
-      </header>
       <div
         ref={scrollArea}
         className="chat-history"

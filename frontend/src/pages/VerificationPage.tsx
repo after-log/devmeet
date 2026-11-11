@@ -1,5 +1,4 @@
-import { ChevronLeft } from 'lucide-react';
-import { Link, Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import WorkEmailVerification from '@/components/WorkEmailVerification';
 import SocialButtons from '@/components/SocialButtons';
 import { useApp } from '@/stores/app';
@@ -11,9 +10,6 @@ const VerificationPage = () => {
 
   return (
     <>
-      <Link to="/me" className="mb-6 inline-flex items-center gap-1 text-xs text-fg-3">
-        <ChevronLeft size={16} /> 내 프로필
-      </Link>
       <p className="eyebrow">// my.verification</p>
       <h2>인증 관리</h2>
       {demo ? (

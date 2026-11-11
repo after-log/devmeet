@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useLocation, useSearchParams } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import { request } from '@/lib/api';
 
 export default function RecoveryPage() {
@@ -14,9 +14,6 @@ export default function RecoveryPage() {
   const [busy, setBusy] = useState(false);
   return (
     <>
-      <Link className="back" to="/auth/login">
-        ← 로그인
-      </Link>
       <h2>{verify ? '이메일 확인' : reset ? '새 비밀번호' : '비밀번호 찾기'}</h2>
       <form
         onSubmit={async (event) => {

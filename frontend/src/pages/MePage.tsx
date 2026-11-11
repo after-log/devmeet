@@ -106,12 +106,6 @@ const MePage = () => {
       <Link className="settings-row" to="/me/verification">
         인증 관리<span>회사 · GitHub ›</span>
       </Link>
-      {!demo && (
-        <div className="info-row">
-          <span>로그인 수단</span>
-          <strong>카카오</strong>
-        </div>
-      )}
       {!demo && p && (
         <button
           className="settings-row"

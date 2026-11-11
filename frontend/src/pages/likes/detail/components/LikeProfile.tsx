@@ -1,4 +1,4 @@
-import { ArrowLeft, Ellipsis, Heart, MessageSquare } from 'lucide-react';
+import { Heart, MessageSquare } from 'lucide-react';
 import type { Person } from '@/types';
 import type { LikeEntry } from '@/types/likes';
 import { CodeLines, personLines } from '@/components/PersonCard';
@@ -12,7 +12,6 @@ interface LikeProfileProps {
   canAccept: boolean;
   acceptLabel: string;
   onBack: () => void;
-  onSafety: () => void;
   onChat: () => void;
   onAccept: () => Promise<void>;
 }
@@ -26,20 +25,10 @@ const LikeProfile = ({
   canAccept,
   acceptLabel,
   onBack,
-  onSafety,
   onChat,
   onAccept,
 }: LikeProfileProps) => (
   <>
-    <div className="flex items-center justify-between">
-      <button className="back flex items-center gap-2" onClick={onBack}>
-        <ArrowLeft size={16} />
-        호감 목록
-      </button>
-      <button className="icon grid place-items-center" aria-label="프로필 메뉴" onClick={onSafety}>
-        <Ellipsis size={20} />
-      </button>
-    </div>
     <p className="eyebrow mt-3">
       // {entry.direction === 'received' ? 'someone likes you' : 'a little courage'}
     </p>

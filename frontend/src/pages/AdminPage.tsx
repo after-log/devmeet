@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Navigate, Link } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { request } from '@/lib/api';
 import { useApp } from '@/stores/app';
 import { toast } from 'sonner';
@@ -220,9 +220,6 @@ const AdminPage = () => {
           </div>
         </>
       )}
-      <Link className="back" to="/me">
-        ← 내 정보
-      </Link>
     </>
   );
 };

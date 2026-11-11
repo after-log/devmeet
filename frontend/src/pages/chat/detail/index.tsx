@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import { chatKey, useChatsStore } from '@/stores/chats';
 import { useApp } from '@/stores/app';
 import { useChatRooms } from '../hooks/useChatRooms';
@@ -17,8 +17,6 @@ const ChatPage = () => {
   const cursor = useChatsStore((s) =>
     owner && profileId ? s.cursors[chatKey(owner, profileId)] : null,
   );
-  const openSheet = useApp((s) => s.openSheet);
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (profileId && room && !loading) markRead(profileId);
@@ -32,11 +30,9 @@ const ChatPage = () => {
       profile={profile}
       loading={loading}
       error={error}
-      onBack={() => navigate('/chat')}
       onSend={(text) => sendMessage(room.profileId, text)}
       hasOlder={!!cursor}
       onLoadOlder={() => loadOlder(room.profileId)}
-      onSafety={() => openSheet({ kind: 'safety', id: profile.id })}
     />
   );
 };

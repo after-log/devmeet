@@ -1,6 +1,5 @@
 import { useRef, useState, type KeyboardEvent } from 'react';
-import { Link } from 'react-router-dom';
-import { Check, ChevronLeft, Eye, LockKeyhole } from 'lucide-react';
+import { Check, Eye, LockKeyhole } from 'lucide-react';
 import { toast } from 'sonner';
 import sections from '@/data/value-questions.json';
 import { useApp } from '@/stores/app';
@@ -81,9 +80,6 @@ const ValuesPage = () => {
 
   return (
     <div className="values-page">
-      <Link to="/me" className="mb-6 inline-flex items-center gap-1 text-xs text-fg-3">
-        <ChevronLeft size={16} /> 내 프로필
-      </Link>
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="eyebrow mb-2!">// my.values</p>
