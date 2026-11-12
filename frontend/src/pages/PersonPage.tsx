@@ -1,7 +1,7 @@
 import { ArrowRight } from 'lucide-react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { findPerson, reasonFor, useApp } from '../stores/app';
-import { CodeLines, personLines } from '@/components/PersonCard';
+import { RhythmBox, personRows } from '@/components/PersonCard';
 import PhotoGallery from '@/components/PhotoGallery';
 import LikeButton from '@/components/LikeButton';
 import { useValueCatalog } from '@/hooks/useValueCatalog';
@@ -55,7 +55,7 @@ const PersonPage = () => {
                 : '검수 중'}
           </span>
         </div>
-        <CodeLines lines={personLines(p)} />
+        <RhythmBox rows={personRows(p)} />
         <div className="profile-body">
           <p className="section-comment">// about me</p>
           <p className="bio whitespace-pre-wrap">{p.intro}</p>

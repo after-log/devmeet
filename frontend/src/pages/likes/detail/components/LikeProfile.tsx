@@ -1,7 +1,7 @@
 import { Heart, MessageSquare } from 'lucide-react';
 import type { Person } from '@/types';
 import type { LikeEntry } from '@/types/likes';
-import { CodeLines, personLines } from '@/components/PersonCard';
+import { RhythmBox, personRows } from '@/components/PersonCard';
 
 interface LikeProfileProps {
   profile: Person;
@@ -66,7 +66,7 @@ const LikeProfile = ({
         </div>
         <span className="tag">{demo ? '가상 프로필' : '인증 전'}</span>
       </div>
-      <CodeLines lines={personLines(profile)} />
+      <RhythmBox rows={personRows(profile)} />
       <div className="profile-body">
         <p className="section-comment">// about me</p>
         <p className="bio whitespace-pre-wrap">{profile.intro}</p>
