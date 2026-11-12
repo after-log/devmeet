@@ -26,7 +26,10 @@
   --color-tag-green: #4c5b45;
   --color-tag-blue: #3f4d6b;
   --color-backdrop: #0d0f14bb;
-  --font-sans: 'Galmuri9', 'Noto Sans KR', sans-serif;
+  --font-sans:
+    'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Noto Sans KR', sans-serif;
+  /* 제목류는 픽셀 글꼴을 유지한다 */
+  --font-display: 'Galmuri9', 'Noto Sans KR', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
   --animate-cursor: blink 1.1s steps(1, end) infinite;
 
@@ -115,6 +118,15 @@
   input:focus-visible,
   select:focus-visible {
     @apply outline-2 outline-offset-3 outline-blue;
+  }
+  h1,
+  h2,
+  h3,
+  .onboard-hero,
+  .profile-name,
+  .option strong,
+  [data-slot='dialog-title'] {
+    @apply font-display;
   }
   h2 {
     @apply m-0 text-[25px] leading-[1.45] font-semibold;
@@ -252,10 +264,7 @@
     @apply overflow-hidden pt-[7px] pb-[15px];
   }
   .code-line {
-    @apply flex min-h-[27px] items-baseline font-mono text-xs leading-[2.2] whitespace-nowrap max-[360px]:text-[11px];
-  }
-  .code-line i {
-    @apply w-[42px] flex-none text-center text-[10px] text-fg-4 not-italic select-none max-[360px]:w-8;
+    @apply flex min-h-[27px] items-baseline px-5 font-mono text-xs leading-[2.2] whitespace-nowrap max-[360px]:px-4 max-[360px]:text-[11px];
   }
   .code-line code {
     font: inherit;

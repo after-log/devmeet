@@ -54,7 +54,7 @@ const PersonPage = () => {
                 : '검수 중'}
           </span>
         </div>
-        <CodeLines lines={personLines(p, p.id)} />
+        <CodeLines lines={personLines(p)} />
         <div className="profile-body">
           <p className="section-comment">// about me</p>
           <p className="bio whitespace-pre-wrap">{p.intro}</p>

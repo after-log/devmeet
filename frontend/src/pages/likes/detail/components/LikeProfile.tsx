@@ -66,7 +66,7 @@ const LikeProfile = ({
         </div>
         <span className="tag">{demo ? '가상 프로필' : '인증 전'}</span>
       </div>
-      <CodeLines lines={personLines(profile, profile.id)} />
+      <CodeLines lines={personLines(profile)} />
       <div className="profile-body">
         <p className="section-comment">// about me</p>
         <p className="bio whitespace-pre-wrap">{profile.intro}</p>

@@ -24,12 +24,11 @@ export const Avatar = ({
     </span>
   );
 
-/** 코드 카드: 파일 탭 + 줄 번호 + 문법 색. 사람의 정보를 가볍게 '객체'처럼 보여 준다. */
+/** 코드 카드: 사람의 정보를 key: value 줄로 가볍게 보여 준다. */
 export const CodeLines = ({ lines }: { lines: ReactNode[] }) => (
   <div className="code-block" aria-hidden="true">
     {lines.map((line, i) => (
       <div className="code-line" key={i}>
-        <i>{String(i + 1).padStart(2, '0')}</i>
         <code>{line}</code>
       </div>
     ))}
@@ -38,21 +37,17 @@ export const CodeLines = ({ lines }: { lines: ReactNode[] }) => (
 
 const str = (value: string) => <span className="string">{JSON.stringify(value)}</span>;
 
-export const personLines = (p: Person, varName = 'match') => [
+export const personLines = (p: Person) => [
   <>
-    <span className="keyword">const</span> <span className="variable">{varName}</span>
-    {' = {'}
-  </>,
-  <>
-    {'  meeting: '}
+    {'meeting: '}
     {str(p.meeting)},
   </>,
   <>
-    {'  contact: '}
+    {'contact: '}
     {str(p.contact)},
   </>,
   <>
-    {'  tags: ['}
+    {'tags: ['}
     {p.tags.slice(0, 3).map((t, i) => (
       <span key={t}>
         {i ? ', ' : ''}
@@ -61,7 +56,6 @@ export const personLines = (p: Person, varName = 'match') => [
     ))}
     {'],'}
   </>,
-  <>{'};'}</>,
 ];
 
 const PersonCard = ({

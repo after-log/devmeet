@@ -39,7 +39,7 @@ const ProfileBuilt = ({ profile, onContinue }: { profile: Profile; onContinue: (
       if (prefersReducedMotion()) {
         drawMosaic(p, img, 0, 0, W, H, 0, col.l);
         drawBar(10);
-        setShown(lines.length + 2);
+        setShown(lines.length);
         return setBuilt(true);
       }
       drawBar(0);
@@ -48,9 +48,9 @@ const ProfileBuilt = ({ profile, onContinue }: { profile: Profile; onContinue: (
         await frame(130, signal);
       }
       drawMosaic(p, img, 0, 0, W, H, 0, col.l);
-      for (let i = 1; i <= lines.length + 2; i++) {
+      for (let i = 1; i <= lines.length; i++) {
         setShown(i);
-        drawBar(Math.round((i / (lines.length + 2)) * 8));
+        drawBar(Math.round((i / lines.length) * 8));
         await frame(110, signal);
       }
       drawBar(9);
@@ -78,19 +78,11 @@ const ProfileBuilt = ({ profile, onContinue }: { profile: Profile; onContinue: (
   }, [profile.photo]);
 
   const str = (v: string) => <span className="string">{JSON.stringify(v)}</span>;
-  const code = [
+  const code = lines.map(([k, v]) => (
     <>
-      <span className="keyword">const</span> <span className="variable">me</span>
-      {' = {'}
-    </>,
-    ...lines.map(([k, v]) => (
-      <>
-        {'\u00a0\u00a0'}
-        {k}: {str(v)},
-      </>
-    )),
-    <>{'};'}</>,
-  ];
+      {k}: {str(v)},
+    </>
+  ));
 
   return (
     <div className="relative">
@@ -109,7 +101,6 @@ const ProfileBuilt = ({ profile, onContinue }: { profile: Profile; onContinue: (
         <div className="code-block" aria-hidden="true">
           {code.slice(0, shown).map((line, i) => (
             <div className="code-line pixel-stepin" key={i}>
-              <i>{String(i + 1).padStart(2, '0')}</i>
               <code>{line}</code>
             </div>
           ))}
