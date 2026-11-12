@@ -1,14 +1,6 @@
 import { useAdminMock } from './hooks/useAdminMock';
 import { useTableFilters } from './hooks/useTableFilters';
-import {
-  EmptyState,
-  PageHeading,
-  Pager,
-  ResultCount,
-  reviewLabels,
-  Tabs,
-  Toolbar,
-} from './components/AdminUI';
+import { EmptyState, Pager, ResultCount, reviewLabels, Tabs, Toolbar } from './components/AdminUI';
 import ProfileCard from './components/ProfileCard';
 
 export default function AdminProfilesPage() {
@@ -21,11 +13,6 @@ export default function AdminProfilesPage() {
   );
   return (
     <>
-      <PageHeading
-        kicker="PROFILE MODERATION"
-        title="프로필 검수"
-        description="회원이 등록한 프로필 사진을 확인하고 검수해 주세요."
-      />
       <Tabs
         options={['ALL', 'PENDING', 'APPROVED', 'REJECTED'].map((status) => ({
           value: status,

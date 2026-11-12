@@ -26,8 +26,6 @@ export default function AdminLayout() {
             <strong className="font-medium text-[#525252]">{title}</strong>
           </div>
           <div className="flex items-center gap-[13px] text-[11px] text-[#a3a3a3] max-sm:gap-[7px]">
-            <Badge status="MOCK">MOCK PREVIEW</Badge>
-            <span className="mx-[5px] h-[19px] w-px bg-[#e5e5e5]" />
             <AdminAvatar />
             <span>관리자</span>
             <IconButton aria-label="로그아웃" onClick={logout}>
@@ -38,12 +36,6 @@ export default function AdminLayout() {
         <main className="mx-auto w-full max-w-[1550px] flex-1 px-[43px] pt-[39px] pb-[30px] max-xl:px-[25px] max-xl:pt-[30px] max-sm:px-[18px] max-sm:py-[25px]">
           <Outlet />
         </main>
-        <footer className="flex justify-between border-t border-[#e5e5e5] px-[43px] py-[18px] text-[10px] text-[#a3a3a3] max-sm:px-5">
-          <span>© 2026 devmeet</span>
-          <span className="flex items-center gap-[9px]">
-            Admin workspace <OnlineDot />
-          </span>
-        </footer>
       </div>
       <AdminDialogs />
       {notice && (

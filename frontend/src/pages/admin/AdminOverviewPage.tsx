@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, ChevronRight, Flag, ShieldCheck } from 'lucide-react';
 import { useAdminMock } from './hooks/useAdminMock';
-import { Badge, EmptyState, PageHeading, Panel } from './components/AdminUI';
+import { Badge, EmptyState, Panel } from './components/AdminUI';
 import OverviewStats from './components/OverviewStats';
 
 export default function AdminOverviewPage() {
@@ -10,15 +10,6 @@ export default function AdminOverviewPage() {
   const openReports = reports.filter((r) => r.status === 'OPEN');
   return (
     <>
-      <PageHeading
-        kicker="OVERVIEW"
-        title={
-          <>
-            안녕하세요, 관리자님<span className="text-[#262626]">.</span>
-          </>
-        }
-        description="오늘도 좋은 연결이 만들어지는 공간을 함께 살펴보세요."
-      />
       <OverviewStats />
       <div className="my-[25px] flex items-center gap-[18px] rounded-[11px] border border-[#e5e5e5] bg-neutral-100 p-6 max-[900px]:flex-wrap max-[900px]:gap-3 max-[900px]:p-[19px]">
         <div className="grid size-12 shrink-0 place-items-center rounded-xl bg-[#e5e5e5] text-[#737373]">

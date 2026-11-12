@@ -2,15 +2,7 @@ import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { categories } from './mock';
 import { useAdminMock } from './hooks/useAdminMock';
-import {
-  AdminButton,
-  OnlineDot,
-  PageHeading,
-  Panel,
-  Tabs,
-  StatusTabs,
-  Toolbar,
-} from './components/AdminUI';
+import { AdminButton, OnlineDot, Panel, Tabs, StatusTabs, Toolbar } from './components/AdminUI';
 import QuestionsTable from './components/QuestionsTable';
 
 export default function AdminValuesPage() {
@@ -27,19 +19,6 @@ export default function AdminValuesPage() {
   };
   return (
     <>
-      <PageHeading
-        kicker="VALUE QUESTIONS"
-        title="가치관 관리"
-        description="서로를 알아가는 질문을 추가하고 활성 상태를 관리하세요."
-      >
-        <AdminButton
-          variant="primary"
-          className="max-sm:mt-5 max-sm:min-h-[35px] max-sm:px-2.5 max-sm:py-2 max-sm:text-[10px]"
-          onClick={add}
-        >
-          <Plus size={17} /> 문항 추가
-        </AdminButton>
-      </PageHeading>
       <div className="mb-6 flex items-center gap-[26px] rounded-[10px] border border-[#e5e5e5] bg-white px-[23px] py-[17px] text-[11px] text-[#a3a3a3] max-xl:gap-[17px] max-sm:gap-[18px] max-sm:p-[15px] max-sm:text-[10px]">
         <span className="flex items-center gap-2">
           전체 문항 <b className="text-[15px] text-[#525252]">{questions.length}</b>

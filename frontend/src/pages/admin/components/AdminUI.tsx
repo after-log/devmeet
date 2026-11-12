@@ -217,36 +217,6 @@ export function DetailList({ items }: { items: [string, ReactNode][] }) {
 export function ModalActions({ children }: { children: ReactNode }) {
   return <div className="mt-[23px] flex flex-wrap justify-end gap-[9px]">{children}</div>;
 }
-export function PageHeading({
-  kicker,
-  title,
-  description,
-  children,
-}: {
-  kicker: string;
-  title: ReactNode;
-  description: string;
-  children?: ReactNode;
-}) {
-  return (
-    <div className="mb-[29px] flex items-center justify-between gap-[15px] max-sm:mb-[23px] max-sm:items-start max-sm:gap-2">
-      <div>
-        <span className="text-[9px] font-semibold tracking-[1.7px] text-[#a3a3a3]">{kicker}</span>
-        <h1 className="mt-[7px]! mb-2! text-[27px] leading-snug font-semibold tracking-[-1.1px] max-lg:text-[25px] max-sm:text-[23px]">
-          {title}
-        </h1>
-        <p className="text-xs text-[#a3a3a3] max-lg:text-[11px] max-sm:max-w-60 max-sm:text-[10px] max-sm:leading-relaxed">
-          {description}
-        </p>
-      </div>
-      {children ?? (
-        <span className="mb-[3px] self-end text-[10px] text-[#a3a3a3] max-xl:hidden">
-          미리보기 기준 · 2026년 11월 12일
-        </span>
-      )}
-    </div>
-  );
-}
 
 export function Tabs({
   options,

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAdminMock } from './hooks/useAdminMock';
-import { PageHeading, Panel, StatusTabs, Tabs, Toolbar } from './components/AdminUI';
+import { Panel, StatusTabs, Tabs, Toolbar } from './components/AdminUI';
 import MembersTable from './components/MembersTable';
 import ReportsTable from './components/ReportsTable';
 
@@ -59,11 +59,6 @@ export default function AdminMembersPage() {
   const tab = params.get('tab') === 'reports' ? 'reports' : 'members';
   return (
     <>
-      <PageHeading
-        kicker="MEMBER MANAGEMENT"
-        title="회원 관리"
-        description="가입 회원과 신고 내역을 한곳에서 관리하세요."
-      />
       <Panel>
         <Tabs
           inset
