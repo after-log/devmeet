@@ -7,12 +7,15 @@ const dist = new URL('../../dist/', import.meta.url);
 // This suite deliberately inspects production output. Run npm run build first.
 const manifest = JSON.parse(await readFile(new URL('manifest.webmanifest', dist), 'utf8'));
 const sw = await readFile(new URL('sw.js', dist), 'utf8');
-const calls = { precache: [], routes: [], messages: [], skipped: false };
+const calls = { precache: [], routes: [], messages: [], skipped: false, claimed: false };
 const workbox = {
   precacheAndRoute: (entries) => {
     calls.precache = entries;
   },
   cleanupOutdatedCaches: () => {},
+  clientsClaim: () => {
+    calls.claimed = true;
+  },
   createHandlerBoundToURL: (url) => ({ url }),
   NavigationRoute: class {
     constructor(handler, options) {
@@ -84,12 +87,8 @@ test('navigation fallback excludes API and OAuth routes while allowing applicati
   }
 });
 
-test('new service workers wait for user approval before activating', () => {
-  assert.equal(calls.skipped, false);
-  const listener = calls.messages.find(({ event }) => event === 'message');
-  assert.ok(listener);
-  listener.callback({ data: { type: 'SOME_OTHER_MESSAGE' } });
-  assert.equal(calls.skipped, false);
-  listener.callback({ data: { type: 'SKIP_WAITING' } });
+// 배포하면 업데이트 버튼을 누르지 않아도 다음에 화면을 열거나 새로 고칠 때 새 버전이 보여야 한다.
+test('new service workers activate right away and take over open pages', () => {
   assert.equal(calls.skipped, true);
+  assert.equal(calls.claimed, true);
 });
