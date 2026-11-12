@@ -28,7 +28,7 @@ const Likes = ({ entries, profiles, matchedIds, onOpen, onDiscover }: LikesProps
         <h2>
           호감<span className="syntax">.</span>
         </h2>
-        <span className="count text-purple">
+        <span className="count text-sub">
           {String(entries.length).padStart(2, '0')} <span>likes</span>
         </span>
       </div>
@@ -47,7 +47,7 @@ const Likes = ({ entries, profiles, matchedIds, onOpen, onDiscover }: LikesProps
         <label className="flex cursor-pointer items-center gap-2 text-fg-3">
           <input
             type="checkbox"
-            className="size-3.5 min-h-0 w-auto accent-blue"
+            className="size-3.5 min-h-0 w-auto accent-point"
             checked={matchedOnly}
             onChange={(event) => setMatchedOnly(event.target.checked)}
           />
@@ -70,7 +70,7 @@ const Likes = ({ entries, profiles, matchedIds, onOpen, onDiscover }: LikesProps
       </div>
       {visible.length === 0 ? (
         <div className="empty" role="status">
-          <Heart size={30} className="mx-auto mb-6 text-purple" />
+          <Heart size={30} className="mx-auto mb-6 text-sub" />
           <h3>
             {matchedOnly
               ? '아직은, 마음이 닿기 전'

@@ -51,7 +51,7 @@ const LikeProfile = ({
       <div className="file-tab">
         <span className="file-icon">ts</span>
         {profile.name}.profile.ts
-        <Heart size={14} className="ml-auto text-purple" />
+        <Heart size={14} className="ml-auto text-sub" />
       </div>
       <img className="detail-photo" src={profile.photo} alt={`${profile.name} 프로필 사진`} />
       <div className="profile-heading">

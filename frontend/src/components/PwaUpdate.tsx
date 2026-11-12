@@ -20,7 +20,7 @@ const PwaUpdate = () => {
         <button onClick={() => setNeedRefresh(false)} className="min-h-10 text-fg-3">
           나중에
         </button>
-        <button onClick={() => void updateServiceWorker(true)} className="min-h-10 text-blue">
+        <button onClick={() => void updateServiceWorker(true)} className="min-h-10 text-point">
           업데이트
         </button>
       </div>

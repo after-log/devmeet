@@ -32,7 +32,7 @@ export const PwaInstallButton = ({ state }: { state: InstallState }) => {
   return (
     <>
       <button
-        className="flex min-h-10 shrink-0 items-center gap-1.5 rounded-md px-2 text-xs whitespace-nowrap text-blue hover:bg-selected disabled:opacity-50"
+        className="flex min-h-10 shrink-0 items-center gap-1.5 rounded-md px-2 text-xs whitespace-nowrap text-point hover:bg-selected disabled:opacity-50"
         onClick={() => void install()}
         disabled={busy}
         aria-label="devmeet 앱 설치"

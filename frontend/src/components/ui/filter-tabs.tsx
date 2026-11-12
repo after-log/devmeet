@@ -21,7 +21,7 @@ export const FilterTabs = <Value extends string>({
           <span
             className={cn(
               'ml-1 font-mono text-[11px]',
-              option.countTone === 'accent' ? 'text-blue' : 'text-fg-4',
+              option.countTone === 'accent' ? 'text-point' : 'text-fg-4',
             )}
           >
             {option.count}

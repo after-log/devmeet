@@ -8,9 +8,9 @@ export const palette = (): Palette => {
   const css = getComputedStyle(document.documentElement);
   const v = (name: string) => css.getPropertyValue(`--color-${name}`).trim();
   return {
-    b: v('blue'),
+    b: v('point'),
     g: v('green'),
-    p: v('purple'),
+    p: v('sub'),
     o: v('orange'),
     f: v('fg'),
     k: v('line-strong'),

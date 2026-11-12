@@ -38,7 +38,7 @@ export const Select = ({
       <SelectPrimitive.Trigger
         id={id}
         className={cn(
-          'flex min-h-12 w-full items-center justify-between gap-3 rounded-md border border-line-strong bg-surface px-[13px] py-3 text-left text-[14px] text-fg transition-colors outline-none hover:border-hover-line focus-visible:ring-2 focus-visible:ring-blue disabled:cursor-default disabled:opacity-50 data-[placeholder]:text-fg-4 data-[state=open]:border-blue',
+          'flex min-h-12 w-full items-center justify-between gap-3 rounded-md border border-line-strong bg-surface px-[13px] py-3 text-left text-[14px] text-fg transition-colors outline-none hover:border-hover-line focus-visible:ring-2 focus-visible:ring-point disabled:cursor-default disabled:opacity-50 data-[placeholder]:text-fg-4 data-[state=open]:border-point',
           className,
         )}
       >
@@ -64,10 +64,10 @@ export const Select = ({
                 <SelectPrimitive.Item
                   key={item.value}
                   value={item.value}
-                  className="relative flex min-h-12 cursor-pointer items-center rounded-md py-3 pr-10 pl-3 text-[13px] outline-none select-none data-[highlighted]:bg-mine data-[highlighted]:text-mine-fg data-[state=checked]:text-blue"
+                  className="relative flex min-h-12 cursor-pointer items-center rounded-md py-3 pr-10 pl-3 text-[13px] outline-none select-none data-[highlighted]:bg-mine data-[highlighted]:text-mine-fg data-[state=checked]:text-point"
                 >
                   <SelectPrimitive.ItemText>{item.label}</SelectPrimitive.ItemText>
-                  <SelectPrimitive.ItemIndicator className="absolute right-3 text-blue">
+                  <SelectPrimitive.ItemIndicator className="absolute right-3 text-point">
                     <Check className="size-4" />
                   </SelectPrimitive.ItemIndicator>
                 </SelectPrimitive.Item>

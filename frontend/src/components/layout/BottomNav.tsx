@@ -46,7 +46,7 @@ const BottomNav = () => {
           key={tab.page}
           to={`/${tab.page}`}
           className={({ isActive }) =>
-            `flex min-h-[42px] flex-1 flex-col items-center justify-center gap-[6px] text-[11px] ${isActive ? 'text-blue' : 'text-fg-4'}`
+            `flex min-h-[42px] flex-1 flex-col items-center justify-center gap-[6px] text-[11px] ${isActive ? 'text-point' : 'text-fg-4'}`
           }
           aria-label={tab.label}
         >

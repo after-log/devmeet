@@ -361,7 +361,7 @@ const OnboardingPage = () => {
                   />
                   <button
                     type="button"
-                    className="w-full text-xs text-blue"
+                    className="w-full text-xs text-point"
                     disabled={uploading || saving || index === 0}
                     onClick={() => updatePhotos([photo, ...photos.filter((p) => p !== photo)])}
                   >

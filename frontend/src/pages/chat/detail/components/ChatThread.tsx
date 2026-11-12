@@ -125,14 +125,14 @@ const ChatThread = ({
               ))}
             </div>
             <button
-              className="mt-4 flex w-full items-center justify-between gap-2 text-left text-xs leading-[1.8] text-fg-2 hover:text-blue"
+              className="mt-4 flex w-full items-center justify-between gap-2 text-left text-xs leading-[1.8] text-fg-2 hover:text-point"
               onClick={() => {
                 setDraft(room.starter);
                 input.current?.focus();
               }}
             >
               {room.starter}
-              <ArrowUpRight size={15} className="shrink-0 text-blue" />
+              <ArrowUpRight size={15} className="shrink-0 text-point" />
             </button>
           </div>
         </article>

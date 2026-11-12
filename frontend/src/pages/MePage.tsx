@@ -64,7 +64,7 @@ const MePage = () => {
           <span className="mt-1 block text-xs text-fg-3">
             일상부터 연애까지, 나다운 답을 골라보세요.
           </span>
-          <span className="mt-3 block font-mono text-[11px] text-blue">
+          <span className="mt-3 block font-mono text-[11px] text-point">
             {answered} / {catalogLoading && !total ? '…' : total} 답변 · 프로필 공개{' '}
             {publicAnswers.length} / {PUBLIC_VALUE_LIMIT}
           </span>

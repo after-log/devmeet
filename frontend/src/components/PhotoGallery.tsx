@@ -26,13 +26,13 @@ export default function PhotoGallery({
             <button
               key={src}
               type="button"
-              className="flex h-8 w-8 items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-blue"
+              className="flex h-8 w-8 items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-point"
               aria-label={`프로필 사진 ${index + 1} 보기`}
               aria-pressed={src === current}
               onClick={() => setSelected(src)}
             >
               <span
-                className={`h-2 w-2 rounded-full ${src === current ? 'bg-blue' : 'bg-line-strong'}`}
+                className={`h-2 w-2 rounded-full ${src === current ? 'bg-point' : 'bg-line-strong'}`}
                 aria-hidden="true"
               />
             </button>

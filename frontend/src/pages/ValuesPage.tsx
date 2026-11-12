@@ -142,7 +142,7 @@ const ValuesEditor = ({ sections }: { sections: ValueSection[] }) => {
           <Eye size={14} />
           프로필에 공개할 답변
         </span>
-        <span className="font-mono text-blue" aria-live="polite">
+        <span className="font-mono text-point" aria-live="polite">
           {publicCount} / {PUBLIC_VALUE_LIMIT}
         </span>
       </div>
@@ -155,7 +155,7 @@ const ValuesEditor = ({ sections }: { sections: ValueSection[] }) => {
         aria-valuenow={answered}
       >
         <div
-          className="h-full rounded-full bg-blue transition-all"
+          className="h-full rounded-full bg-point transition-all"
           style={{ width: `${(answered / Math.max(total, 1)) * 100}%` }}
         />
       </div>
@@ -195,7 +195,7 @@ const ValuesEditor = ({ sections }: { sections: ValueSection[] }) => {
         className="values-panel"
       >
         <div className="values-section-heading">
-          <span className="text-[28px] text-purple" aria-hidden="true">
+          <span className="text-[28px] text-sub" aria-hidden="true">
             {section.icon}
           </span>
           <p className="my-1 font-mono text-xs tracking-[0.2em]">{section.english}</p>
@@ -244,7 +244,7 @@ const ValuesEditor = ({ sections }: { sections: ValueSection[] }) => {
                   <button
                     type="button"
                     aria-pressed={skipped}
-                    className={`text-[11px] underline-offset-4 hover:underline ${skipped ? 'text-blue' : 'text-fg-4'}`}
+                    className={`text-[11px] underline-offset-4 hover:underline ${skipped ? 'text-point' : 'text-fg-4'}`}
                     onClick={() => {
                       if (skipped)
                         setAnswers((current) => {
@@ -262,7 +262,7 @@ const ValuesEditor = ({ sections }: { sections: ValueSection[] }) => {
                     aria-pressed={answer?.choice != null && answer.private === false}
                     aria-label={`${question.text} 프로필에 공개`}
                     disabled={answer?.choice == null}
-                    className={`inline-flex items-center gap-1 text-[11px] disabled:opacity-40 ${answer?.choice != null && !answer.private ? 'text-blue' : 'text-fg-4'}`}
+                    className={`inline-flex items-center gap-1 text-[11px] disabled:opacity-40 ${answer?.choice != null && !answer.private ? 'text-point' : 'text-fg-4'}`}
                     onClick={() => togglePublic(question.id)}
                   >
                     {answer?.choice != null && !answer.private ? (
@@ -292,7 +292,7 @@ const ValuesEditor = ({ sections }: { sections: ValueSection[] }) => {
         )}
         <div className="flex items-center justify-between gap-3">
           <p className="m-0 text-[11px] leading-5 text-fg-3" aria-live="polite">
-            <span className="block text-blue">
+            <span className="block text-point">
               프로필 공개 {publicCount} / {PUBLIC_VALUE_LIMIT}
             </span>
             {demo
