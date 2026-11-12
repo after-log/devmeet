@@ -223,7 +223,7 @@ const InfoSheet = ({ kind }: { kind: 'social' | 'privacy' }) => {
           GitHub 인증은 둘러보기를 종료하고 카카오로 로그인한 뒤 이용해 주세요.
         </p>
       ) : user?.verification?.github ? (
-        <p className="text-sm text-green" role="status">
+        <p className="text-sm text-point" role="status">
           GitHub 인증 완료
         </p>
       ) : user ? (

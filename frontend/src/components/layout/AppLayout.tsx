@@ -107,10 +107,7 @@ const AppLayout = () => {
             }
           >
             {error && !demo && (
-              <div
-                role="alert"
-                className="mb-5 rounded-lg border border-orange p-3 text-xs text-orange"
-              >
+              <div role="alert" className="mb-5 rounded-lg border border-sub p-3 text-xs text-sub">
                 {error}
                 <button className="ml-3 underline" onClick={() => void boot()}>
                   다시 연결

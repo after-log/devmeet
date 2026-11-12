@@ -103,7 +103,7 @@ export default function WorkEmailVerification() {
       </p>
       {status?.verified && (
         <div className="mb-4 text-sm">
-          <p className="text-green">이메일 확인 완료</p>
+          <p className="text-point">이메일 확인 완료</p>
           <p className="break-all">
             {status.verified.company} · {status.verified.email}
           </p>
@@ -181,7 +181,7 @@ export default function WorkEmailVerification() {
                 disabled={busy || expired}
               />
               {expired && (
-                <p className="text-xs text-orange">인증번호가 만료됐어요. 새 번호를 받아 주세요.</p>
+                <p className="text-xs text-sub">인증번호가 만료됐어요. 새 번호를 받아 주세요.</p>
               )}
               <button className="btn full" disabled={busy || expired || code.length !== 6}>
                 이메일 확인하기
@@ -191,12 +191,12 @@ export default function WorkEmailVerification() {
         </>
       )}
       {notice && (
-        <p className="text-sm text-green" role="status">
+        <p className="text-sm text-point" role="status">
           {notice}
         </p>
       )}
       {error && (
-        <p className="text-sm text-orange" role="alert">
+        <p className="text-sm text-sub" role="alert">
           {error}
         </p>
       )}

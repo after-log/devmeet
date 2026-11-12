@@ -7,8 +7,6 @@
   --color-border: #393b40;
   /* 포인트 컬러: 메인 네온 옐로, 서브 코랄 오렌지 */
   --color-point: #f5ff52;
-  --color-green: #a5c17e;
-  --color-orange: #cf8e6d;
   --color-sub: #e8554a;
   --color-page: #18191b;
   --color-nav: #242529f5;
@@ -23,8 +21,8 @@
   --color-selected: #2d2f1f;
   --color-mine: #383b1e;
   --color-mine-fg: #f2f6b5;
-  --color-tag-orange: #50423a;
-  --color-tag-green: #4c5b45;
+  --color-tag-sub: #5a3330;
+  --color-tag-point: #5a5d2a;
   --color-tag-blue: #3f4d6b;
   --color-backdrop: #0d0f14bb;
   --font-sans:
@@ -79,8 +77,6 @@
     --color-border: #dfe1e5;
     /* 흰 배경에서도 읽히도록 어두운 올리브 옐로 */
     --color-point: #7d8300;
-    --color-green: #3d8a2e;
-    --color-orange: #b5591c;
     --color-sub: #d23f34;
     --color-page: #f2f3f5;
     --color-nav: #fffffff0;
@@ -95,8 +91,8 @@
     --color-selected: #f8fadb;
     --color-mine: #f1f5c2;
     --color-mine-fg: #474b00;
-    --color-tag-orange: #ecc9b2;
-    --color-tag-green: #bfdcb4;
+    --color-tag-sub: #f2c0bb;
+    --color-tag-point: #dfe38f;
     --color-tag-blue: #bcd0f7;
     --color-backdrop: #1e1f2266;
   }
@@ -193,7 +189,7 @@
     @apply sticky bottom-0 z-20 -mx-6 border-t border-line bg-canvas px-6 py-4 max-[480px]:-mx-5 max-[480px]:px-5 max-[360px]:-mx-[15px] max-[360px]:px-[15px];
   }
   .logo {
-    @apply font-mono text-[21px] leading-[normal] font-semibold tracking-[-1px] [&_span]:text-green;
+    @apply font-mono text-[21px] leading-[normal] font-semibold tracking-[-1px] [&_span]:text-point;
   }
   .demo {
     @apply font-mono text-[11px] leading-[normal] text-fg-4;
@@ -206,13 +202,13 @@
   }
   .syntax,
   .keyword {
-    @apply text-orange;
+    @apply text-sub;
   }
   .variable {
     @apply text-sub;
   }
   .string {
-    @apply text-green;
+    @apply text-point;
   }
   .count {
     @apply font-mono text-xs leading-[normal] [&_span]:text-fg-4;
@@ -254,13 +250,13 @@
     @apply font-mono text-base leading-[normal] tracking-[-.5px] text-fg-3;
   }
   .profile-name b {
-    @apply text-[13px] font-normal text-green;
+    @apply text-[13px] font-normal text-point;
   }
   .initial-box {
     @apply relative grid h-[52px] w-[52px] flex-none place-content-center rounded-[7px] border border-line bg-lift font-mono text-[21px] leading-[normal] text-fg-2;
   }
   .initial-box span {
-    @apply absolute right-2 bottom-[3px] text-xs text-green;
+    @apply absolute right-2 bottom-[3px] text-xs text-point;
   }
   .code-block {
     @apply overflow-hidden pt-[7px] pb-[15px];
@@ -297,7 +293,7 @@
     @apply mt-[7px] mb-[17px] text-xs leading-[1.8] break-keep text-fg-3;
   }
   .verified {
-    @apply text-[11px] text-fg-4 [&_span]:mr-[5px] [&_span]:text-green;
+    @apply text-[11px] text-fg-4 [&_span]:mr-[5px] [&_span]:text-point;
   }
   .btn {
     @apply min-h-12 rounded-md border border-point bg-point px-4 py-3 text-[14px] font-semibold whitespace-nowrap text-on-accent disabled:opacity-35;
@@ -336,7 +332,7 @@
     @apply border-point bg-selected;
   }
   .symbol {
-    @apply font-mono text-xl leading-[normal] text-orange;
+    @apply font-mono text-xl leading-[normal] text-sub;
   }
   .option strong {
     @apply block text-[14px] font-medium;
@@ -351,7 +347,7 @@
     @apply ml-auto flex-none rounded border border-line-strong px-[10px] py-[5px] font-mono text-[11px] leading-[normal] text-fg-3;
   }
   .tag.ok {
-    @apply border-tag-green text-green;
+    @apply border-tag-point text-point;
   }
   .tag.ing {
     @apply border-tag-blue text-point;
@@ -390,16 +386,16 @@
     @apply mt-[5px] block text-xs text-fg-3;
   }
   .listrow time {
-    @apply ml-auto font-mono text-[10px] leading-[normal] text-green;
+    @apply ml-auto font-mono text-[10px] leading-[normal] text-point;
   }
   .small-avatar {
-    @apply grid h-[46px] w-[46px] flex-none place-items-center rounded-md border border-line-strong bg-lift font-mono text-[14px] leading-[normal] text-green;
+    @apply grid h-[46px] w-[46px] flex-none place-items-center rounded-md border border-line-strong bg-lift font-mono text-[14px] leading-[normal] text-point;
   }
   .empty {
     @apply px-[10px] py-[65px] text-center;
   }
   .big {
-    @apply mb-7 font-mono text-xl leading-[normal] text-green;
+    @apply mb-7 font-mono text-xl leading-[normal] text-point;
   }
   .empty h3 {
     @apply text-[19px] font-medium;
@@ -435,10 +431,10 @@
     @apply w-[46px] flex-none rounded-[5px] bg-point text-xl text-on-accent;
   }
   .gradient-title {
-    @apply mt-[25px] mb-[18px] font-mono text-[23px] leading-[normal] text-green;
+    @apply mt-[25px] mb-[18px] font-mono text-[23px] leading-[normal] text-point;
   }
   .prompt {
-    @apply mt-1 mb-6 font-mono text-[13px] leading-[normal] text-fg-4 [&_span]:mr-[9px] [&_span]:text-green;
+    @apply mt-1 mb-6 font-mono text-[13px] leading-[normal] text-fg-4 [&_span]:mr-[9px] [&_span]:text-point;
   }
   .cursor {
     @apply ml-[7px] inline-block h-[14px] w-[7px] animate-cursor bg-point align-[-2px] motion-reduce:animate-none;
@@ -468,7 +464,7 @@
     @apply mb-[18px] flex items-center justify-between;
   }
   .cat {
-    @apply rounded border border-tag-orange px-[9px] py-1 font-mono text-[11px] leading-[normal] text-orange;
+    @apply rounded border border-tag-sub px-[9px] py-1 font-mono text-[11px] leading-[normal] text-sub;
   }
   .ox-top b {
     @apply font-mono text-xs leading-[normal] font-normal text-fg [&_span]:text-fg-4;
@@ -525,7 +521,7 @@
     @apply flex items-center justify-between gap-3 border-b border-line bg-lift px-6 py-2 font-mono text-[11px] text-fg-3 max-[480px]:px-5 [&_button]:text-point;
   }
   .error {
-    @apply mt-3 mb-0 min-h-5 text-xs text-orange;
+    @apply mt-3 mb-0 min-h-5 text-xs text-sub;
   }
   .upload-preview {
     @apply mb-3 aspect-square w-full rounded-md border border-line object-cover;
@@ -629,7 +625,7 @@
     @apply block h-[6px] w-[6px] bg-current opacity-25 motion-safe:animate-[pixel-load_.9s_steps(1,end)_infinite];
   }
   .prompt .pixel-dots i {
-    @apply bg-green;
+    @apply bg-point;
   }
   .pixel-dots i:nth-child(2) {
     animation-delay: 0.3s;
@@ -692,7 +688,7 @@
     @apply flex justify-between;
   }
   .signup-log b {
-    @apply font-medium text-green;
+    @apply font-medium text-point;
   }
   .signup-bar {
     @apply mt-3 mb-6 block h-[6px] w-full [image-rendering:pixelated];

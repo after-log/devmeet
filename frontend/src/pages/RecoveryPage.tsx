@@ -68,7 +68,7 @@ export default function RecoveryPage() {
           </p>
         )}
         {message && (
-          <p role="status" className="text-green">
+          <p role="status" className="text-point">
             {message}
           </p>
         )}

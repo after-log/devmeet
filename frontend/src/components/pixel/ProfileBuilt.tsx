@@ -108,7 +108,7 @@ const ProfileBuilt = ({ profile, onContinue }: { profile: Profile; onContinue: (
         </div>
         <div className="built-status">
           <canvas ref={bar} width={60} height={4} aria-hidden="true" />
-          <span className={built ? 'text-green' : ''} role="status">
+          <span className={built ? 'text-point' : ''} role="status">
             {built ? '✓ build complete' : 'building…'}
           </span>
         </div>

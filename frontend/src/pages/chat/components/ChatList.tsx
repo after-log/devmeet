@@ -31,7 +31,7 @@ const ChatList = ({
         <h2>
           대화<span className="syntax">.</span>
         </h2>
-        <span className="count text-green">
+        <span className="count text-point">
           {String(rooms.length).padStart(2, '0')} <span>connections</span>
         </span>
       </div>
@@ -42,7 +42,7 @@ const ChatList = ({
             <h3 id="new-matches-title" className="m-0 font-mono text-xs font-normal text-fg-3">
               // new connections
             </h3>
-            <span className="text-[11px] text-green">새로운 인연 {newMatches.length}</span>
+            <span className="text-[11px] text-point">새로운 인연 {newMatches.length}</span>
           </div>
           <div className="mt-4 flex gap-4 overflow-x-auto pb-1">
             {newMatches.map((room) => {
@@ -56,7 +56,7 @@ const ChatList = ({
                 >
                   <span className="relative">
                     <Avatar person={profile} />
-                    <span className="absolute -top-1 -right-1 size-2.5 rounded-full border-2 border-surface bg-green" />
+                    <span className="absolute -top-1 -right-1 size-2.5 rounded-full border-2 border-surface bg-point" />
                   </span>
                   <span className="text-xs text-fg-2">{profile.name}</span>
                 </button>
@@ -91,7 +91,7 @@ const ChatList = ({
       </div>
       {visibleRooms.length === 0 && (
         <div className="empty" role="status">
-          <MessageSquare size={30} className="mx-auto mb-6 text-green" />
+          <MessageSquare size={30} className="mx-auto mb-6 text-point" />
           <h3>{unreadOnly ? '모든 대화를 읽었어요' : '아직은, 첫 인사 전'}</h3>
           <p>
             {unreadOnly
