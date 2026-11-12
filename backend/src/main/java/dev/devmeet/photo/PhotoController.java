@@ -24,9 +24,7 @@ public class PhotoController {
 
   @GetMapping("/photos/{id}")
   public ResponseEntity<?> photo(Authentication auth, @PathVariable UUID id) {
-    boolean admin =
-        auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
-    var path = photos.read(auth.getName(), id, admin);
+    var path = photos.read(auth.getName(), id, false);
     return ResponseEntity.ok()
         .contentType(MediaType.IMAGE_JPEG)
         .cacheControl(CacheControl.noStore())

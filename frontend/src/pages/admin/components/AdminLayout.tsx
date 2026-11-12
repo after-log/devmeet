@@ -1,12 +1,13 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { Check, ChevronRight, LogOut } from 'lucide-react';
-import { useAdminMock } from '../hooks/useAdminMock';
+import { Check, ChevronRight, LogOut, RefreshCw } from 'lucide-react';
+import { useAdmin } from '../hooks/useAdmin';
 import AdminSidebar from './AdminSidebar';
 import { AdminAvatar, AdminSurface, IconButton } from './AdminUI';
 import AdminDialogs from '../dialogs/AdminDialogs';
 
 export default function AdminLayout() {
-  const { authenticated, notice, logout } = useAdminMock();
+  const { authenticated, booting, loading, busy, username, notice, error, refresh, logout } =
+    useAdmin();
   const { pathname } = useLocation();
   const title =
     (
@@ -15,6 +16,12 @@ export default function AdminLayout() {
         string
       >
     )[pathname.split('/')[2]] ?? '대시보드';
+  if (booting)
+    return (
+      <AdminSurface className="grid min-h-dvh place-items-center bg-white">
+        <p role="status">관리자 데이터를 불러오는 중…</p>
+      </AdminSurface>
+    );
   if (!authenticated) return <Navigate to="/admin/login" replace />;
   return (
     <AdminSurface className="flex min-h-dvh bg-[#fafafa] max-sm:block">
@@ -27,13 +34,36 @@ export default function AdminLayout() {
           </div>
           <div className="flex items-center gap-[13px] text-[13px] text-neutral-600 max-sm:gap-[7px]">
             <AdminAvatar />
-            <span>관리자</span>
-            <IconButton aria-label="로그아웃" onClick={logout}>
+            <span>{username}</span>
+            <IconButton
+              aria-label="데이터 새로고침"
+              disabled={loading || busy}
+              onClick={() => void refresh()}
+            >
+              <RefreshCw size={16} />
+            </IconButton>
+            <IconButton aria-label="로그아웃" disabled={busy} onClick={() => void logout()}>
               <LogOut size={16} />
             </IconButton>
           </div>
         </header>
         <main className="mx-auto w-full max-w-[1550px] flex-1 px-[43px] pt-[39px] pb-[30px] max-xl:px-[25px] max-xl:pt-[30px] max-sm:px-[18px] max-sm:py-[25px]">
+          {error && (
+            <div
+              role="alert"
+              className="mb-5 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800"
+            >
+              {error}
+              <button className="ml-3 underline" onClick={() => void refresh()} disabled={loading}>
+                다시 불러오기
+              </button>
+            </div>
+          )}
+          {(loading || busy) && (
+            <p role="status" className="mb-4! text-sm text-neutral-600">
+              {busy ? '변경 사항 저장 중…' : '데이터를 불러오는 중…'}
+            </p>
+          )}
           <Outlet />
         </main>
       </div>

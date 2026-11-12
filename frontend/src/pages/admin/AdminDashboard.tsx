@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { AdminMockProvider } from './hooks/useAdminMock';
+import { AdminProvider } from './hooks/useAdmin';
 import AdminLayout from './components/AdminLayout';
 import AdminLoginPage from './AdminLoginPage';
 import AdminMembersPage from './AdminMembersPage';
@@ -9,7 +9,7 @@ import AdminValuesPage from './AdminValuesPage';
 
 export default function AdminDashboard() {
   return (
-    <AdminMockProvider>
+    <AdminProvider>
       <Routes>
         <Route path="login" element={<AdminLoginPage />} />
         <Route element={<AdminLayout />}>
@@ -20,6 +20,6 @@ export default function AdminDashboard() {
         </Route>
         <Route path="*" element={<Navigate to="/admin" replace />} />
       </Routes>
-    </AdminMockProvider>
+    </AdminProvider>
   );
 }

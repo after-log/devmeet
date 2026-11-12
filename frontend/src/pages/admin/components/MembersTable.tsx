@@ -1,6 +1,7 @@
+import AdminPhoto from './AdminPhoto';
 import { useMemo } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
-import type { Member } from '../mock';
+import type { Member } from '../types';
 import { AdminButton, Badge } from './AdminUI';
 import AdminDataTable from './AdminDataTable';
 
@@ -23,7 +24,7 @@ export default function MembersTable({
         header: '회원 정보',
         cell: ({ row: { original: member } }) => (
           <div className="flex items-center gap-2.5">
-            <img
+            <AdminPhoto
               className="h-[37px] w-[34px] rounded-md object-cover"
               src={member.photos[0]}
               alt=""

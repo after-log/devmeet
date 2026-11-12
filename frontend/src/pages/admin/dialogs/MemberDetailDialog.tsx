@@ -1,6 +1,7 @@
+import AdminPhoto from '../components/AdminPhoto';
 import { useState } from 'react';
-import type { Member } from '../mock';
-import { useAdminMock } from '../hooks/useAdminMock';
+import type { Member } from '../types';
+import { useAdmin } from '../hooks/useAdmin';
 import {
   AdminButton,
   Badge,
@@ -12,7 +13,7 @@ import {
 } from '../components/AdminUI';
 
 export default function MemberDetailDialog({ member }: { member: Member }) {
-  const { closeDialog, openReview, toggleSuspension } = useAdminMock();
+  const { closeDialog, openReview, toggleSuspension } = useAdmin();
   const [reason, setReason] = useState('');
   return (
     <Modal
@@ -21,7 +22,7 @@ export default function MemberDetailDialog({ member }: { member: Member }) {
       close={closeDialog}
     >
       <div className="flex items-center gap-[17px]">
-        <img
+        <AdminPhoto
           className="h-[85px] w-[75px] rounded-[9px] object-cover"
           src={member.photos[0]}
           alt={member.name}
@@ -37,7 +38,7 @@ export default function MemberDetailDialog({ member }: { member: Member }) {
       <DetailList
         items={[
           ['직무', member.role],
-          ['나이 / 지역', `${member.age}세 / ${member.region}`],
+          ['나이 / 지역', member.hasProfile ? `${member.age}세 / ${member.region}` : '미등록'],
           ['프로필 검수', <Badge status={member.review} />],
         ]}
       />
@@ -50,7 +51,9 @@ export default function MemberDetailDialog({ member }: { member: Member }) {
         />
       </Field>
       <ModalActions>
-        <AdminButton onClick={() => openReview(member)}>프로필 사진 확인</AdminButton>
+        <AdminButton disabled={!member.hasProfile} onClick={() => openReview(member)}>
+          프로필 사진 확인
+        </AdminButton>
         <AdminButton
           variant={member.suspended ? 'primary' : 'danger'}
           disabled={!reason.trim()}

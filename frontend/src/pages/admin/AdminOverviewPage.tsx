@@ -1,11 +1,12 @@
+import AdminPhoto from './components/AdminPhoto';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ChevronRight, Flag, ShieldCheck } from 'lucide-react';
-import { useAdminMock } from './hooks/useAdminMock';
+import { useAdmin } from './hooks/useAdmin';
 import { Badge, EmptyState, Panel } from './components/AdminUI';
 import OverviewStats from './components/OverviewStats';
 
 export default function AdminOverviewPage() {
-  const { members, reports, openReview, openReport } = useAdminMock();
+  const { members, reports, openReview, openReport } = useAdmin();
   const pending = members.filter((m) => m.review === 'PENDING');
   const openReports = reports.filter((r) => r.status === 'OPEN');
   return (
@@ -52,7 +53,7 @@ export default function AdminOverviewPage() {
               key={m.id}
               onClick={() => openReview(m)}
             >
-              <img
+              <AdminPhoto
                 className="h-[45px] w-[42px] rounded-[7px] object-cover"
                 src={m.photos[0]}
                 alt=""

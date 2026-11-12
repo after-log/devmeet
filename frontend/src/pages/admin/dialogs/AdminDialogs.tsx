@@ -1,11 +1,11 @@
-import { useAdminMock } from '../hooks/useAdminMock';
+import { useAdmin } from '../hooks/useAdmin';
 import MemberDetailDialog from './MemberDetailDialog';
 import ProfileReviewDialog from './ProfileReviewDialog';
 import QuestionCreateDialog from './QuestionCreateDialog';
 import ReportReviewDialog from './ReportReviewDialog';
 
 export default function AdminDialogs() {
-  const { dialog } = useAdminMock();
+  const { dialog } = useAdmin();
   if (!dialog) return null;
   switch (dialog.type) {
     case 'profile':

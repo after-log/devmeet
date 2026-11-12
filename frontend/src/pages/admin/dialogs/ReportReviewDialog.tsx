@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import type { Report } from '../mock';
-import { useAdminMock } from '../hooks/useAdminMock';
+import type { Report } from '../types';
+import { useAdmin } from '../hooks/useAdmin';
 import {
   AdminButton,
   Badge,
@@ -13,7 +13,7 @@ import {
 } from '../components/AdminUI';
 
 export default function ReportReviewDialog({ report }: { report: Report }) {
-  const { closeDialog, reviewReport } = useAdminMock();
+  const { closeDialog, reviewReport } = useAdmin();
   const [note, setNote] = useState(report.note);
   return (
     <Modal title="신고 내역 확인" description={`${report.id} · ${report.date}`} close={closeDialog}>

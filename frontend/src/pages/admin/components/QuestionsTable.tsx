@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
-import type { Question } from '../mock';
+import type { Question } from '../types';
 import { cn } from '@/lib/utils';
 import AdminDataTable from './AdminDataTable';
 

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
-import type { Report } from '../mock';
+import type { Report } from '../types';
 import { AdminButton, Badge } from './AdminUI';
 import AdminDataTable from './AdminDataTable';
 

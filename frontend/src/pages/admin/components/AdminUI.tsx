@@ -12,6 +12,7 @@ import {
   CircleMinus,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useAdmin } from '../hooks/useAdmin';
 
 export const reviewLabels: Record<string, string> = {
   PENDING: '검수 대기',
@@ -20,6 +21,7 @@ export const reviewLabels: Record<string, string> = {
   OPEN: '미처리',
   VALID: '처리 완료',
   DISMISSED: '기각',
+  NONE: '미등록',
 };
 
 export function AdminSurface({ children, className }: { children: ReactNode; className?: string }) {
@@ -142,6 +144,7 @@ export function Modal({
   children: ReactNode;
   close: () => void;
 }) {
+  const { busy, error } = useAdmin();
   return (
     <Dialog.Root
       open
@@ -161,12 +164,22 @@ export function Modal({
                 </Dialog.Description>
               </div>
               <Dialog.Close asChild>
-                <IconButton aria-label="닫기">
+                <IconButton aria-label="닫기" disabled={busy}>
                   <X size={20} />
                 </IconButton>
               </Dialog.Close>
             </header>
-            {children}
+            <fieldset className="m-0 min-w-0 border-0 p-0" disabled={busy} aria-busy={busy}>
+              {error && (
+                <p
+                  role="alert"
+                  className="mb-4! rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800"
+                >
+                  {error}
+                </p>
+              )}
+              {children}
+            </fieldset>
           </AdminSurface>
         </Dialog.Content>
       </Dialog.Portal>

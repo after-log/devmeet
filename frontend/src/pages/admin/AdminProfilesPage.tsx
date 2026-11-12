@@ -1,10 +1,11 @@
-import { useAdminMock } from './hooks/useAdminMock';
+import { useAdmin } from './hooks/useAdmin';
 import { useTableFilters } from './hooks/useTableFilters';
 import { EmptyState, Pager, ResultCount, reviewLabels, Tabs, Toolbar } from './components/AdminUI';
 import ProfileCard from './components/ProfileCard';
 
 export default function AdminProfilesPage() {
-  const { members, openReview } = useAdminMock();
+  const { members: allMembers, openReview } = useAdmin();
+  const members = allMembers.filter((member) => member.hasProfile);
   const { search, filter, page, setSearch, setFilter, setPage } = useTableFilters();
   const filtered = members.filter(
     (m) =>

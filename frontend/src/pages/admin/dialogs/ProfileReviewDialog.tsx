@@ -1,8 +1,9 @@
+import AdminPhoto from '../components/AdminPhoto';
 import { useState } from 'react';
 import { Check, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { Member } from '../mock';
-import { useAdminMock } from '../hooks/useAdminMock';
+import type { Member } from '../types';
+import { useAdmin } from '../hooks/useAdmin';
 import {
   AdminButton,
   Badge,
@@ -14,7 +15,7 @@ import {
 } from '../components/AdminUI';
 
 export default function ProfileReviewDialog({ member }: { member: Member }) {
-  const { closeDialog, reviewProfile } = useAdminMock();
+  const { closeDialog, reviewProfile } = useAdmin();
   const [photoIndex, setPhotoIndex] = useState(0);
   const [reason, setReason] = useState('');
   return (
@@ -25,7 +26,7 @@ export default function ProfileReviewDialog({ member }: { member: Member }) {
     >
       <div className="grid grid-cols-2 gap-[25px] max-sm:grid-cols-1">
         <div>
-          <img
+          <AdminPhoto
             className="h-80 w-full rounded-[9px] bg-[#f5f5f5] object-cover max-sm:h-[300px]"
             src={member.photos[photoIndex]}
             alt={`${member.name} 등록 사진 ${photoIndex + 1}`}
@@ -41,7 +42,7 @@ export default function ProfileReviewDialog({ member }: { member: Member }) {
                 onClick={() => setPhotoIndex(i)}
                 aria-label={`사진 ${i + 1} 확인`}
               >
-                <img
+                <AdminPhoto
                   className="size-full rounded-[3px] object-cover"
                   src={src}
                   alt={`등록 사진 ${i + 1}`}
@@ -49,9 +50,6 @@ export default function ProfileReviewDialog({ member }: { member: Member }) {
               </button>
             ))}
           </div>
-          <p className="mt-2.5! text-[12px] text-neutral-600">
-            mock 이미지 3장은 동일 인물의 예시 사진입니다.
-          </p>
         </div>
         <div>
           <Badge status={member.review} />

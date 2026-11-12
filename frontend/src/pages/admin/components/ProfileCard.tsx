@@ -1,5 +1,6 @@
+import AdminPhoto from './AdminPhoto';
 import { ArrowRight, Image } from 'lucide-react';
-import type { Member } from '../mock';
+import type { Member } from '../types';
 import { Badge } from './AdminUI';
 
 export default function ProfileCard({
@@ -15,7 +16,7 @@ export default function ProfileCard({
         className="group relative block h-[220px] w-full overflow-hidden border-0 bg-[#f5f5f5] p-0 max-sm:h-[190px] min-[1550px]:h-[270px]"
         onClick={() => onReview(member)}
       >
-        <img
+        <AdminPhoto
           className="size-full object-cover transition-transform duration-300 group-hover:scale-[1.035] motion-reduce:transition-none"
           src={member.photos[0]}
           alt={`${member.name} 프로필`}

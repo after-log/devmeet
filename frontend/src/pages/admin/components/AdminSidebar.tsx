@@ -8,7 +8,7 @@ import {
   Users,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useAdminMock } from '../hooks/useAdminMock';
+import { useAdmin } from '../hooks/useAdmin';
 
 const menu = [
   { path: '', label: '대시보드', icon: LayoutDashboard },
@@ -17,7 +17,7 @@ const menu = [
   { path: '/values', label: '가치관 관리', icon: SlidersHorizontal },
 ];
 export default function AdminSidebar() {
-  const { members } = useAdminMock();
+  const { members } = useAdmin();
   const pending = members.filter((m) => m.review === 'PENDING').length;
   return (
     <aside className="fixed inset-y-0 left-0 z-30 flex w-[244px] flex-col border-r border-[#e5e5e5] bg-white px-[18px] pt-[31px] max-[900px]:w-[180px] max-xl:w-[216px] max-xl:px-3 max-sm:sticky max-sm:top-0 max-sm:w-full max-sm:px-[15px] max-sm:py-3 max-sm:shadow-sm">

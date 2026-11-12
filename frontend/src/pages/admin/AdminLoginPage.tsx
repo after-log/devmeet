@@ -1,19 +1,29 @@
 import { useState, type FormEvent } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { ArrowRight, Eye, EyeOff, LockKeyhole, ShieldCheck } from 'lucide-react';
-import { useAdminMock } from './hooks/useAdminMock';
-import { AdminButton, AdminSurface, Badge, Field, IconButton } from './components/AdminUI';
+import { useAdmin } from './hooks/useAdmin';
+import { AdminButton, AdminSurface, Field, IconButton } from './components/AdminUI';
 
 export default function AdminLoginPage() {
-  const { authenticated, login } = useAdminMock();
+  const { authenticated, booting, busy, login, error: sessionError, initialize } = useAdmin();
   const [credentials, setCredentials] = useState({ id: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  if (booting)
+    return (
+      <AdminSurface className="grid min-h-dvh place-items-center bg-white">
+        <p role="status">관리자 세션 확인 중…</p>
+      </AdminSurface>
+    );
   if (authenticated) return <Navigate to="/admin" replace />;
-  const submit = (event: FormEvent) => {
+  const submit = async (event: FormEvent) => {
     event.preventDefault();
-    if (!login(credentials.id, credentials.password))
-      setError('아이디 또는 비밀번호를 확인해 주세요.');
+    setError('');
+    try {
+      await login(credentials.id, credentials.password);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : '관리자 로그인에 실패했어요.');
+    }
   };
   return (
     <AdminSurface className="grid min-h-dvh grid-cols-2 bg-white max-sm:block">
@@ -49,7 +59,10 @@ export default function AdminLoginPage() {
         </small>
       </div>
       <main className="grid place-items-center p-[45px] max-sm:px-7 max-sm:py-[35px]">
-        <form onSubmit={submit} className="w-full max-w-[350px] max-sm:max-w-[400px]">
+        <form
+          onSubmit={(event) => void submit(event)}
+          className="w-full max-w-[350px] max-sm:max-w-[400px]"
+        >
           <div className="mb-[23px] grid size-12 place-items-center rounded-xl bg-[#f5f5f5] text-neutral-600">
             <LockKeyhole size={23} />
           </div>
@@ -87,27 +100,24 @@ export default function AdminLoginPage() {
               </IconButton>
             </div>
           </Field>
-          {error && (
+          {(error || sessionError) && (
             <p className="mt-3! text-[13px] text-red-700" role="alert">
-              {error}
+              {error || sessionError}
             </p>
           )}
           <AdminButton
             type="submit"
+            disabled={busy}
             variant="primary"
             className="mt-[25px] w-full justify-between px-[17px] py-3"
           >
-            로그인 <ArrowRight size={17} />
+            {busy ? '로그인 중…' : '로그인'} <ArrowRight size={17} />
           </AdminButton>
-          <div className="mt-5 rounded-lg border border-[#e5e5e5] bg-[#fafafa] p-3.5">
-            <Badge status="MOCK">UI PREVIEW</Badge>
-            <p className="mt-2! text-[12px] leading-[1.9] text-neutral-600">
-              체험 계정 <b className="font-medium text-neutral-600">admin</b> /{' '}
-              <b className="font-medium text-neutral-600">devmeet123!</b>
-              <br />
-              화면 확인용 로그인입니다. 실제 접근 제어는 백엔드 연동 시 적용됩니다.
-            </p>
-          </div>
+          {sessionError && (
+            <AdminButton className="mt-3 w-full" onClick={() => void initialize()}>
+              서버 연결 다시 확인
+            </AdminButton>
+          )}
           <Link className="mt-[26px] block text-center text-[13px] text-neutral-600" to="/">
             ← 서비스로 돌아가기
           </Link>

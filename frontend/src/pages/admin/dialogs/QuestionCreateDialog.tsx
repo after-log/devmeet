@@ -1,14 +1,13 @@
 import { useState, type FormEvent } from 'react';
 import { Plus } from 'lucide-react';
-import { categories } from '../mock';
-import { useAdminMock } from '../hooks/useAdminMock';
+import { useAdmin } from '../hooks/useAdmin';
 import { AdminButton, Field, Modal, ModalActions } from '../components/AdminUI';
 
 export default function QuestionCreateDialog() {
-  const { closeDialog, addQuestion } = useAdminMock();
+  const { closeDialog, addQuestion, categories } = useAdmin();
   const [draft, setDraft] = useState({
     text: '',
-    section: categories[0].label,
+    section: categories[0]?.label ?? '',
     purpose: '매칭',
     options: ['', '', '', ''],
   });

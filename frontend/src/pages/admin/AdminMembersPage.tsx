@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useAdminMock } from './hooks/useAdminMock';
+import { useAdmin } from './hooks/useAdmin';
 import { Panel, StatusTabs, Tabs, Toolbar } from './components/AdminUI';
 import MembersTable from './components/MembersTable';
 import ReportsTable from './components/ReportsTable';
 
 function MemberRecords({ isReports }: { isReports: boolean }) {
-  const { members, reports, openMember, openReport } = useAdminMock();
+  const { members, reports, openMember, openReport } = useAdmin();
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState('ALL');
   const options = isReports
@@ -54,7 +54,7 @@ function MemberRecords({ isReports }: { isReports: boolean }) {
   );
 }
 export default function AdminMembersPage() {
-  const { members, reports } = useAdminMock();
+  const { members, reports } = useAdmin();
   const [params, setParams] = useSearchParams();
   const tab = params.get('tab') === 'reports' ? 'reports' : 'members';
   return (

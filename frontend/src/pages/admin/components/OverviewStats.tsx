@@ -1,16 +1,16 @@
 import { Flag, Image, SlidersHorizontal, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useAdminMock } from '../hooks/useAdminMock';
+import { useAdmin } from '../hooks/useAdmin';
 
 export default function OverviewStats() {
-  const { members, reports, questions } = useAdminMock();
+  const { members, reports, questions } = useAdmin();
   const stats = [
     {
       label: '전체 가입 회원',
       value: members.length,
       unit: '명',
       icon: Users,
-      sub: '프로필 등록 회원',
+      sub: '전체 가입 계정',
       tone: 'bg-neutral-100 text-neutral-700',
     },
     {
