@@ -4,7 +4,6 @@ import dev.devmeet.account.Account;
 import dev.devmeet.account.AccountRepository;
 import dev.devmeet.common.ApiException;
 import dev.devmeet.common.MemberAccess;
-import dev.devmeet.config.AdminPolicy;
 import dev.devmeet.matching.MatchingService;
 import dev.devmeet.photo.PhotoService;
 import java.util.Map;
@@ -22,7 +21,6 @@ public class ProfileService {
   private final MemberAccess access;
   private final PhotoService photos;
   private final MatchingService matching;
-  private final AdminPolicy admins;
 
   public ProfileService(
       AccountRepository accounts,
@@ -30,15 +28,13 @@ public class ProfileService {
       QuestionCatalog catalog,
       MemberAccess access,
       PhotoService photos,
-      MatchingService matching,
-      AdminPolicy admins) {
+      MatchingService matching) {
     this.accounts = accounts;
     this.profiles = profiles;
     this.catalog = catalog;
     this.access = access;
     this.photos = photos;
     this.matching = matching;
-    this.admins = admins;
   }
 
   public record UserView(
@@ -64,7 +60,7 @@ public class ProfileService {
             profile.map(Profile::getPhotoStatus).orElse("NONE"),
             "photoReviewReason",
             profile.map(Profile::getPhotoReviewReason).orElse("")),
-        admins.isAdmin(email));
+        false);
   }
 
   @Transactional
@@ -80,7 +76,7 @@ public class ProfileService {
     var answers =
         request.valueAnswers() == null
             ? profile.getValueAnswers()
-            : catalog.validate(request.valueAnswers());
+            : catalog.validate(request.valueAnswers(), profile.getValueAnswers());
     request.photos().forEach(photo -> photos.validateOwner(account.getId(), photo));
     profile.update(request, answers);
     return profiles.saveAndFlush(profile).view();
@@ -93,7 +89,7 @@ public class ProfileService {
         profiles
             .findById(account.getId())
             .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, "프로필을 먼저 완성해 주세요."));
-    profile.setValueAnswers(catalog.validate(input));
+    profile.setValueAnswers(catalog.validate(input, profile.getValueAnswers()));
     return profiles.saveAndFlush(profile).view();
   }
 
@@ -105,10 +101,10 @@ public class ProfileService {
             .findById(id)
             .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "프로필을 찾을 수 없어요."));
     if (!me.getId().equals(id)
-        && !admins.isAdmin(email)
         && (!profile.getPhotoStatus().equals("APPROVED") || profile.getPhotos().size() < 3))
       throw new ApiException(HttpStatus.NOT_FOUND, "프로필을 찾을 수 없어요.");
     var result = profile.publicView();
+    result.put("valueAnswers", catalog.publicAnswers(profile.getValueAnswers()));
     result.put("githubVerified", matching.github(id));
     return result;
   }

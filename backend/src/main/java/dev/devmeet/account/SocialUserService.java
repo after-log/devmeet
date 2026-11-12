@@ -1,6 +1,5 @@
 package dev.devmeet.account;
 
-import dev.devmeet.config.AdminPolicy;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.time.Instant;
@@ -21,11 +20,9 @@ public class SocialUserService implements OAuth2UserService<OAuth2UserRequest, O
       implements Serializable {}
 
   private final SocialAccounts accounts;
-  private final AdminPolicy admins;
 
-  public SocialUserService(SocialAccounts accounts, AdminPolicy admins) {
+  public SocialUserService(SocialAccounts accounts) {
     this.accounts = accounts;
-    this.admins = admins;
   }
 
   @Override
@@ -52,7 +49,6 @@ public class SocialUserService implements OAuth2UserService<OAuth2UserRequest, O
       var account = accounts.resolve(provider, subject, linkEmail);
       var roles = new ArrayList<SimpleGrantedAuthority>();
       roles.add(new SimpleGrantedAuthority("ROLE_MEMBER"));
-      if (admins.isAdmin(account.getEmail())) roles.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
       return new DefaultOAuth2User(
           roles, Map.of("email", account.getEmail(), "id", account.getId().toString()), "email");
     } catch (RuntimeException error) {

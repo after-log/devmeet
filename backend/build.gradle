@@ -65,3 +65,10 @@ tasks.register('integrationTest', Test) {
     useJUnitPlatform()
     shouldRunAfter test
 }
+
+tasks.register('setupLocalAdmin', JavaExec) {
+    description = 'Creates a unique local administrator credential in ignored .local files.'
+    group = 'application'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'dev.devmeet.admin.LocalAdminSetup'
+}

@@ -35,7 +35,7 @@ public class AdminController {
 
   public record ReportReview(
       @NotNull @Pattern(regexp = "VALID|DISMISSED") String status,
-      @NotNull @Size(max = 1000) String note) {}
+      @NotBlank @Size(max = 1000) String note) {}
 
   public record Suspension(boolean suspended, @NotBlank @Size(max = 1000) String reason) {}
 
@@ -129,6 +129,7 @@ public class AdminController {
   @Transactional
   public void suspend(
       Principal principal, @PathVariable UUID id, @Valid @RequestBody Suspension request) {
+    access.lock(id);
     int changed =
         jdbc.update(
             "UPDATE accounts SET suspended=? WHERE id=UUID_TO_BIN(?)",

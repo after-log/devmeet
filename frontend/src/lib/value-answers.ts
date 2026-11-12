@@ -1,10 +1,14 @@
 import sections from '@/data/value-questions.json';
+import type { ValueQuestion } from '@/hooks/useValueCatalog';
 import type { ValueAnswers } from '@/types';
 
 export const PUBLIC_VALUE_LIMIT = 10;
 export const valueQuestions = sections.flatMap((section) => section.questions);
-export const publicValueAnswers = (answers: ValueAnswers) =>
-  valueQuestions
+export const publicValueAnswers = (
+  answers: ValueAnswers,
+  questions: ValueQuestion[] = valueQuestions,
+) =>
+  questions
     .flatMap((question) => {
       const answer = answers[question.id];
       return answer?.choice != null &&
@@ -16,10 +20,13 @@ export const publicValueAnswers = (answers: ValueAnswers) =>
     .slice(0, PUBLIC_VALUE_LIMIT);
 
 /** Keep answers intact while limiting public visibility, including older saved profiles. */
-export const normalizeValueAnswers = (answers: ValueAnswers = {}): ValueAnswers => {
+export const normalizeValueAnswers = (
+  answers: ValueAnswers = {},
+  questions: ValueQuestion[] = valueQuestions,
+): ValueAnswers => {
   let publicCount = 0;
   return Object.fromEntries(
-    valueQuestions.flatMap((question) => {
+    questions.flatMap((question) => {
       const answer = answers[question.id];
       if (!answer || (answer.choice !== null && !question.options.includes(answer.choice)))
         return [];

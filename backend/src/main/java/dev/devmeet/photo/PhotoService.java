@@ -113,7 +113,7 @@ public class PhotoService {
 
   @Transactional(readOnly = true)
   public Path read(String email, UUID id, boolean admin) {
-    UUID me = access.account(email).getId();
+    UUID me = admin ? null : access.account(email).getId();
     var owners =
         jdbc.queryForList(
             "SELECT BIN_TO_UUID(owner_id) FROM photos WHERE id=UUID_TO_BIN(?)",
