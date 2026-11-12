@@ -257,15 +257,24 @@
   .initial-box span {
     @apply absolute right-2 bottom-[3px] text-xs text-point;
   }
-  .code-block {
-    @apply overflow-hidden pt-[7px] pb-[15px];
+  /* 생활 리듬 상자 (터미널 출력 모양) */
+  .rhythm {
+    @apply mx-5 mt-1 mb-5 rounded-lg border border-line bg-page px-3.5 py-3 max-[360px]:mx-4;
   }
-  .code-line {
-    @apply flex min-h-[27px] items-baseline px-5 font-mono text-xs leading-[2.2] whitespace-nowrap max-[360px]:px-4 max-[360px]:text-[11px];
+  .rhythm-title {
+    @apply m-0 mb-2 text-xs text-fg-4 [&_b]:mr-1.5 [&_b]:font-mono [&_b]:font-normal;
   }
-  .code-line code {
-    font: inherit;
-    @apply text-fg-2;
+  .rhythm dl {
+    @apply m-0 grid gap-[6px];
+  }
+  .rhythm-row {
+    @apply grid grid-cols-[70px_1fr] items-baseline gap-2;
+  }
+  .rhythm-row dt {
+    @apply font-mono text-xs text-fg-4;
+  }
+  .rhythm-row dd {
+    @apply m-0 text-[13.5px] leading-[1.5] text-fg;
   }
   .profile-body {
     @apply border-t border-line px-5 pt-[18px] pb-4 max-[360px]:px-4;
@@ -457,8 +466,8 @@
   .prev .file-tab {
     @apply h-[38px];
   }
-  .prev .code-block {
-    @apply pt-[6px] pb-[11px];
+  .prev .rhythm {
+    @apply mb-4;
   }
   .ox {
     @apply mt-[26px] mb-[14px] rounded-lg border border-border bg-surface p-[19px];

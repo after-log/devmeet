@@ -25,23 +25,41 @@ export const Avatar = ({
     </span>
   );
 
-/** 코드 카드: 사람의 정보를 key: value 줄로 가볍게 보여 준다. */
-export const CodeLines = ({ lines }: { lines: ReactNode[] }) => (
-  <div className="code-block" aria-hidden="true">
-    {lines.map((line, i) => (
-      <div className="code-line" key={i}>
-        <code>{line}</code>
-      </div>
-    ))}
+export type InfoRow = [key: string, value: string];
+
+/**
+ * 생활 리듬 상자: 터미널 출력처럼 주석 한 줄(// 자기소개) 아래에
+ * 키(모노 글꼴)와 값(본문 글꼴)을 줄 맞춰 보여 준다.
+ */
+export const RhythmBox = ({
+  rows,
+  title = '자기소개',
+  stepIn = false,
+}: {
+  rows: InfoRow[];
+  title?: string;
+  stepIn?: boolean;
+}) => (
+  <div className="rhythm">
+    <p className="rhythm-title">
+      <b>//</b>
+      {title}
+    </p>
+    <dl>
+      {rows.map(([k, v]) => (
+        <div className={`rhythm-row${stepIn ? 'pixel-stepin' : ''}`} key={k}>
+          <dt>{k}</dt>
+          <dd>{v}</dd>
+        </div>
+      ))}
+    </dl>
   </div>
 );
 
-const str = (value: string) => <span className="string">{value}</span>;
-
-export const personLines = (p: Person) => [
-  <>meeting: {str(p.meeting)}</>,
-  <>contact: {str(p.contact)}</>,
-  <>tags: {str(p.tags.slice(0, 3).join(' · '))}</>,
+export const personRows = (p: Person): InfoRow[] => [
+  ['meeting', p.meeting],
+  ['contact', p.contact],
+  ['tags', p.tags.slice(0, 3).join(' · ')],
 ];
 
 const PersonCard = ({
@@ -80,7 +98,7 @@ const PersonCard = ({
       </div>
       <span className="tag">{person.role === 'developer' ? 'dev' : 'open'}</span>
     </div>
-    <CodeLines lines={personLines(person)} />
+    <RhythmBox rows={personRows(person)} />
     <div className="profile-body">
       <p className="section-comment">// about me</p>
       <p className="bio line-clamp-3">{person.intro}</p>

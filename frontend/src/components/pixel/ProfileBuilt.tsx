@@ -1,4 +1,5 @@
 import { ArrowRight } from 'lucide-react';
+import { RhythmBox } from '@/components/PersonCard';
 import { useEffect, useRef, useState } from 'react';
 import type { Profile } from '@/types';
 import { drawMosaic, frame, loadImage, palette, play, prefersReducedMotion } from '@/lib/pixel';
@@ -78,13 +79,6 @@ const ProfileBuilt = ({ profile, onContinue }: { profile: Profile; onContinue: (
     });
   }, [profile.photo]);
 
-  const str = (v: string) => <span className="string">{v}</span>;
-  const code = lines.map(([k, v]) => (
-    <>
-      {k}: {str(v)}
-    </>
-  ));
-
   return (
     <div className="relative">
       <p className="eyebrow">{built ? '// build complete' : '// compiling me.profile.ts'}</p>
@@ -99,13 +93,7 @@ const ProfileBuilt = ({ profile, onContinue }: { profile: Profile; onContinue: (
           me.profile.ts<span className="tab-end">{built ? '✓' : '•'}</span>
         </div>
         <canvas ref={photo} className="built-photo" width={320} height={240} aria-hidden="true" />
-        <div className="code-block" aria-hidden="true">
-          {code.slice(0, shown).map((line, i) => (
-            <div className="code-line pixel-stepin" key={i}>
-              <code>{line}</code>
-            </div>
-          ))}
-        </div>
+        <RhythmBox rows={lines.slice(0, shown)} stepIn />
         <div className="built-status">
           <canvas ref={bar} width={60} height={4} aria-hidden="true" />
           <span className={built ? 'text-point' : ''} role="status">
