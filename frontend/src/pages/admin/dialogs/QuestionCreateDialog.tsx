@@ -28,10 +28,10 @@ export default function QuestionCreateDialog() {
     >
       <form onSubmit={submit}>
         <div className="grid grid-cols-2 gap-4">
-          <label className="block text-[11px] font-medium text-[#737373]">
+          <label className="block text-[13px] font-medium text-neutral-600">
             분류
             <select
-              className="mt-[7px] block min-h-[42px] w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2.5 text-xs font-normal text-[#262626]"
+              className="mt-[7px] block min-h-[42px] w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2.5 text-sm font-normal text-[#262626]"
               value={draft.section}
               onChange={(e) => setDraft({ ...draft, section: e.target.value })}
             >
@@ -40,10 +40,10 @@ export default function QuestionCreateDialog() {
               ))}
             </select>
           </label>
-          <label className="block text-[11px] font-medium text-[#737373]">
+          <label className="block text-[13px] font-medium text-neutral-600">
             용도
             <select
-              className="mt-[7px] block min-h-[42px] w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2.5 text-xs font-normal text-[#262626]"
+              className="mt-[7px] block min-h-[42px] w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2.5 text-sm font-normal text-[#262626]"
               value={draft.purpose}
               onChange={(e) => setDraft({ ...draft, purpose: e.target.value })}
             >
@@ -54,7 +54,7 @@ export default function QuestionCreateDialog() {
         </div>
         <Field label="문항 내용">
           <input
-            className="mt-[7px] block min-h-[42px] w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2.5 text-xs font-normal text-[#262626] placeholder:text-[#a3a3a3]"
+            className="mt-[7px] block min-h-[42px] w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2.5 text-sm font-normal text-[#262626] placeholder:text-neutral-600"
             required
             maxLength={200}
             value={draft.text}
@@ -63,19 +63,19 @@ export default function QuestionCreateDialog() {
           />
         </Field>
         <div className="mt-[22px]">
-          <strong className="text-[11px] font-medium text-[#737373]">
+          <strong className="text-[13px] font-medium text-neutral-600">
             선택지{' '}
-            <span className="ml-1.5 text-[10px] font-normal text-[#a3a3a3]">
+            <span className="ml-1.5 text-[12px] font-normal text-neutral-600">
               서로 다른 선택지 4개를 입력해 주세요.
             </span>
           </strong>
           {draft.options.map((option, i) => (
             <label key={i} className="mt-2.5 flex items-center gap-2.5">
-              <span className="rounded-[5px] bg-[#f5f5f5] p-1.5 font-mono text-[10px] text-[#a3a3a3]">
+              <span className="rounded-[5px] bg-[#f5f5f5] p-1.5 font-mono text-[12px] text-neutral-600">
                 {String(i + 1).padStart(2, '0')}
               </span>
               <input
-                className="min-h-[42px] w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2.5 text-xs text-[#262626] placeholder:text-[#a3a3a3]"
+                className="min-h-[42px] w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2.5 text-sm text-[#262626] placeholder:text-neutral-600"
                 aria-label={`선택지 ${i + 1}`}
                 required
                 maxLength={100}
@@ -91,7 +91,9 @@ export default function QuestionCreateDialog() {
             </label>
           ))}
         </div>
-        <p className="mt-2.5! text-[10px] text-[#a3a3a3]">추가된 문항은 활성 상태로 시작합니다.</p>
+        <p className="mt-2.5! text-[12px] text-neutral-600">
+          추가된 문항은 활성 상태로 시작합니다.
+        </p>
         <ModalActions>
           <AdminButton onClick={closeDialog}>취소</AdminButton>
           <AdminButton type="submit" variant="primary" disabled={!valid}>

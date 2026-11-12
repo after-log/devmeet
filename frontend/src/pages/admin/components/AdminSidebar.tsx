@@ -26,11 +26,11 @@ export default function AdminSidebar() {
         to="/admin"
       >
         devmeet<span className="text-[#262626]">.</span>
-        <small className="mt-[7px] ml-3 rounded bg-[#f5f5f5] px-1.5 py-[3px] font-mono text-[9px] font-semibold tracking-[1.2px] text-[#737373] max-[900px]:ml-[7px] max-[900px]:text-[8px]">
+        <small className="mt-[7px] ml-3 rounded bg-[#f5f5f5] px-1.5 py-[3px] font-mono text-[12px] font-semibold tracking-[1.2px] text-neutral-600 max-[900px]:ml-[7px] max-[900px]:text-[12px]">
           ADMIN
         </small>
       </Link>
-      <nav className="mt-8 grid gap-1.5 max-sm:mt-3 max-sm:flex max-sm:gap-[5px]">
+      <nav className="mt-8 grid gap-1.5 max-sm:mt-3 max-sm:flex max-sm:gap-[5px] max-sm:overflow-x-auto">
         {menu.map(({ path, label, icon: Icon }) => (
           <NavLink
             key={path}
@@ -38,17 +38,17 @@ export default function AdminSidebar() {
             end
             className={({ isActive }) =>
               cn(
-                'flex items-center gap-3 rounded-lg px-[15px] py-3 font-medium max-[900px]:px-[11px] max-[900px]:text-xs max-sm:flex-1 max-sm:justify-center max-sm:gap-[5px] max-sm:px-[5px] max-sm:py-[9px] max-sm:text-[10px] max-sm:whitespace-nowrap',
+                'flex items-center gap-3 rounded-lg px-[15px] py-3 font-medium max-[900px]:px-[11px] max-[900px]:text-sm max-sm:flex-1 max-sm:justify-center max-sm:gap-[5px] max-sm:px-[5px] max-sm:py-[9px] max-sm:text-[12px] max-sm:whitespace-nowrap',
                 isActive
                   ? 'bg-[#f5f5f5] font-semibold text-[#262626]'
-                  : 'text-[#737373] hover:bg-[#fafafa]',
+                  : 'text-neutral-600 hover:bg-[#fafafa]',
               )
             }
           >
             <Icon size={19} className="max-sm:size-3.5" />
             <span>{label}</span>
             {path === '/profiles' && pending > 0 && (
-              <b className="ml-auto min-w-[23px] rounded-[5px] bg-[#e5e5e5] text-center text-[10px] max-sm:ml-0 max-sm:min-w-[15px] max-sm:text-[8px]">
+              <b className="ml-auto min-w-[23px] rounded-[5px] bg-amber-100 text-center text-[12px] text-amber-800 max-sm:ml-0 max-sm:min-w-[15px] max-sm:text-[12px]">
                 {pending}
               </b>
             )}
@@ -57,7 +57,7 @@ export default function AdminSidebar() {
       </nav>
       <div className="mt-auto pt-[30px] max-sm:hidden">
         <Link
-          className="mb-[13px] flex items-center gap-2 px-4 py-[11px] text-[11px] text-[#a3a3a3]"
+          className="mb-[13px] flex items-center gap-2 px-4 py-[11px] text-[13px] text-neutral-600"
           to="/"
         >
           <ArrowDownLeft size={16} /> 서비스 바로가기 <ArrowRight size={15} className="ml-auto" />

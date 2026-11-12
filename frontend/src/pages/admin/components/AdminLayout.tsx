@@ -2,7 +2,7 @@ import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { Check, ChevronRight, LogOut } from 'lucide-react';
 import { useAdminMock } from '../hooks/useAdminMock';
 import AdminSidebar from './AdminSidebar';
-import { AdminAvatar, AdminSurface, Badge, IconButton, OnlineDot } from './AdminUI';
+import { AdminAvatar, AdminSurface, IconButton } from './AdminUI';
 import AdminDialogs from '../dialogs/AdminDialogs';
 
 export default function AdminLayout() {
@@ -21,11 +21,11 @@ export default function AdminLayout() {
       <AdminSidebar />
       <div className="ml-[244px] flex min-h-dvh min-w-0 flex-1 flex-col max-[900px]:ml-[180px] max-xl:ml-[216px] max-sm:ml-0">
         <header className="flex h-[76px] items-center justify-between border-b border-[#e5e5e5] bg-white px-[43px] max-[900px]:h-[65px] max-xl:px-[25px] max-sm:h-[52px] max-sm:px-5">
-          <div className="flex items-center gap-[13px] text-[11px] text-[#a3a3a3] max-sm:gap-[7px] max-sm:text-[10px]">
+          <div className="flex items-center gap-[13px] text-[13px] text-neutral-600 max-sm:gap-[7px] max-sm:text-[12px]">
             워크스페이스 <ChevronRight size={14} />
-            <strong className="font-medium text-[#525252]">{title}</strong>
+            <strong className="font-medium text-neutral-700">{title}</strong>
           </div>
-          <div className="flex items-center gap-[13px] text-[11px] text-[#a3a3a3] max-sm:gap-[7px]">
+          <div className="flex items-center gap-[13px] text-[13px] text-neutral-600 max-sm:gap-[7px]">
             <AdminAvatar />
             <span>관리자</span>
             <IconButton aria-label="로그아웃" onClick={logout}>
@@ -40,10 +40,10 @@ export default function AdminLayout() {
       <AdminDialogs />
       {notice && (
         <div
-          className="fixed bottom-7 left-[calc(50%+100px)] z-90 flex max-w-[calc(100%-30px)] -translate-x-1/2 items-center gap-2.5 rounded-[9px] border border-[#525252] bg-[#262626] px-5 py-[13px] text-xs text-white shadow-lg max-sm:left-1/2 max-sm:w-max max-sm:text-[11px]"
+          className="fixed bottom-7 left-[calc(50%+100px)] z-90 flex max-w-[calc(100%-30px)] -translate-x-1/2 items-center gap-2.5 rounded-[9px] border border-[#525252] bg-[#262626] px-5 py-[13px] text-sm text-white shadow-lg max-sm:left-1/2 max-sm:w-max max-sm:text-[13px]"
           role="status"
         >
-          <Check size={17} className="shrink-0 text-[#d4d4d4]" />
+          <Check size={17} className="shrink-0 text-emerald-300" />
           {notice}
         </div>
       )}

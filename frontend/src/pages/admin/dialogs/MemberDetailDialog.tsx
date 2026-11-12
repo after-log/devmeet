@@ -28,7 +28,7 @@ export default function MemberDetailDialog({ member }: { member: Member }) {
         />
         <div>
           <h3 className="text-lg font-semibold">{member.name}</h3>
-          <p className="mt-[3px]! mb-[7px]! text-[11px] text-[#a3a3a3]">{member.email}</p>
+          <p className="mt-[3px]! mb-[7px]! text-[13px] text-neutral-600">{member.email}</p>
           <Badge status={member.suspended ? 'REJECTED' : 'APPROVED'}>
             {member.suspended ? '이용 제한' : '정상 회원'}
           </Badge>

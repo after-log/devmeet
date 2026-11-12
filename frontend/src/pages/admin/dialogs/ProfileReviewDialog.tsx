@@ -49,7 +49,7 @@ export default function ProfileReviewDialog({ member }: { member: Member }) {
               </button>
             ))}
           </div>
-          <p className="mt-2.5! text-[10px] text-[#a3a3a3]">
+          <p className="mt-2.5! text-[12px] text-neutral-600">
             mock 이미지 3장은 동일 인물의 예시 사진입니다.
           </p>
         </div>
@@ -57,9 +57,9 @@ export default function ProfileReviewDialog({ member }: { member: Member }) {
           <Badge status={member.review} />
           <h3 className="mt-[13px]! mb-1.5! text-[21px] font-semibold max-sm:text-[19px]">
             {member.name}{' '}
-            <small className="text-xs font-normal text-[#a3a3a3]">{member.age}세</small>
+            <small className="text-sm font-normal text-neutral-600">{member.age}세</small>
           </h3>
-          <p className="text-xs text-[#a3a3a3]">
+          <p className="text-sm text-neutral-600">
             {member.role}
             <br />
             {member.region}
@@ -72,7 +72,7 @@ export default function ProfileReviewDialog({ member }: { member: Member }) {
             </ul>
           </Guidance>
           {member.reason && (
-            <p className="mt-2.5! text-[10px] text-[#a3a3a3]">이전 반려 사유: {member.reason}</p>
+            <p className="mt-2.5! text-[12px] text-neutral-600">이전 반려 사유: {member.reason}</p>
           )}
           <Field label="검수 사유" hint="불합격 시 필수">
             <TextArea

@@ -23,7 +23,7 @@ export default function QuestionsTable({
         accessorKey: 'id',
         header: '문항 ID',
         cell: ({ row }) => (
-          <span className="font-mono text-[11px] text-[#a3a3a3]">{row.original.id}</span>
+          <span className="font-mono text-[13px] text-neutral-600">{row.original.id}</span>
         ),
       },
       {
@@ -32,7 +32,7 @@ export default function QuestionsTable({
         enableGlobalFilter: false,
         filterFn: 'equalsString',
         cell: ({ row }) => (
-          <span className="rounded-[5px] bg-[#f5f5f5] px-2 py-[3px] text-[10px] text-[#737373]">
+          <span className="rounded-[5px] bg-[#f5f5f5] px-2 py-[3px] text-[12px] text-neutral-600">
             {row.original.section}
           </span>
         ),
@@ -42,7 +42,7 @@ export default function QuestionsTable({
         header: '문항 / 선택지',
         cell: ({ row: { original: question } }) => (
           <div className="min-w-[264px] whitespace-normal">
-            <strong className="text-xs">{question.text}</strong>
+            <strong className="text-sm">{question.text}</strong>
             <small className="max-w-[540px] leading-[1.8]">{question.options.join(' · ')}</small>
           </div>
         ),
@@ -58,8 +58,8 @@ export default function QuestionsTable({
           <>
             <button
               className={cn(
-                'inline-flex h-[19px] w-8 items-center rounded-full border-0 p-[3px]',
-                question.active ? 'bg-[#404040]' : 'bg-[#d4d4d4]',
+                'inline-flex h-6 w-10 items-center rounded-full border-0 p-[3px]',
+                question.active ? 'bg-emerald-600' : 'bg-neutral-300',
               )}
               role="switch"
               aria-checked={question.active}
@@ -68,12 +68,11 @@ export default function QuestionsTable({
             >
               <span
                 className={cn(
-                  'block size-[13px] rounded-full bg-white shadow-sm transition-transform motion-reduce:transition-none',
-                  question.active && 'translate-x-[13px]',
+                  'block size-[18px] rounded-full bg-white shadow-sm transition-transform motion-reduce:transition-none',
+                  question.active && 'translate-x-4',
                 )}
               />
             </button>
-            <small>{question.active ? '활성' : '비활성'}</small>
           </>
         ),
       },
