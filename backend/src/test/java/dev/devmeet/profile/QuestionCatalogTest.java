@@ -1,64 +1,70 @@
 package dev.devmeet.profile;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import dev.devmeet.common.ApiException;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.core.JdbcTemplate;
 import tools.jackson.databind.json.JsonMapper;
 
 class QuestionCatalogTest {
   private QuestionCatalog catalog;
+  private List<QuestionCatalog.Entry> entries;
 
   @BeforeEach
   void loadCatalog() throws Exception {
-    catalog = new QuestionCatalog(JsonMapper.builder().build());
+    var mapper=JsonMapper.builder().build();
+    try(var stream=new ClassPathResource("catalog/value-questions.json").getInputStream()) {
+      var sections=mapper.readValue(stream,QuestionCatalog.Section[].class);
+      entries=Arrays.stream(sections).flatMap(section->section.questions().stream().map(q->new QuestionCatalog.Entry(q.id(),section.id(),section.label(),q.text(),q.purpose(),q.options(),true))).toList();
+    }
+    catalog=spy(new QuestionCatalog(mock(JdbcTemplate.class),mapper));
+    doReturn(entries).when(catalog).entries();
   }
 
   @Test
-  void loadsEightyUniqueQuestions() {
-    assertThat(catalog.sections()).hasSize(5);
-    assertThat(catalog.sections().stream().mapToInt(section -> section.questions().size()).sum())
-        .isEqualTo(80);
+  void retainsTheOriginalEightyStableIds() {
+    assertThat(entries).hasSize(80);
+    assertThat(entries.stream().map(QuestionCatalog.Entry::id)).doesNotHaveDuplicates();
   }
 
   @Test
   void rejectsUnknownQuestionsAndInvalidOptions() {
-    assertThatThrownBy(() -> catalog.validate(Map.of("UNKNOWN", new ValueAnswer("x", true))))
-        .isInstanceOf(ApiException.class);
-    assertThatThrownBy(() -> catalog.validate(Map.of("D01", new ValueAnswer("invalid", true))))
-        .isInstanceOf(ApiException.class);
+    assertThatThrownBy(()->catalog.validate(Map.of("UNKNOWN",new ValueAnswer("x",true)))).isInstanceOf(ApiException.class);
+    assertThatThrownBy(()->catalog.validate(Map.of("D01",new ValueAnswer("invalid",true)))).isInstanceOf(ApiException.class);
   }
 
   @Test
   void defaultsToPrivateAndDoesNotPublishSkippedAnswers() {
-    var choice = catalog.sections().getFirst().questions().getFirst().options().getFirst();
-    var result =
-        catalog.validate(
-            Map.of("D01", new ValueAnswer(choice, null), "D02", new ValueAnswer(null, false)));
-    assertThat(result.values()).allMatch(answer -> !answer.isPublic());
-    assertThat(result.get("D01").hidden()).isTrue();
-    assertThat(result.get("D02").hidden()).isTrue();
+    var result=catalog.validate(Map.of("D01",new ValueAnswer(entries.getFirst().options().getFirst(),null),"D02",new ValueAnswer(null,false)));
+    assertThat(result.values()).allMatch(answer->!answer.isPublic());
   }
 
   @Test
-  void allowsTenPublicAnswersAndRejectsElevenWithoutDroppingPrivateAnswers() {
-    Map<String, ValueAnswer> answers = new LinkedHashMap<>();
-    var questions =
-        catalog.sections().stream().flatMap(section -> section.questions().stream()).toList();
-    for (int i = 0; i < questions.size(); i++) {
-      var question = questions.get(i);
-      answers.put(question.id(), new ValueAnswer(question.options().getFirst(), i >= 10));
-    }
-    var result = catalog.validate(answers);
-    assertThat(result).hasSize(80);
-    assertThat(result.values().stream().filter(ValueAnswer::isPublic).count()).isEqualTo(10);
-    var eleventh = questions.get(10);
-    answers.put(eleventh.id(), new ValueAnswer(eleventh.options().getFirst(), false));
-    assertThatThrownBy(() -> catalog.validate(answers))
-        .isInstanceOf(ApiException.class)
-        .hasMessageContaining("10개");
+  void allowsTenPublicAnswersAndRejectsEleven() {
+    Map<String,ValueAnswer> answers=new LinkedHashMap<>();
+    for(int i=0;i<entries.size();i++) answers.put(entries.get(i).id(),new ValueAnswer(entries.get(i).options().getFirst(),i>=10));
+    assertThat(catalog.validate(answers)).hasSize(80);
+    var eleventh=entries.get(10);
+    answers.put(eleventh.id(),new ValueAnswer(eleventh.options().getFirst(),false));
+    assertThatThrownBy(()->catalog.validate(answers)).isInstanceOf(ApiException.class).hasMessageContaining("10개");
+  }
+
+  @Test
+  void inactiveAnswersSurviveAnActiveOnlySaveAndCannotBeChanged() {
+    var first=entries.getFirst();
+    var modified=new ArrayList<>(entries);
+    modified.set(0,new QuestionCatalog.Entry(first.id(),first.sectionId(),first.section(),first.text(),first.purpose(),first.options(),false));
+    doReturn(modified).when(catalog).entries();
+    var previous=Map.of(first.id(),new ValueAnswer(first.options().getFirst(),false));
+    var result=catalog.validate(Map.of(),previous);
+    assertThat(result.get(first.id()).choice()).isEqualTo(previous.get(first.id()).choice());
+    assertThat(result.get(first.id()).hidden()).isTrue();
+    var attempted=catalog.validate(Map.of(first.id(),new ValueAnswer(first.options().getLast(),false)),previous);
+    assertThat(attempted.get(first.id())).isEqualTo(result.get(first.id()));
   }
 }

@@ -1,18 +1,20 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useApp } from '../stores/app';
 import { Avatar } from '@/components/PersonCard';
-import valueSections from '@/data/value-questions.json';
+import { useValueCatalog } from '@/hooks/useValueCatalog';
 import { demoProfilePhoto } from '@/data/members';
 import { publicValueAnswers, PUBLIC_VALUE_LIMIT } from '@/lib/value-answers';
 
 const MePage = () => {
   const navigate = useNavigate();
   const { user, demo, demoValueAnswers, resetDraft, openSheet, logout } = useApp();
+  const { sections: valueSections, loading: catalogLoading } = useValueCatalog(demo);
+  const questions = valueSections.flatMap((section) => section.questions);
   const p = user?.profile;
   const name = p?.name ?? '체험 계정';
   const answers = demo ? demoValueAnswers : (p?.valueAnswers ?? {});
-  const answered = Object.values(answers).filter((answer) => answer.choice !== null).length;
-  const publicAnswers = publicValueAnswers(answers);
+  const answered = questions.filter((q) => answers[q.id]?.choice != null).length;
+  const publicAnswers = publicValueAnswers(answers, questions);
   const total = valueSections.reduce((sum, section) => sum + section.questions.length, 0);
   return (
     <>
@@ -62,7 +64,8 @@ const MePage = () => {
             일상부터 연애까지, 나다운 답을 골라보세요.
           </span>
           <span className="mt-3 block font-mono text-[11px] text-blue">
-            {answered} / {total} 답변 · 프로필 공개 {publicAnswers.length} / {PUBLIC_VALUE_LIMIT}
+            {answered} / {catalogLoading && !total ? '…' : total} 답변 · 프로필 공개{' '}
+            {publicAnswers.length} / {PUBLIC_VALUE_LIMIT}
           </span>
         </span>
         <span className="text-xl text-fg-3" aria-hidden="true">

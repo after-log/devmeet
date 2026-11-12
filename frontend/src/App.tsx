@@ -18,7 +18,7 @@ import VerificationPage from './pages/VerificationPage';
 import CompanyVerificationPage from './pages/CompanyVerificationPage';
 import GithubVerificationPage from './pages/GithubVerificationPage';
 import ValuesPage from './pages/ValuesPage';
-import AdminPage from './pages/AdminPage';
+import AdminDashboard from './pages/admin/AdminDashboard';
 import NotFoundPage from './pages/NotFoundPage';
 
 /** 프로필을 만든 회원 또는 둘러보기 중일 때만 들어갈 수 있는 화면 */
@@ -32,6 +32,7 @@ const Member = ({ children }: { children: ReactNode }) => {
 
 const App = () => (
   <Routes>
+    <Route path="admin/*" element={<AdminDashboard />} />
     <Route element={<AppLayout />}>
       <Route index element={<WelcomePage />} />
       <Route path="auth/:mode" element={<AuthPage />} />
@@ -135,7 +136,6 @@ const App = () => (
           </Member>
         }
       />
-      <Route path="admin" element={<AdminPage />} />
       {/* 예전 주소 호환 */}
       <Route path="me/work-email" element={<Navigate to="/me/verification/company" replace />} />
       <Route path="discover" element={<Navigate to="/today" replace />} />

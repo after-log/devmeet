@@ -19,7 +19,7 @@ public class ProfileController {
     this.catalog = catalog;
   }
 
-  public record ValuesRequest(@NotNull @Size(max = 80) Map<String, ValueAnswer> valueAnswers) {}
+  public record ValuesRequest(@NotNull @Size(max = 5000) Map<String, ValueAnswer> valueAnswers) {}
 
   @GetMapping("/value-questions")
   public Object questions() {

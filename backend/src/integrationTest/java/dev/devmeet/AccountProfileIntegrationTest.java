@@ -208,7 +208,7 @@ class AccountProfileIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json.writeValueAsString(Map.of("valueAnswers", answers))))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.profile.valueAnswers.length()").value(80));
+        .andExpect(jsonPath("$.profile.valueAnswers.length()").value(questions.size()));
     mvc.perform(get("/api/people/" + id).session(viewer))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.person.valueAnswers.length()").value(10))
@@ -242,7 +242,7 @@ class AccountProfileIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json.writeValueAsString(savedProfile)))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.profile.valueAnswers.length()").value(80));
+        .andExpect(jsonPath("$.profile.valueAnswers.length()").value(questions.size()));
 
     mvc.perform(
             put("/api/profile/values")

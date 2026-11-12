@@ -6,7 +6,6 @@ spring:
     password: YOUR_DB_PASSWORD
 app:
   public-url: http://localhost:5173
-  admin-emails: "" # Comma-separated email addresses of explicitly designated administrators.
   photo-directory: ./data/photos
   require-github: false
   oauth:
@@ -16,3 +15,6 @@ app:
     kakao:
       client-id: ""
       client-secret: ""
+
+# Run ./gradlew setupLocalAdmin once to create .local/admin.properties (ignored by Git).
+# Production: set ADMIN_USERNAME and ADMIN_PASSWORD_HASH (BCrypt; never use a frontend secret).

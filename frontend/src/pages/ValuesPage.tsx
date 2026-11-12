@@ -1,29 +1,68 @@
 import { useRef, useState, type KeyboardEvent } from 'react';
+import { Link } from 'react-router-dom';
 import { Check, Eye, LockKeyhole } from 'lucide-react';
 import { toast } from 'sonner';
-import sections from '@/data/value-questions.json';
+import { useValueCatalog, type ValueSection } from '@/hooks/useValueCatalog';
 import { useApp } from '@/stores/app';
 import { api } from '@/lib/api';
 import type { ValueAnswer, ValueAnswers } from '@/types';
 import { normalizeValueAnswers, publicValueAnswers, PUBLIC_VALUE_LIMIT } from '@/lib/value-answers';
 
-const total = sections.reduce((sum, section) => sum + section.questions.length, 0);
-const countAnswers = (answers: ValueAnswers) =>
-  Object.values(answers).filter((answer) => answer.choice !== null).length;
-
 const ValuesPage = () => {
+  const demo = useApp((state) => state.demo);
+  const catalog = useValueCatalog(demo);
+  const total = catalog.sections.reduce((sum, section) => sum + section.questions.length, 0);
+  if (catalog.error && !total)
+    return (
+      <div role="alert">
+        <p>{catalog.error}</p>
+        <button className="btn" onClick={() => void catalog.refresh()}>
+          다시 불러오기
+        </button>
+      </div>
+    );
+  if (catalog.loading && !total) return <p role="status">가치관 문항을 불러오는 중…</p>;
+  if (!total)
+    return (
+      <>
+        <p>현재 활성화된 가치관 문항이 없어요.</p>
+        <Link className="back" to="/me">
+          내 프로필로 돌아가기
+        </Link>
+      </>
+    );
+  return (
+    <>
+      {catalog.error && (
+        <div role="alert" className="mb-4 rounded-lg border border-orange p-3 text-xs text-orange">
+          {catalog.error}
+          <button className="ml-2 underline" onClick={() => void catalog.refresh()}>
+            다시 불러오기
+          </button>
+        </div>
+      )}
+      <ValuesEditor sections={catalog.sections} />
+    </>
+  );
+};
+
+const ValuesEditor = ({ sections }: { sections: ValueSection[] }) => {
+  const questions = sections.flatMap((section) => section.questions);
+  const total = questions.length;
   const { user, demo, demoValueAnswers, setDemoValueAnswers, setUser } = useApp();
   const initial = demo ? demoValueAnswers : (user?.profile?.valueAnswers ?? {});
-  const [answers, setAnswers] = useState<ValueAnswers>(() => normalizeValueAnswers(initial));
-  const [saved, setSaved] = useState(initial);
+  const [answers, setAnswers] = useState<ValueAnswers>(() =>
+    normalizeValueAnswers(initial, questions),
+  );
+  const [saved, setSaved] = useState(() => normalizeValueAnswers(initial, questions));
   const [active, setActive] = useState(0);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const panel = useRef<HTMLDivElement>(null);
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
-  const section = sections[active];
-  const answered = countAnswers(answers);
-  const publicCount = publicValueAnswers(answers).length;
+  const section = sections[Math.min(active, sections.length - 1)];
+  const answered = questions.filter((q) => answers[q.id]?.choice != null).length;
+  const publicCount = publicValueAnswers(answers, questions).length;
   const sectionCount = section.questions.filter((q) => answers[q.id]?.choice != null).length;
   const dirty = JSON.stringify(answers) !== JSON.stringify(saved);
 
@@ -63,13 +102,16 @@ const ValuesPage = () => {
     setSaving(true);
     setError('');
     try {
+      let savedAnswers = answers;
       if (demo) setDemoValueAnswers(answers);
       else {
         const { profile } = await api.saveValues(answers);
+        savedAnswers = normalizeValueAnswers(profile.valueAnswers ?? {}, questions);
         const currentUser = useApp.getState().user;
         if (currentUser) setUser({ ...currentUser, profile });
       }
-      setSaved(answers);
+      setAnswers(savedAnswers);
+      setSaved(savedAnswers);
       toast(demo ? '체험용 답변을 저장했어요.' : '가치관을 저장했어요.');
     } catch (err) {
       setError((err as Error).message);
@@ -114,7 +156,7 @@ const ValuesPage = () => {
       >
         <div
           className="h-full rounded-full bg-blue transition-all"
-          style={{ width: `${(answered / total) * 100}%` }}
+          style={{ width: `${(answered / Math.max(total, 1)) * 100}%` }}
         />
       </div>
 

@@ -3,12 +3,15 @@ import { findPerson, reasonFor, useApp } from '../stores/app';
 import { CodeLines, personLines } from '@/components/PersonCard';
 import PhotoGallery from '@/components/PhotoGallery';
 import LikeButton from '@/components/LikeButton';
+import { useValueCatalog } from '@/hooks/useValueCatalog';
 import { publicValueAnswers } from '@/lib/value-answers';
 
 const PersonPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { people, liked, demo, user, connections } = useApp();
+  const { sections } = useValueCatalog(demo);
+  const questions = sections.flatMap((section) => section.questions);
   const p = findPerson(id);
   if (!p) return <Navigate to="/today" replace />;
   const inToday = people.some((x) => x.id === p.id);
@@ -62,7 +65,7 @@ const PersonPage = () => {
             <p>{reasonFor(p)}</p>
           </div>
           <p className="section-comment">// rhythm</p>
-          {publicValueAnswers(p.valueAnswers ?? {}).map((answer) => (
+          {publicValueAnswers(p.valueAnswers ?? {}, questions).map((answer) => (
             <div className="mb-5" key={answer.id}>
               <p className="mb-1 text-xs text-fg-3">{answer.text}</p>
               <p className="m-0 text-sm">{answer.choice}</p>

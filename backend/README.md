@@ -16,7 +16,6 @@ spring:
     password: "DB_PASSWORD"
 app:
   public-url: http://localhost:5173
-  admin-emails: "운영자로 지정할 이메일"
   photo-directory: ./data/photos
   require-github: false
 ```
@@ -56,14 +55,33 @@ FE는 http://localhost:5173, BE는 http://127.0.0.1:8080 입니다.
 추천 배정과 좋아요/메시지는 계정 행 잠금을 사용합니다. 두 계정 잠금 순서를 통일하고
 READ COMMITTED로 잠금 뒤 최신 상태를 읽어 동시 상호 좋아요와 차단을 처리합니다.
 공개 답변 제한은 MySQL INSERT/UPDATE 트리거에서도 검사합니다.
-문항 정의는 `src/main/resources/catalog/value-questions.json`입니다.
+문항은 `value_sections`, `value_questions` 테이블에서 관리합니다.
+V8 마이그레이션이 기존 JSON의 80개 문항과 ID·선택지를 그대로 이전합니다.
+새 문항은 관리자에서 추가하고 활성 상태를 전환합니다. 비활성 문항은 사용자 화면·공개 답변·
+추천 점수에서 제외하며 기존 저장 답변은 유지합니다. 새 추천 배치를 만들 때 활성 매칭 문항을
+다시 읽습니다. 이미 배정된 당일 추천은 유지됩니다.
 
 ## 운영자와 사진 검수
 
-`app.admin-emails`에 운영자 이메일을 쉼표로 지정하거나 `ADMIN_EMAILS`를 설정합니다.
-일반 가입 화면에서 관리자 권한을 선택할 수 없습니다. 지정한 이메일로 가입/로그인한 뒤
-`/admin`에 들어가 사진·신고를 검토합니다. 변경한 권한은 다시 로그인하면 반영됩니다.
-관리자 API는 서버에서 `ROLE_ADMIN`을 검사하고 모든 처리에 감사 로그를 기록합니다.
+관리자 계정은 일반 회원·OAuth 계정과 분리합니다. 로컬에서는 다음을 한 번 실행합니다:
+
+```sh
+./gradlew setupLocalAdmin
+```
+
+`backend/.local/admin.properties`에 관리자 ID와 BCrypt 비밀번호 해시를 생성합니다.
+로그인 정보는 `backend/.local/admin-credentials.txt`에서 확인합니다. 두 파일은 소유자만
+읽을 수 있고 Git·Docker 컨텍스트·배포 JAR에서 제외됩니다. 기존 설정은 덮어쓰지 않습니다.
+백엔드를 재시작한 뒤 `http://localhost:5173/admin`에서 로그인합니다.
+
+운영에서는 `ADMIN_USERNAME`, `ADMIN_PASSWORD_HASH`를 Secret으로 지정합니다.
+`ADMIN_EMAILS`로 일반 회원에게 관리자 권한을 부여하던 방식은 더 이상 사용하지 않습니다.
+관리자 세션·CSRF는 회원 인증과 다른 저장 키를 사용하며, 회원 로그인이 관리자 API 접근을
+허용하지 않습니다. 관리자 로그아웃은 일반 회원의 로그인 상태를 지우지 않습니다.
+변경 API는 서버에서 `ROLE_OPERATOR`를 검사하고 처리 사유를 감사 로그에 기록합니다.
+
+관리자 화면은 실제 회원·신고·사진·문항을 조회하고, 서버 저장 성공 후 다시 조회합니다.
+현재 관리자 테이블은 전체 목록을 불러와 TanStack Table에서 검색·필터·페이지 이동을 처리합니다.
 
 새 사진 등록이나 변경 시 검수 상태는 PENDING입니다. 승인 전에 추천되지 않습니다.
 관리자 자신이 프로필 작성을 마치지 않아도 `/admin`에 들어갈 수 있습니다.
@@ -168,6 +186,12 @@ app:
 | POST        | /api/auth/{provider}/link                            | 현재 로그인 계정에 소셜 계정 연결 시작                     |
 | POST        | /api/auth/password/request, /api/auth/password/reset | 재설정 요청·변경                                           |
 | POST        | /api/auth/email/request, /api/auth/email/verify      | 이메일 확인 요청·완료                                      |
+| GET         | /api/admin/auth/csrf, /api/admin/auth/me              | 관리자 CSRF·세션 확인                                     |
+| POST        | /api/admin/auth/login, /api/admin/auth/logout        | 별도 관리자 로그인·로그아웃                               |
+| GET         | /api/admin/accounts, /api/admin/reports               | 가입 회원·신고 전체 목록                                  |
+| GET, POST   | /api/admin/questions                                 | 전체 문항 조회·신규 추가                                  |
+| PUT         | /api/admin/questions/{id}                            | 문항 활성·비활성                                          |
+| GET         | /api/admin/photo-files/{id}                          | 관리자용 사진 조회                                        |
 | GET         | /api/admin?page=0                                    | 회원 풀·통계·검수/신고 대기 50개씩                         |
 | PUT         | /api/admin/photos/{id}                               | 사진 APPROVED/REJECTED 처리                                |
 | PUT         | /api/admin/reports/{id}                              | 신고 VALID/DISMISSED 처리                                  |

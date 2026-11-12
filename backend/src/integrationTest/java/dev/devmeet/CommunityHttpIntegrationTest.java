@@ -22,15 +22,20 @@ import tools.jackson.databind.json.JsonMapper;
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
     properties = {
-      "app.admin-emails=integration-admin@example.test",
+      "app.admin.username=integration-operator",
       "app.photo-directory=./build/integration-photos"
     })
 @ActiveProfiles("integration")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class CommunityHttpIntegrationTest {
+  @org.springframework.test.context.DynamicPropertySource
+  static void adminCredentials(org.springframework.test.context.DynamicPropertyRegistry registry) {
+    registry.add("app.admin.password-hash",()->new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder(4).encode("test-only-password"));
+  }
   @LocalServerPort int port;
   @Autowired JsonMapper json;
   @Autowired JdbcTemplate jdbc;
+  @Autowired dev.devmeet.profile.QuestionCatalog catalog;
   Actor admin;
 
   class Actor {
@@ -49,7 +54,7 @@ class CommunityHttpIntegrationTest {
         var csrf =
             read(
                 client.send(
-                    HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port + "/api/csrf"))
+                    HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port + (path.startsWith("/admin") ? "/api/admin/auth/csrf" : "/api/csrf")))
                         .GET()
                         .build(),
                     HttpResponse.BodyHandlers.ofString()));
@@ -156,7 +161,26 @@ class CommunityHttpIntegrationTest {
 
   @BeforeAll
   void administrator() throws Exception {
-    admin = register("integration-admin@example.test");
+    admin = new Actor();
+    admin.ok("POST", "/admin/auth/login", Map.of("id", "integration-operator", "password", "test-only-password"));
+  }
+
+  @Test
+  void administratorCatalogChangesReachMembersAndPreserveInactiveAnswers() throws Exception {
+    String id=admin.ok("POST","/admin/questions",Map.of("section","일상","text","통합 테스트 문항","purpose","매칭","options",List.of("하나","둘","셋","넷"))).get("id").asText();
+    try {
+      assertThat(catalog.matchingIds()).contains(id);
+      Actor actor=member("가치관 "+UUID.randomUUID(),"non-developer");
+      actor.ok("PUT","/profile/values",Map.of("valueAnswers",Map.of(id,Map.of("choice","하나","private",false))));
+      assertThat(admin.ok("GET","/admin/accounts",null).toString()).contains(actor.id);
+      admin.ok("PUT","/admin/questions/"+id,Map.of("active",false));
+      assertThat(catalog.matchingIds()).doesNotContain(id);
+      assertThat(actor.ok("GET","/value-questions",null).get("sections").toString()).doesNotContain(id);
+      var saved=actor.ok("PUT","/profile/values",Map.of("valueAnswers",Map.of())).get("profile").get("valueAnswers").get(id);
+      assertThat(saved.get("choice").asText()).isEqualTo("하나");
+      assertThat(saved.get("private").asBoolean()).isTrue();
+      assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM admin_audit WHERE action='QUESTION_CREATE' AND note LIKE ?",Integer.class,id+":%" )).isEqualTo(1);
+    } finally { admin.ok("PUT","/admin/questions/"+id,Map.of("active",false)); }
   }
 
   @Test
@@ -184,7 +208,7 @@ class CommunityHttpIntegrationTest {
         "PUT",
         "/admin/reports/" + report.get("id").asText(),
         Map.of("status", "VALID", "note", "확인"));
-    assertThat(a.call("GET", "/admin", null).statusCode()).isEqualTo(403);
+    assertThat(a.call("GET", "/admin", null).statusCode()).isEqualTo(401);
     String photo = a.ok("GET", "/people/" + b.id, null).get("person").get("photo").asText();
     a.ok("POST", "/block", Map.of("id", b.id));
     assertThat(a.ok("GET", "/connections", null).get("matches").size()).isZero();

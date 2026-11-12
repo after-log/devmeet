@@ -141,3 +141,14 @@ npm run preview # http://localhost:4173
 아이콘은 기존 픽셀 스타일에 맞춘 하트입니다.
 `python3 scripts/generate-icons.py`로 PNG와 favicon을 다시 생성할 수 있습니다.
 설치 창과 실제 홈 화면 실행은 Android Chrome 및 iOS Safari 기기에서 최종 확인하세요.
+
+## 관리자 화면
+
+`/admin`에서 별도의 관리자 ID·비밀번호로 로그인합니다. 일반 회원 로그인이나 브라우저 저장값으로
+관리자 권한을 부여하지 않습니다. 백엔드에서 `./gradlew setupLocalAdmin`을 한 번 실행한 뒤
+`backend/.local/admin-credentials.txt`의 로그인 정보를 사용합니다.
+
+프로필 검수·가입 회원·신고·가치관 문항은 `/api/admin/*`의 실제 데이터를 조회하고 저장합니다.
+문항 추가·활성 전환은 사용자 가치관 화면과 새 추천 계산에도 반영됩니다.
+관리자 전용 세션 및 CSRF를 사용하며, 새로고침하면 서버에서 로그인 상태를 확인합니다.
+관리자 테이블은 TanStack React Table, 스타일은 컴포넌트의 Tailwind 클래스를 사용합니다.
