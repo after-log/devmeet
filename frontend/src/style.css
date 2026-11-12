@@ -557,7 +557,7 @@
     @apply grid min-h-[19px] min-w-[19px] place-items-center rounded-[5px] bg-point px-1 font-mono text-[10px] text-on-accent;
   }
   .chat-detail-layout {
-    @apply flex h-dvh min-h-0 flex-col overflow-hidden min-[650px]:h-[calc(100dvh-70px)] min-[650px]:min-h-0;
+    @apply flex h-dvh min-h-0 flex-col overflow-hidden min-[650px]:h-[calc(100dvh-35px)] min-[650px]:min-h-0;
   }
   .chat-detail-layout > header {
     @apply shrink-0;
