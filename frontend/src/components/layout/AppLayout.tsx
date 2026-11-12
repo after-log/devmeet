@@ -77,9 +77,9 @@ const AppLayout = () => {
   }, [pathname, step, openSheet, refresh]);
   return (
     <>
-      <div className="mx-auto max-w-[480px] min-[650px]:py-[35px]">
+      <div className="mx-auto max-w-[480px] min-[650px]:pt-[35px]">
         <div
-          className={`min-h-dvh border-x border-line bg-canvas max-[480px]:border-0 min-[650px]:min-h-[calc(100dvh-70px)] min-[650px]:rounded-xl min-[650px]:border min-[650px]:border-line ${isValuesPage ? 'min-[650px]:overflow-clip' : 'min-[650px]:overflow-hidden'} ${isChatDetail ? 'chat-detail-layout' : 'pb-[94px]'}`}
+          className={`min-h-dvh border-x border-line bg-canvas max-[480px]:border-0 min-[650px]:min-h-[calc(100dvh-35px)] min-[650px]:rounded-t-xl min-[650px]:border min-[650px]:border-b-0 min-[650px]:border-line ${isValuesPage ? 'min-[650px]:overflow-clip' : 'min-[650px]:overflow-hidden'} ${isChatDetail ? 'chat-detail-layout' : 'pb-[94px]'}`}
         >
           <AppHeader theme={theme} onToggleTheme={toggleTheme} />
           {(pathname === '/' || TABS.includes(pathname)) && (
