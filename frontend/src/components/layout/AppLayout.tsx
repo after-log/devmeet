@@ -119,7 +119,6 @@ const AppLayout = () => {
             ) : (
               <p className="prompt flex items-center" role="status">
                 loading
-                <i className="cursor" />
                 <span className="pixel-dots" aria-hidden="true">
                   <i />
                   <i />

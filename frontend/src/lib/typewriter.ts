@@ -124,6 +124,8 @@ export async function typeIn(root: Element, signal: AbortSignal, seen = played) 
     });
   jobs.forEach((j) => j.nodes.forEach((n) => write(n, '')));
   const caret = caretEl();
+  // 타이핑하는 동안 화면에 고정된 깜빡이 커서(.focus-caret)는 숨긴다
+  root.setAttribute('data-typing', '');
   try {
     for (const job of jobs) {
       const total = job.original.join('').length;
@@ -150,6 +152,7 @@ export async function typeIn(root: Element, signal: AbortSignal, seen = played) 
     await sleep(160, signal);
   } finally {
     caret.remove();
+    root.removeAttribute('data-typing');
     restore();
   }
 }

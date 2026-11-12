@@ -30,7 +30,6 @@
   /* 제목류는 픽셀 글꼴을 유지한다 */
   --font-display: 'Galmuri9', 'Noto Sans KR', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
-  --animate-cursor: blink 1.1s steps(1, end) infinite;
 
   @keyframes pixel-load {
     0%,
@@ -436,8 +435,12 @@
   .prompt {
     @apply mt-1 mb-6 font-mono text-[13px] leading-[normal] text-fg-4 [&_span]:mr-[9px] [&_span]:text-point;
   }
-  .cursor {
-    @apply ml-[7px] inline-block h-[14px] w-[7px] animate-cursor bg-point align-[-2px] motion-reduce:animate-none;
+  /* 화면에서 가장 중요한 한 곳(오늘의 추천 제목)에만 두는 얇은 깜빡이 커서. 타이핑 중에는 숨긴다 */
+  .focus-caret {
+    @apply ml-[3px] inline-block h-[0.9em] w-[2px] animate-[blink_1s_steps(1,end)_infinite] bg-point align-[-0.08em] motion-reduce:animate-none;
+  }
+  [data-typing] .focus-caret {
+    @apply invisible;
   }
   .checks {
     @apply mt-8 mb-0 list-none border-t border-line p-0;

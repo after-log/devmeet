@@ -18,6 +18,7 @@ const TodayPage = () => {
       <div className="topline">
         <h2>
           오늘의 추천<span className="syntax">.</span>
+          <i className="focus-caret" aria-hidden="true" />
         </h2>
         {p && (
           <span className="count">
