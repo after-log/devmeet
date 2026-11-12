@@ -23,7 +23,7 @@
   --color-mine-fg: #c4ffb8;
   --color-tag-sub: #5a3330;
   --color-tag-point: #2f6b25;
-  --color-tag-blue: #3f4d6b;
+  --color-tag-blue: #2f6b25;
   --color-backdrop: #0d0f14bb;
   --font-sans:
     'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Noto Sans KR', sans-serif;
@@ -92,7 +92,7 @@
     --color-mine-fg: #145c08;
     --color-tag-sub: #f2c0bb;
     --color-tag-point: #a6eb94;
-    --color-tag-blue: #bcd0f7;
+    --color-tag-blue: #a6eb94;
     --color-backdrop: #1e1f2266;
   }
   body {
