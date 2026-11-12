@@ -26,8 +26,8 @@ const LikeListItem = ({ entry, profile, matched, onOpen }: LikeListItemProps) =>
         {profile.job} · {profile.location}
       </span>
       <span className="mt-3 flex items-center gap-1.5 text-[11px]">
-        <Heart size={12} className={matched ? 'text-green' : 'text-sub'} />
-        <span className={matched ? 'text-green' : 'text-fg-4'}>
+        <Heart size={12} className={matched ? 'text-point' : 'text-sub'} />
+        <span className={matched ? 'text-point' : 'text-fg-4'}>
           {matched
             ? '서로 마음이 통했어요'
             : entry.direction === 'received'

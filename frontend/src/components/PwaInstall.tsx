@@ -64,7 +64,7 @@ export const PwaInstallButton = ({ state }: { state: InstallState }) => {
             </p>
           )}
           {error && (
-            <p role="alert" className="text-xs text-orange">
+            <p role="alert" className="text-xs text-sub">
               {error}
             </p>
           )}

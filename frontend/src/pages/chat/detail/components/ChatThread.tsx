@@ -104,7 +104,7 @@ const ChatThread = ({
           </button>
         )}
         <p className="tip my-5">
-          <span className="text-green">{'{ connected }'}</span>
+          <span className="text-point">{'{ connected }'}</span>
           <br />
           서로의 마음이 연결되었어요.
         </p>
@@ -118,7 +118,7 @@ const ChatThread = ({
               {room.interests.map((interest) => (
                 <span
                   key={interest}
-                  className="rounded border border-tag-green px-2 py-1 text-[11px] text-green"
+                  className="rounded border border-tag-point px-2 py-1 text-[11px] text-point"
                 >
                   {interest}
                 </span>
@@ -148,7 +148,7 @@ const ChatThread = ({
         )}
         {!loading && !error && room.messages.length === 0 && (
           <div className="py-7 text-center">
-            <p className="font-mono text-lg text-green">hello, {profile.id}_</p>
+            <p className="font-mono text-lg text-point">hello, {profile.id}_</p>
             <p className="text-xs leading-7 text-fg-4">
               거창한 인사가 아니어도 괜찮아요.
               <br />

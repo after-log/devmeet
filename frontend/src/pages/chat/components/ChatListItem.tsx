@@ -37,7 +37,7 @@ const ChatListItem = ({ room, profile, onOpen }: ChatListItemProps) => {
             {room.unread}
           </span>
         ) : !last ? (
-          <span className="font-mono text-[10px] text-green">NEW</span>
+          <span className="font-mono text-[10px] text-point">NEW</span>
         ) : (
           <span className="h-[19px]" />
         )}
