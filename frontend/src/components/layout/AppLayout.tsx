@@ -1,5 +1,6 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useRouteTyping } from '@/lib/typewriter';
 import { useApp } from '../../stores/app';
 import AppHeader from '@/components/layout/AppHeader';
 import BottomNav from '@/components/layout/BottomNav';
@@ -18,6 +19,13 @@ const AppLayout = () => {
   const installState = usePwaInstall();
   const { booted, boot, demo, user, error, exitDemo, step, openSheet, refresh } = useApp();
   const { pathname } = useLocation();
+  // 라벨 → 제목 → 본문 타이핑. 상세 화면은 사람과 상관없이 한 화면으로 보고, 온보딩은 단계마다 따로 센다
+  const mainRef = useRef<HTMLElement>(null);
+  const getMain = useCallback(() => mainRef.current, []);
+  const typingKey =
+    pathname.replace(/^\/(chat|people|match|likes)\/[^/]+/, '/$1/:id') +
+    (pathname === '/onboarding' ? `#${step}` : '');
+  useRouteTyping(typingKey, booted, getMain);
   const isChatDetail = /^\/chat\/[^/]+\/?$/.test(pathname);
   const isValuesPage = pathname === '/me/values';
   const [theme, setTheme] = useState(getTheme);
@@ -91,6 +99,7 @@ const AppLayout = () => {
             </div>
           )}
           <main
+            ref={mainRef}
             className={
               isChatDetail
                 ? 'chat-detail-main'

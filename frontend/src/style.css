@@ -698,4 +698,8 @@
   .built-burst {
     @apply pointer-events-none absolute top-[92px] right-0 h-[180px] w-[180px] [image-rendering:pixelated];
   }
+  /* 콘텐츠 타이핑 커서: 두꺼운 파란 블록. body에 떠 있어 React 트리를 건드리지 않는다 */
+  .type-caret {
+    @apply pointer-events-none fixed z-40 block bg-blue;
+  }
 }
