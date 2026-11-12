@@ -17,17 +17,17 @@ export default function AdminLayout() {
     )[pathname.split('/')[2]] ?? '대시보드';
   if (!authenticated) return <Navigate to="/admin/login" replace />;
   return (
-    <AdminSurface className="flex min-h-dvh bg-[#f7f8fb] max-sm:block">
+    <AdminSurface className="flex min-h-dvh bg-[#fafafa] max-sm:block">
       <AdminSidebar />
       <div className="ml-[244px] flex min-h-dvh min-w-0 flex-1 flex-col max-[900px]:ml-[180px] max-xl:ml-[216px] max-sm:ml-0">
-        <header className="flex h-[76px] items-center justify-between border-b border-[#e8eaf0] bg-white px-[43px] max-[900px]:h-[65px] max-xl:px-[25px] max-sm:h-[52px] max-sm:px-5">
-          <div className="flex items-center gap-[13px] text-[11px] text-[#9298a6] max-sm:gap-[7px] max-sm:text-[10px]">
+        <header className="flex h-[76px] items-center justify-between border-b border-[#e5e5e5] bg-white px-[43px] max-[900px]:h-[65px] max-xl:px-[25px] max-sm:h-[52px] max-sm:px-5">
+          <div className="flex items-center gap-[13px] text-[11px] text-[#a3a3a3] max-sm:gap-[7px] max-sm:text-[10px]">
             워크스페이스 <ChevronRight size={14} />
-            <strong className="font-medium text-[#535968]">{title}</strong>
+            <strong className="font-medium text-[#525252]">{title}</strong>
           </div>
-          <div className="flex items-center gap-[13px] text-[11px] text-[#9298a6] max-sm:gap-[7px]">
+          <div className="flex items-center gap-[13px] text-[11px] text-[#a3a3a3] max-sm:gap-[7px]">
             <Badge status="MOCK">MOCK PREVIEW</Badge>
-            <span className="mx-[5px] h-[19px] w-px bg-[#e9eaf0]" />
+            <span className="mx-[5px] h-[19px] w-px bg-[#e5e5e5]" />
             <AdminAvatar />
             <span>관리자</span>
             <IconButton aria-label="로그아웃" onClick={logout}>
@@ -38,7 +38,7 @@ export default function AdminLayout() {
         <main className="mx-auto w-full max-w-[1550px] flex-1 px-[43px] pt-[39px] pb-[30px] max-xl:px-[25px] max-xl:pt-[30px] max-sm:px-[18px] max-sm:py-[25px]">
           <Outlet />
         </main>
-        <footer className="flex justify-between border-t border-[#eaecf2] px-[43px] py-[18px] text-[10px] text-[#a6aab6] max-sm:px-5">
+        <footer className="flex justify-between border-t border-[#e5e5e5] px-[43px] py-[18px] text-[10px] text-[#a3a3a3] max-sm:px-5">
           <span>© 2026 devmeet</span>
           <span className="flex items-center gap-[9px]">
             Admin workspace <OnlineDot />
@@ -48,10 +48,10 @@ export default function AdminLayout() {
       <AdminDialogs />
       {notice && (
         <div
-          className="fixed bottom-7 left-[calc(50%+100px)] z-90 flex max-w-[calc(100%-30px)] -translate-x-1/2 items-center gap-2.5 rounded-[9px] border border-[#67537f] bg-[#342d44] px-5 py-[13px] text-xs text-white shadow-lg max-sm:left-1/2 max-sm:w-max max-sm:text-[11px]"
+          className="fixed bottom-7 left-[calc(50%+100px)] z-90 flex max-w-[calc(100%-30px)] -translate-x-1/2 items-center gap-2.5 rounded-[9px] border border-[#525252] bg-[#262626] px-5 py-[13px] text-xs text-white shadow-lg max-sm:left-1/2 max-sm:w-max max-sm:text-[11px]"
           role="status"
         >
-          <Check size={17} className="shrink-0 text-[#b8d5a7]" />
+          <Check size={17} className="shrink-0 text-[#d4d4d4]" />
           {notice}
         </div>
       )}

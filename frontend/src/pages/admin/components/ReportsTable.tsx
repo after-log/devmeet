@@ -1,49 +1,68 @@
+import { useMemo } from 'react';
+import type { ColumnDef } from '@tanstack/react-table';
 import type { Report } from '../mock';
-import { AdminButton, AdminTable, Badge } from './AdminUI';
+import { AdminButton, Badge } from './AdminUI';
+import AdminDataTable from './AdminDataTable';
 
 export default function ReportsTable({
   reports,
   onDetail,
+  search,
+  status,
 }: {
   reports: Report[];
   onDetail: (report: Report) => void;
+  search: string;
+  status: string;
 }) {
+  const columns = useMemo<ColumnDef<Report>[]>(
+    () => [
+      {
+        accessorKey: 'id',
+        header: '신고 번호 / 접수일',
+        cell: ({ row: { original: report } }) => (
+          <>
+            <strong>{report.id}</strong>
+            <small>{report.date}</small>
+          </>
+        ),
+      },
+      { accessorKey: 'sender', header: '신고자' },
+      { accessorKey: 'target', header: '대상 회원' },
+      { accessorKey: 'reason', header: '신고 사유' },
+      {
+        accessorKey: 'status',
+        header: '처리 상태',
+        enableGlobalFilter: false,
+        filterFn: 'equalsString',
+        cell: ({ row }) => <Badge status={row.original.status} />,
+      },
+      {
+        id: 'actions',
+        header: '관리',
+        cell: ({ row }) => (
+          <AdminButton
+            className="min-h-0 rounded-[5px] border-[#e5e5e5] px-[9px] py-[5px] text-[10px] text-[#737373]"
+            onClick={() => onDetail(row.original)}
+          >
+            신고 확인
+          </AdminButton>
+        ),
+      },
+    ],
+    [onDetail],
+  );
+  const columnFilters = useMemo(
+    () => (status === 'ALL' ? [] : [{ id: 'status', value: status }]),
+    [status],
+  );
   return (
-    <AdminTable>
-      <thead>
-        <tr>
-          <th>신고 번호 / 접수일</th>
-          <th>신고자</th>
-          <th>대상 회원</th>
-          <th>신고 사유</th>
-          <th>처리 상태</th>
-          <th>관리</th>
-        </tr>
-      </thead>
-      <tbody>
-        {reports.map((report) => (
-          <tr key={report.id}>
-            <td>
-              <strong>{report.id}</strong>
-              <small>{report.date}</small>
-            </td>
-            <td>{report.sender}</td>
-            <td>{report.target}</td>
-            <td>{report.reason}</td>
-            <td>
-              <Badge status={report.status} />
-            </td>
-            <td>
-              <AdminButton
-                className="min-h-0 rounded-[5px] border-[#e8e9ef] px-[9px] py-[5px] text-[10px] text-[#8a839a]"
-                onClick={() => onDetail(report)}
-              >
-                신고 확인
-              </AdminButton>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </AdminTable>
+    <AdminDataTable
+      data={reports}
+      columns={columns}
+      search={search}
+      columnFilters={columnFilters}
+      caption="회원 신고 목록"
+    />
   );
 }

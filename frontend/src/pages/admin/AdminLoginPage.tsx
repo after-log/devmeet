@@ -17,49 +17,49 @@ export default function AdminLoginPage() {
   };
   return (
     <AdminSurface className="grid min-h-dvh grid-cols-2 bg-white max-sm:block">
-      <div className="flex min-h-dvh flex-col justify-between bg-[#f0ebf7] px-[65px] py-[50px] max-[900px]:p-10 max-sm:min-h-0 max-sm:px-7 max-sm:py-[25px]">
-        <Link to="/" className="font-mono text-[33px] font-bold tracking-[-2px] text-[#293040]">
-          devmeet<span className="text-[#7f65d4]">.</span>
+      <div className="flex min-h-dvh flex-col justify-between bg-[#e5e5e5] px-[65px] py-[50px] max-[900px]:p-10 max-sm:min-h-0 max-sm:px-7 max-sm:py-[25px]">
+        <Link to="/" className="font-mono text-[33px] font-bold tracking-[-2px] text-[#262626]">
+          devmeet<span className="text-[#262626]">.</span>
         </Link>
         <div className="max-sm:hidden">
-          <span className="text-[9px] font-semibold tracking-[1.7px] text-[#9a90ae]">
+          <span className="text-[9px] font-semibold tracking-[1.7px] text-[#a3a3a3]">
             DEVMEET ADMINISTRATION
           </span>
-          <h1 className="mt-[21px]! text-[38px] leading-normal font-semibold tracking-[-1.7px] text-[#5b496f] max-[900px]:text-[30px]">
+          <h1 className="mt-[21px]! text-[38px] leading-normal font-semibold tracking-[-1.7px] text-[#525252] max-[900px]:text-[30px]">
             좋은 만남의 시작을,
             <br />
             함께 관리해요.
           </h1>
-          <p className="mt-[17px]! text-[13px] leading-[1.9] text-[#a28faf]">
+          <p className="mt-[17px]! text-[13px] leading-[1.9] text-[#a3a3a3]">
             안전한 프로필과 신뢰할 수 있는 커뮤니티.
             <br />
             devmeet 운영을 위한 관리자 워크스페이스.
           </p>
-          <div className="mt-[60px] flex items-center gap-[23px] text-[#ac94c9]">
+          <div className="mt-[60px] flex items-center gap-[23px] text-[#a3a3a3]">
             <ShieldCheck size={68} strokeWidth={1} />
-            <span className="font-mono text-xs leading-[1.9] text-[#ac9abb]">
+            <span className="font-mono text-xs leading-[1.9] text-[#a3a3a3]">
               Thoughtful connections,
               <br />
               thoughtfully managed.
             </span>
           </div>
         </div>
-        <small className="text-[10px] text-[#b4a7c0] max-sm:hidden">
+        <small className="text-[10px] text-[#a3a3a3] max-sm:hidden">
           © 2026 devmeet. All rights reserved.
         </small>
       </div>
       <main className="grid place-items-center p-[45px] max-sm:px-7 max-sm:py-[35px]">
         <form onSubmit={submit} className="w-full max-w-[350px] max-sm:max-w-[400px]">
-          <div className="mb-[23px] grid size-12 place-items-center rounded-xl bg-[#f1ecf9] text-[#9674c9]">
+          <div className="mb-[23px] grid size-12 place-items-center rounded-xl bg-[#f5f5f5] text-[#737373]">
             <LockKeyhole size={23} />
           </div>
           <h2 className="mb-2! text-[25px] font-semibold max-sm:text-[23px]">관리자 로그인</h2>
-          <p className="mb-[29px]! text-xs text-[#9d96a7]">
+          <p className="mb-[29px]! text-xs text-[#a3a3a3]">
             관리자 계정으로 워크스페이스에 접속하세요.
           </p>
           <Field label="아이디">
             <input
-              className="mt-[7px] block min-h-[42px] w-full rounded-lg border border-[#dfe3eb] bg-white px-3 py-2.5 text-xs font-normal text-[#293040] placeholder:text-[#9a9faf]"
+              className="mt-[7px] block min-h-[42px] w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2.5 text-xs font-normal text-[#262626] placeholder:text-[#a3a3a3]"
               autoComplete="username"
               placeholder="관리자 아이디"
               value={credentials.id}
@@ -70,7 +70,7 @@ export default function AdminLoginPage() {
           <Field label="비밀번호">
             <div className="relative mt-[7px]">
               <input
-                className="min-h-[42px] w-full rounded-lg border border-[#dfe3eb] bg-white py-2.5 pr-[42px] pl-3 text-xs font-normal text-[#293040] placeholder:text-[#9a9faf]"
+                className="min-h-[42px] w-full rounded-lg border border-[#e5e5e5] bg-white py-2.5 pr-[42px] pl-3 text-xs font-normal text-[#262626] placeholder:text-[#a3a3a3]"
                 type={showPassword ? 'text' : 'password'}
                 autoComplete="current-password"
                 placeholder="비밀번호 입력"
@@ -88,7 +88,7 @@ export default function AdminLoginPage() {
             </div>
           </Field>
           {error && (
-            <p className="mt-3! text-[11px] text-[#c56c6b]" role="alert">
+            <p className="mt-3! text-[11px] text-[#737373]" role="alert">
               {error}
             </p>
           )}
@@ -99,16 +99,16 @@ export default function AdminLoginPage() {
           >
             로그인 <ArrowRight size={17} />
           </AdminButton>
-          <div className="mt-5 rounded-lg border border-[#eee8f5] bg-[#faf8fc] p-3.5">
+          <div className="mt-5 rounded-lg border border-[#e5e5e5] bg-[#fafafa] p-3.5">
             <Badge status="MOCK">UI PREVIEW</Badge>
-            <p className="mt-2! text-[10px] leading-[1.9] text-[#a49aad]">
-              체험 계정 <b className="font-medium text-[#887397]">admin</b> /{' '}
-              <b className="font-medium text-[#887397]">devmeet123!</b>
+            <p className="mt-2! text-[10px] leading-[1.9] text-[#a3a3a3]">
+              체험 계정 <b className="font-medium text-[#737373]">admin</b> /{' '}
+              <b className="font-medium text-[#737373]">devmeet123!</b>
               <br />
               화면 확인용 로그인입니다. 실제 접근 제어는 백엔드 연동 시 적용됩니다.
             </p>
           </div>
-          <Link className="mt-[26px] block text-center text-[11px] text-[#aaa0b4]" to="/">
+          <Link className="mt-[26px] block text-center text-[11px] text-[#a3a3a3]" to="/">
             ← 서비스로 돌아가기
           </Link>
         </form>

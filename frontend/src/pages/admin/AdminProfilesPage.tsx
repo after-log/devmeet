@@ -1,6 +1,14 @@
 import { useAdminMock } from './hooks/useAdminMock';
 import { useTableFilters } from './hooks/useTableFilters';
-import { EmptyState, PageHeading, Pager, reviewLabels, Tabs, Toolbar } from './components/AdminUI';
+import {
+  EmptyState,
+  PageHeading,
+  Pager,
+  ResultCount,
+  reviewLabels,
+  Tabs,
+  Toolbar,
+} from './components/AdminUI';
 import ProfileCard from './components/ProfileCard';
 
 export default function AdminProfilesPage() {
@@ -28,19 +36,9 @@ export default function AdminProfilesPage() {
         value={filter}
         onChange={setFilter}
       />
-      <Toolbar
-        search={search}
-        onSearch={setSearch}
-        filter={filter}
-        onFilter={setFilter}
-        placeholder="이름, 이메일 또는 회원 ID 검색"
-        options={[
-          ['ALL', '전체 상태'],
-          ['PENDING', '검수 대기'],
-          ['APPROVED', '합격'],
-          ['REJECTED', '불합격'],
-        ]}
-      />
+      <Toolbar search={search} onSearch={setSearch} placeholder="이름, 이메일 또는 회원 ID 검색">
+        <ResultCount total={filtered.length} allTotal={members.length} />
+      </Toolbar>
       <div className="grid grid-cols-4 gap-[19px] max-[900px]:grid-cols-2 max-xl:grid-cols-3 max-sm:gap-[11px]">
         {filtered.slice(page * 8, page * 8 + 8).map((member) => (
           <ProfileCard key={member.id} member={member} onReview={openReview} />

@@ -1,65 +1,55 @@
+import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAdminMock } from './hooks/useAdminMock';
-import { useTableFilters } from './hooks/useTableFilters';
-import { EmptyState, PageHeading, Pager, Panel, Tabs, Toolbar } from './components/AdminUI';
+import { PageHeading, Panel, StatusTabs, Tabs, Toolbar } from './components/AdminUI';
 import MembersTable from './components/MembersTable';
 import ReportsTable from './components/ReportsTable';
 
 function MemberRecords({ isReports }: { isReports: boolean }) {
   const { members, reports, openMember, openReport } = useAdminMock();
-  const { search, filter, page, setSearch, setFilter, setPage } = useTableFilters();
-  const filteredMembers = members.filter(
-    (m) =>
-      `${m.name} ${m.email} ${m.id}`.toLowerCase().includes(search.toLowerCase()) &&
-      (filter === 'ALL' || (filter === 'SUSPENDED' ? m.suspended : !m.suspended)),
-  );
-  const filteredReports = reports.filter(
-    (r) =>
-      `${r.sender} ${r.target} ${r.reason} ${r.id}`.toLowerCase().includes(search.toLowerCase()) &&
-      (filter === 'ALL' || r.status === filter),
-  );
-  const total = isReports ? filteredReports.length : filteredMembers.length;
+  const [search, setSearch] = useState('');
+  const [status, setStatus] = useState('ALL');
+  const options = isReports
+    ? [
+        { value: 'ALL', label: '전체', count: reports.length },
+        ...['OPEN', 'VALID', 'DISMISSED'].map((value) => ({
+          value,
+          label: (
+            { OPEN: '미처리', VALID: '처리 완료', DISMISSED: '기각' } as Record<string, string>
+          )[value],
+          count: reports.filter((report) => report.status === value).length,
+        })),
+      ]
+    : [
+        { value: 'ALL', label: '전체', count: members.length },
+        {
+          value: 'NORMAL',
+          label: '정상',
+          count: members.filter((member) => !member.suspended).length,
+        },
+        {
+          value: 'SUSPENDED',
+          label: '이용 제한',
+          count: members.filter((member) => member.suspended).length,
+        },
+      ];
   return (
     <>
       <Toolbar
         inset
         search={search}
         onSearch={setSearch}
-        filter={filter}
-        onFilter={setFilter}
         placeholder={
           isReports ? '신고자, 대상 회원 또는 신고 사유 검색' : '이름, 이메일 또는 회원 ID 검색'
         }
-        options={
-          isReports
-            ? [
-                ['ALL', '전체 상태'],
-                ['OPEN', '미처리'],
-                ['VALID', '처리 완료'],
-                ['DISMISSED', '기각'],
-              ]
-            : [
-                ['ALL', '전체 상태'],
-                ['NORMAL', '정상'],
-                ['SUSPENDED', '이용 제한'],
-              ]
-        }
-      />
+      >
+        <StatusTabs options={options} value={status} onChange={setStatus} />
+      </Toolbar>
       {isReports ? (
-        <ReportsTable
-          reports={filteredReports.slice(page * 8, page * 8 + 8)}
-          onDetail={openReport}
-        />
+        <ReportsTable reports={reports} onDetail={openReport} search={search} status={status} />
       ) : (
-        <MembersTable
-          members={filteredMembers.slice(page * 8, page * 8 + 8)}
-          onDetail={openMember}
-        />
+        <MembersTable members={members} onDetail={openMember} search={search} status={status} />
       )}
-      {!total && <EmptyState />}
-      <div className="px-6 max-sm:px-4">
-        <Pager page={page} total={total} change={setPage} />
-      </div>
     </>
   );
 }

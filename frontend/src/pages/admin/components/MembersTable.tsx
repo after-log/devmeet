@@ -1,68 +1,99 @@
+import { useMemo } from 'react';
+import type { ColumnDef } from '@tanstack/react-table';
 import type { Member } from '../mock';
-import { AdminButton, AdminTable, Badge } from './AdminUI';
+import { AdminButton, Badge } from './AdminUI';
+import AdminDataTable from './AdminDataTable';
 
 export default function MembersTable({
   members,
   onDetail,
+  search,
+  status,
 }: {
   members: Member[];
   onDetail: (member: Member) => void;
+  search: string;
+  status: string;
 }) {
+  const columns = useMemo<ColumnDef<Member>[]>(
+    () => [
+      {
+        id: 'identity',
+        accessorFn: (member) => `${member.name} ${member.email} ${member.id}`,
+        header: '회원 정보',
+        cell: ({ row: { original: member } }) => (
+          <div className="flex items-center gap-2.5">
+            <img
+              className="h-[37px] w-[34px] rounded-md object-cover"
+              src={member.photos[0]}
+              alt=""
+            />
+            <div>
+              <strong>
+                {member.name}
+                <span className="ml-[7px] text-[8px] text-[#a3a3a3]">{member.id}</span>
+              </strong>
+              <small>{member.email}</small>
+            </div>
+          </div>
+        ),
+      },
+      {
+        accessorKey: 'role',
+        header: '직무 / 지역',
+        enableGlobalFilter: false,
+        cell: ({ row: { original: member } }) => (
+          <>
+            {member.role}
+            <small>{member.region}</small>
+          </>
+        ),
+      },
+      { accessorKey: 'joined', header: '가입일', enableGlobalFilter: false },
+      {
+        accessorKey: 'review',
+        header: '프로필 검수',
+        enableGlobalFilter: false,
+        cell: ({ row }) => <Badge status={row.original.review} />,
+      },
+      {
+        id: 'status',
+        accessorFn: (member) => (member.suspended ? 'SUSPENDED' : 'NORMAL'),
+        header: '계정 상태',
+        enableGlobalFilter: false,
+        filterFn: 'equalsString',
+        cell: ({ row: { original: member } }) => (
+          <Badge status={member.suspended ? 'REJECTED' : 'APPROVED'}>
+            {member.suspended ? '이용 제한' : '정상'}
+          </Badge>
+        ),
+      },
+      {
+        id: 'actions',
+        header: '관리',
+        cell: ({ row }) => (
+          <AdminButton
+            className="min-h-0 rounded-[5px] border-[#e5e5e5] px-[9px] py-[5px] text-[10px] text-[#737373]"
+            onClick={() => onDetail(row.original)}
+          >
+            상세 보기
+          </AdminButton>
+        ),
+      },
+    ],
+    [onDetail],
+  );
+  const columnFilters = useMemo(
+    () => (status === 'ALL' ? [] : [{ id: 'status', value: status }]),
+    [status],
+  );
   return (
-    <AdminTable>
-      <thead>
-        <tr>
-          <th>회원 정보</th>
-          <th>직무 / 지역</th>
-          <th>가입일</th>
-          <th>프로필 검수</th>
-          <th>계정 상태</th>
-          <th>관리</th>
-        </tr>
-      </thead>
-      <tbody>
-        {members.map((member) => (
-          <tr key={member.id}>
-            <td>
-              <div className="flex items-center gap-2.5">
-                <img
-                  className="h-[37px] w-[34px] rounded-md object-cover"
-                  src={member.photos[0]}
-                  alt=""
-                />
-                <div>
-                  <strong>
-                    {member.name}
-                    <span className="ml-[7px] text-[8px] text-[#b0b3bd]">{member.id}</span>
-                  </strong>
-                  <small>{member.email}</small>
-                </div>
-              </div>
-            </td>
-            <td>
-              {member.role}
-              <small>{member.region}</small>
-            </td>
-            <td>{member.joined}</td>
-            <td>
-              <Badge status={member.review} />
-            </td>
-            <td>
-              <Badge status={member.suspended ? 'REJECTED' : 'APPROVED'}>
-                {member.suspended ? '이용 제한' : '정상'}
-              </Badge>
-            </td>
-            <td>
-              <AdminButton
-                className="min-h-0 rounded-[5px] border-[#e8e9ef] px-[9px] py-[5px] text-[10px] text-[#8a839a]"
-                onClick={() => onDetail(member)}
-              >
-                상세 보기
-              </AdminButton>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </AdminTable>
+    <AdminDataTable
+      data={members}
+      columns={columns}
+      search={search}
+      columnFilters={columnFilters}
+      caption="가입 회원 목록"
+    />
   );
 }

@@ -26,7 +26,7 @@ export default function ProfileReviewDialog({ member }: { member: Member }) {
       <div className="grid grid-cols-2 gap-[25px] max-sm:grid-cols-1">
         <div>
           <img
-            className="h-80 w-full rounded-[9px] bg-[#f1eff4] object-cover max-sm:h-[300px]"
+            className="h-80 w-full rounded-[9px] bg-[#f5f5f5] object-cover max-sm:h-[300px]"
             src={member.photos[photoIndex]}
             alt={`${member.name} 등록 사진 ${photoIndex + 1}`}
           />
@@ -36,7 +36,7 @@ export default function ProfileReviewDialog({ member }: { member: Member }) {
                 key={src}
                 className={cn(
                   'h-[62px] w-14 rounded-md bg-white p-0.5',
-                  i === photoIndex ? 'border-2 border-[#9979cf]' : 'border border-[#ebe8f1]',
+                  i === photoIndex ? 'border-2 border-[#404040]' : 'border border-[#e5e5e5]',
                 )}
                 onClick={() => setPhotoIndex(i)}
                 aria-label={`사진 ${i + 1} 확인`}
@@ -49,7 +49,7 @@ export default function ProfileReviewDialog({ member }: { member: Member }) {
               </button>
             ))}
           </div>
-          <p className="mt-2.5! text-[10px] text-[#aaa3b4]">
+          <p className="mt-2.5! text-[10px] text-[#a3a3a3]">
             mock 이미지 3장은 동일 인물의 예시 사진입니다.
           </p>
         </div>
@@ -57,9 +57,9 @@ export default function ProfileReviewDialog({ member }: { member: Member }) {
           <Badge status={member.review} />
           <h3 className="mt-[13px]! mb-1.5! text-[21px] font-semibold max-sm:text-[19px]">
             {member.name}{' '}
-            <small className="text-xs font-normal text-[#9791a0]">{member.age}세</small>
+            <small className="text-xs font-normal text-[#a3a3a3]">{member.age}세</small>
           </h3>
-          <p className="text-xs text-[#9993a3]">
+          <p className="text-xs text-[#a3a3a3]">
             {member.role}
             <br />
             {member.region}
@@ -72,7 +72,7 @@ export default function ProfileReviewDialog({ member }: { member: Member }) {
             </ul>
           </Guidance>
           {member.reason && (
-            <p className="mt-2.5! text-[10px] text-[#aaa3b4]">이전 반려 사유: {member.reason}</p>
+            <p className="mt-2.5! text-[10px] text-[#a3a3a3]">이전 반려 사유: {member.reason}</p>
           )}
           <Field label="검수 사유" hint="불합격 시 필수">
             <TextArea

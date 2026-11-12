@@ -11,7 +11,7 @@ export default function OverviewStats() {
       unit: '명',
       icon: Users,
       sub: '프로필 등록 회원',
-      tone: 'bg-[#f2edf9] text-[#9378c8]',
+      tone: 'bg-[#f5f5f5] text-[#737373]',
     },
     {
       label: '프로필 검수 대기',
@@ -19,7 +19,7 @@ export default function OverviewStats() {
       unit: '건',
       icon: Image,
       sub: '검수가 필요한 프로필',
-      tone: 'bg-[#fcf5e8] text-[#c7a266]',
+      tone: 'bg-[#f5f5f5] text-[#a3a3a3]',
     },
     {
       label: '미처리 신고',
@@ -27,7 +27,7 @@ export default function OverviewStats() {
       unit: '건',
       icon: Flag,
       sub: '확인이 필요한 신고',
-      tone: 'bg-[#fcf0ef] text-[#ce9391]',
+      tone: 'bg-[#f5f5f5] text-[#a3a3a3]',
     },
     {
       label: '활성 가치관 문항',
@@ -35,17 +35,17 @@ export default function OverviewStats() {
       unit: '개',
       icon: SlidersHorizontal,
       sub: `전체 ${questions.length}개 문항`,
-      tone: 'bg-[#edf5ef] text-[#75a087]',
+      tone: 'bg-[#f5f5f5] text-[#a3a3a3]',
     },
   ];
   return (
     <div className="grid grid-cols-4 gap-[17px] max-[900px]:grid-cols-2 max-xl:gap-3 max-sm:gap-2.5">
       {stats.map(({ label, value, unit, icon: Icon, sub, tone }) => (
         <div
-          className="rounded-[11px] border border-[#e7e9f0] bg-white px-[22px] pt-[21px] pb-[17px] shadow-[0_2px_3px_#25213b02] max-xl:p-4 max-sm:p-[15px]"
+          className="rounded-[11px] border border-[#e5e5e5] bg-white px-[22px] pt-[21px] pb-[17px] shadow-[0_2px_3px_#26262602] max-xl:p-4 max-sm:p-[15px]"
           key={label}
         >
-          <div className="flex items-center justify-between text-[11px] text-[#818797] max-sm:text-[10px]">
+          <div className="flex items-center justify-between text-[11px] text-[#737373] max-sm:text-[10px]">
             <span>{label}</span>
             <span
               className={cn(
@@ -58,9 +58,9 @@ export default function OverviewStats() {
           </div>
           <strong className="mt-[9px] block text-[32px] leading-snug font-semibold tracking-[-1.2px] max-sm:text-[29px]">
             {value}
-            <small className="ml-1.5 text-xs font-normal text-[#9a9eaa]">{unit}</small>
+            <small className="ml-1.5 text-xs font-normal text-[#a3a3a3]">{unit}</small>
           </strong>
-          <p className="mt-2! text-[10px] text-[#a2a6b2]">{sub}</p>
+          <p className="mt-2! text-[10px] text-[#a3a3a3]">{sub}</p>
         </div>
       ))}
     </div>
