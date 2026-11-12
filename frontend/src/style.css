@@ -5,8 +5,8 @@
   --color-surface: #242529;
   --color-lift: #2b2d30;
   --color-border: #393b40;
-  /* 포인트 컬러: 메인 네온 옐로, 서브 코랄 오렌지 */
-  --color-point: #f5ff52;
+  /* 포인트 컬러: 메인 네온 민트 그린, 서브 코랄 오렌지 */
+  --color-point: #3ecf8e;
   --color-sub: #e8554a;
   --color-page: #18191b;
   --color-nav: #242529f5;
@@ -18,11 +18,11 @@
   --color-fg-3: #969eab;
   --color-fg-4: #7f8793;
   --color-on-accent: #151922;
-  --color-selected: #2d2f1f;
-  --color-mine: #383b1e;
-  --color-mine-fg: #f2f6b5;
+  --color-selected: #1f2e27;
+  --color-mine: #1f3a2e;
+  --color-mine-fg: #b4f0d3;
   --color-tag-sub: #5a3330;
-  --color-tag-point: #5a5d2a;
+  --color-tag-point: #2a5a44;
   --color-tag-blue: #3f4d6b;
   --color-backdrop: #0d0f14bb;
   --font-sans:
@@ -74,8 +74,8 @@
     --color-surface: #f7f8fa;
     --color-lift: #ebecf0;
     --color-border: #dfe1e5;
-    /* 흰 배경에서도 읽히도록 어두운 올리브 옐로 */
-    --color-point: #7d8300;
+    /* 흰 배경에서도 읽히도록 진한 초록 */
+    --color-point: #1a8a5a;
     --color-sub: #d23f34;
     --color-page: #f2f3f5;
     --color-nav: #fffffff0;
@@ -87,11 +87,11 @@
     --color-fg-3: #5f636e;
     --color-fg-4: #868a95;
     --color-on-accent: #ffffff;
-    --color-selected: #f8fadb;
-    --color-mine: #f1f5c2;
-    --color-mine-fg: #474b00;
+    --color-selected: #e9f8f0;
+    --color-mine: #d6f3e5;
+    --color-mine-fg: #0f5a3a;
     --color-tag-sub: #f2c0bb;
-    --color-tag-point: #dfe38f;
+    --color-tag-point: #a8e6c8;
     --color-tag-blue: #bcd0f7;
     --color-backdrop: #1e1f2266;
   }
