@@ -78,10 +78,10 @@ const ProfileBuilt = ({ profile, onContinue }: { profile: Profile; onContinue: (
     });
   }, [profile.photo]);
 
-  const str = (v: string) => <span className="string">{JSON.stringify(v)}</span>;
+  const str = (v: string) => <span className="string">{v}</span>;
   const code = lines.map(([k, v]) => (
     <>
-      {k}: {str(v)},
+      {k}: {str(v)}
     </>
   ));
 

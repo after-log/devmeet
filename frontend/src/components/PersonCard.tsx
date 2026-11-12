@@ -36,27 +36,12 @@ export const CodeLines = ({ lines }: { lines: ReactNode[] }) => (
   </div>
 );
 
-const str = (value: string) => <span className="string">{JSON.stringify(value)}</span>;
+const str = (value: string) => <span className="string">{value}</span>;
 
 export const personLines = (p: Person) => [
-  <>
-    {'meeting: '}
-    {str(p.meeting)},
-  </>,
-  <>
-    {'contact: '}
-    {str(p.contact)},
-  </>,
-  <>
-    {'tags: ['}
-    {p.tags.slice(0, 3).map((t, i) => (
-      <span key={t}>
-        {i ? ', ' : ''}
-        {str(t)}
-      </span>
-    ))}
-    {'],'}
-  </>,
+  <>meeting: {str(p.meeting)}</>,
+  <>contact: {str(p.contact)}</>,
+  <>tags: {str(p.tags.slice(0, 3).join(' · '))}</>,
 ];
 
 const PersonCard = ({
