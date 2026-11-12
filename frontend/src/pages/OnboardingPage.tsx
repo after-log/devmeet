@@ -1,3 +1,4 @@
+import { ArrowRight, Check, ChevronRight, Keyboard, Sparkles } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -77,12 +78,24 @@ const RoleOption = ({
     aria-pressed={draft.role === role}
     onClick={() => pick(role)}
   >
-    <span className="symbol">{role === 'developer' ? '⌨' : '✧'}</span>
+    <span className="symbol">
+      {role === 'developer' ? (
+        <Keyboard className="ico" aria-hidden="true" />
+      ) : (
+        <Sparkles className="ico" fill="currentColor" aria-hidden="true" />
+      )}
+    </span>
     <span>
       <strong>{title}</strong>
       <small>{description}</small>
     </span>
-    <span className="end">{draft.role === role ? '✓' : '›'}</span>
+    <span className="end">
+      {draft.role === role ? (
+        <Check className="ico" aria-hidden="true" />
+      ) : (
+        <ChevronRight className="ico" aria-hidden="true" />
+      )}
+    </span>
   </button>
 );
 
@@ -442,13 +455,21 @@ const OnboardingPage = () => {
         disabled={uploading || saving || (!valid && step < 3)}
         onClick={next}
       >
-        {saving
-          ? '저장 중…'
-          : step === 3
-            ? editing
-              ? '저장하기'
-              : '사진 검수 요청하고 가입 완료 →'
-            : '다음 →'}
+        {saving ? (
+          '저장 중…'
+        ) : step === 3 ? (
+          editing ? (
+            '저장하기'
+          ) : (
+            <>
+              사진 검수 요청하고 가입 완료 <ArrowRight className="ico" aria-hidden="true" />
+            </>
+          )
+        ) : (
+          <>
+            다음 <ArrowRight className="ico" aria-hidden="true" />
+          </>
+        )}
       </button>
     </>
   );

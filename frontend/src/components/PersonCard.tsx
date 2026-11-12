@@ -1,3 +1,4 @@
+import { ChevronRight, X } from 'lucide-react';
 import type { ReactNode } from 'react';
 import type { Person } from '@/types';
 import PixelPhoto from './pixel/PixelPhoto';
@@ -72,7 +73,8 @@ const PersonCard = ({
   <article className="profile">
     <div className="file-tab">
       <span className="file-icon">ts</span>
-      {person.name}.profile.ts<span className="tab-end">{demo ? 'demo' : '×'}</span>
+      {person.name}.profile.ts
+      <span className="tab-end">{demo ? 'demo' : <X className="ico" aria-hidden="true" />}</span>
     </div>
     <button
       className="card-photo"
@@ -131,7 +133,7 @@ export const PersonRow = ({
       </strong>
       <small className="truncate">{note ?? `${person.job} · ${person.location}`}</small>
     </span>
-    {end ?? <time>›</time>}
+    {end ?? <ChevronRight className="ico" aria-hidden="true" />}
   </button>
 );
 

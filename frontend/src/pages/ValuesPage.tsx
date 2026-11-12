@@ -1,6 +1,6 @@
 import { useRef, useState, type KeyboardEvent } from 'react';
 import { Link } from 'react-router-dom';
-import { Check, Eye, LockKeyhole } from 'lucide-react';
+import { ArrowRight, Check, Eye, LockKeyhole } from 'lucide-react';
 import { toast } from 'sonner';
 import { useValueCatalog, type ValueSection } from '@/hooks/useValueCatalog';
 import { useApp } from '@/stores/app';
@@ -280,7 +280,7 @@ const ValuesEditor = ({ sections }: { sections: ValueSection[] }) => {
         {active < sections.length - 1 && (
           <button className="values-next" onClick={() => changeSection(active + 1, true)}>
             다음 섹션 · {sections[active + 1].label}
-            <span aria-hidden="true">→</span>
+            <ArrowRight className="ico" aria-hidden="true" />
           </button>
         )}
       </div>

@@ -1,3 +1,4 @@
+import { ArrowRight } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import type { Profile } from '@/types';
 import { drawMosaic, frame, loadImage, palette, play, prefersReducedMotion } from '@/lib/pixel';
@@ -114,7 +115,7 @@ const ProfileBuilt = ({ profile, onContinue }: { profile: Profile; onContinue: (
       </article>
       <canvas ref={burst} className="built-burst" width={60} height={60} aria-hidden="true" />
       <button className="btn full" onClick={onContinue}>
-        오늘의 추천 3명 보기 →
+        오늘의 추천 3명 보기 <ArrowRight className="ico" aria-hidden="true" />
       </button>
     </div>
   );

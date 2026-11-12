@@ -1,39 +1,13 @@
 import { useEffect, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useApp } from '@/stores/app';
+import { Heart, LayoutGrid, MessageCircle, User } from 'lucide-react';
+// 비활성 탭은 선, 활성 탭은 채운 아이콘(shadcn 기본 아이콘 lucide)
 const tabs = [
-  {
-    page: 'today',
-    label: '추천',
-    icon: (
-      <>
-        <rect x="3" y="3" width="7" height="7" rx="2" />
-        <rect x="14" y="3" width="7" height="7" rx="2" />
-        <rect x="3" y="14" width="7" height="7" rx="2" />
-        <rect x="14" y="14" width="7" height="7" rx="2" />
-      </>
-    ),
-  },
-  {
-    page: 'likes',
-    label: '좋아요',
-    icon: <path d="M20 5c-3-3-6-1-8 1-2-2-5-4-8-1-4 4 1 10 8 15 7-5 12-11 8-15Z" />,
-  },
-  {
-    page: 'chat',
-    label: '대화',
-    icon: <path d="M21 11a9 9 0 0 1-9 9H4l-2 2V11a9 9 0 0 1 19 0Z" />,
-  },
-  {
-    page: 'me',
-    label: '내 정보',
-    icon: (
-      <>
-        <circle cx="12" cy="7" r="4" />
-        <path d="M4 22v-3a8 8 0 0 1 16 0v3" />
-      </>
-    ),
-  },
+  { page: 'today', label: '추천', Icon: LayoutGrid },
+  { page: 'likes', label: '좋아요', Icon: Heart },
+  { page: 'chat', label: '대화', Icon: MessageCircle },
+  { page: 'me', label: '내 정보', Icon: User },
 ] as const;
 /** 받은 좋아요 중 아직 좋아요 탭에서 보지 않은 것이 있으면 true. 본 목록은 회원별로 이 브라우저에 기억한다. */
 const useNewLikes = () => {
@@ -76,15 +50,22 @@ const BottomNav = () => {
           }
           aria-label={tab.label}
         >
-          <span className="relative">
-            <svg className="size-[19px] fill-none stroke-current stroke-[1.6]" viewBox="0 0 24 24">
-              {tab.icon}
-            </svg>
-            {tab.page === 'likes' && fresh && (
-              <i className="pixel-new-dot" role="img" aria-label="새 좋아요" />
-            )}
-          </span>
-          {tab.label}
+          {({ isActive }) => (
+            <>
+              <span className="relative">
+                <tab.Icon
+                  className="size-5"
+                  strokeWidth={1.8}
+                  fill={isActive ? 'currentColor' : 'none'}
+                  aria-hidden="true"
+                />
+                {tab.page === 'likes' && fresh && (
+                  <i className="pixel-new-dot" role="img" aria-label="새 좋아요" />
+                )}
+              </span>
+              {tab.label}
+            </>
+          )}
         </NavLink>
       ))}
     </nav>

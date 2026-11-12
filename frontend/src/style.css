@@ -708,6 +708,10 @@
     @apply pointer-events-none absolute top-[92px] right-0 h-[180px] w-[180px] [image-rendering:pixelated];
   }
   /* 콘텐츠 타이핑 커서: 두꺼운 파란 블록. body에 떠 있어 React 트리를 건드리지 않는다 */
+  /* 글자 사이에 넣는 아이콘(lucide). 글자 크기를 따라간다 */
+  .ico {
+    @apply inline-block size-[1.15em] shrink-0 align-[-0.2em];
+  }
   .type-caret {
     @apply pointer-events-none fixed z-40 block bg-blue;
   }

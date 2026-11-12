@@ -1,3 +1,4 @@
+import { ArrowRight } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { frame, palette, play, prefersReducedMotion } from '@/lib/pixel';
 
@@ -74,7 +75,7 @@ const SignupBuildLog = ({ name, onContinue }: { name?: string; onContinue: () =>
         </p>
       </div>
       <button className="btn full" onClick={onContinue}>
-        프로필 만들기 →
+        프로필 만들기 <ArrowRight className="ico" aria-hidden="true" />
       </button>
     </>
   );
