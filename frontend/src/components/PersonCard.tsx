@@ -28,12 +28,12 @@ export const Avatar = ({
 export type InfoRow = [key: string, value: string];
 
 /**
- * 생활 리듬 상자: 터미널 출력처럼 주석 한 줄(// rhythm) 아래에
+ * 생활 리듬 상자: 터미널 출력처럼 주석 한 줄(// 자기소개) 아래에
  * 키(모노 글꼴)와 값(본문 글꼴)을 줄 맞춰 보여 준다.
  */
 export const RhythmBox = ({
   rows,
-  title = '// rhythm',
+  title = '자기소개',
   stepIn = false,
 }: {
   rows: InfoRow[];
@@ -41,7 +41,10 @@ export const RhythmBox = ({
   stepIn?: boolean;
 }) => (
   <div className="rhythm">
-    <p className="rhythm-title">{title}</p>
+    <p className="rhythm-title">
+      <b>//</b>
+      {title}
+    </p>
     <dl>
       {rows.map(([k, v]) => (
         <div className={`rhythm-row${stepIn ? 'pixel-stepin' : ''}`} key={k}>

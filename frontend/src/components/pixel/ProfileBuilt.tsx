@@ -93,7 +93,7 @@ const ProfileBuilt = ({ profile, onContinue }: { profile: Profile; onContinue: (
           me.profile.ts<span className="tab-end">{built ? '✓' : '•'}</span>
         </div>
         <canvas ref={photo} className="built-photo" width={320} height={240} aria-hidden="true" />
-        <RhythmBox rows={lines.slice(0, shown)} title="// me" stepIn />
+        <RhythmBox rows={lines.slice(0, shown)} stepIn />
         <div className="built-status">
           <canvas ref={bar} width={60} height={4} aria-hidden="true" />
           <span className={built ? 'text-point' : ''} role="status">

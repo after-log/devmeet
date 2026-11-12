@@ -262,7 +262,7 @@
     @apply mx-5 mt-1 mb-5 rounded-lg border border-line bg-page px-3.5 py-3 max-[360px]:mx-4;
   }
   .rhythm-title {
-    @apply m-0 mb-2 font-mono text-xs text-fg-4;
+    @apply m-0 mb-2 text-xs text-fg-4 [&_b]:mr-1.5 [&_b]:font-mono [&_b]:font-normal;
   }
   .rhythm dl {
     @apply m-0 grid gap-[6px];
