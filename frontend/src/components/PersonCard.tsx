@@ -28,12 +28,12 @@ export const Avatar = ({
 export type InfoRow = [key: string, value: string];
 
 /**
- * 생활 리듬 상자: 터미널 출력처럼 주석 한 줄(// 자기소개) 아래에
+ * 생활 리듬 상자: 터미널 출력처럼 주석 한 줄(// 소개) 아래에
  * 키(모노 글꼴)와 값(본문 글꼴)을 줄 맞춰 보여 준다.
  */
 export const RhythmBox = ({
   rows,
-  title = '자기소개',
+  title = '소개',
   stepIn = false,
 }: {
   rows: InfoRow[];
