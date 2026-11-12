@@ -9,7 +9,8 @@ export default defineConfig({
     react(),
     tailwindcss(),
     VitePWA({
-      registerType: 'prompt',
+      // 배포하면 업데이트 버튼을 누르지 않아도 새 버전이 바로 적용되게 한다.
+      registerType: 'autoUpdate',
       includeManifestIcons: false, // PNG icons are already covered by globPatterns below.
       manifest: {
         id: '/',
@@ -36,6 +37,9 @@ export default defineConfig({
       workbox: {
         globPatterns: ['**/*.{js,css,html,png,svg}'],
         // Only the application shell is cached; account data and photos stay on the network.
+        skipWaiting: true,
+        clientsClaim: true,
+        cleanupOutdatedCaches: true,
         navigateFallbackDenylist: [/^\/api(?:\/|$)/, /^\/oauth2(?:\/|$)/, /^\/login(?:\/|$)/],
       },
     }),
