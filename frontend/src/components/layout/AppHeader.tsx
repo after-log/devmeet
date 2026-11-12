@@ -58,7 +58,9 @@ const AppHeader = ({ theme, onToggleTheme }: { theme: Theme; onToggleTheme: () =
           </button>
           {isChat && person && <Avatar person={person} size={36} />}
           <div className="min-w-0 flex-1">
-            <p className="m-0 truncate text-sm font-semibold text-fg">{detail.title}</p>
+            <p className="m-0 truncate font-display text-sm font-semibold text-fg">
+              {detail.title}
+            </p>
             {isChat && person && (
               <p className="m-0 truncate text-[11px] text-fg-4">
                 {person.job} · {person.location}

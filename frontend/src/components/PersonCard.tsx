@@ -1,3 +1,4 @@
+import { ChevronRight, X } from 'lucide-react';
 import type { ReactNode } from 'react';
 import type { Person } from '@/types';
 import PixelPhoto from './pixel/PixelPhoto';
@@ -24,44 +25,23 @@ export const Avatar = ({
     </span>
   );
 
-/** 코드 카드: 파일 탭 + 줄 번호 + 문법 색. 사람의 정보를 가볍게 '객체'처럼 보여 준다. */
+/** 코드 카드: 사람의 정보를 key: value 줄로 가볍게 보여 준다. */
 export const CodeLines = ({ lines }: { lines: ReactNode[] }) => (
   <div className="code-block" aria-hidden="true">
     {lines.map((line, i) => (
       <div className="code-line" key={i}>
-        <i>{String(i + 1).padStart(2, '0')}</i>
         <code>{line}</code>
       </div>
     ))}
   </div>
 );
 
-const str = (value: string) => <span className="string">{JSON.stringify(value)}</span>;
+const str = (value: string) => <span className="string">{value}</span>;
 
-export const personLines = (p: Person, varName = 'match') => [
-  <>
-    <span className="keyword">const</span> <span className="variable">{varName}</span>
-    {' = {'}
-  </>,
-  <>
-    {'  meeting: '}
-    {str(p.meeting)},
-  </>,
-  <>
-    {'  contact: '}
-    {str(p.contact)},
-  </>,
-  <>
-    {'  tags: ['}
-    {p.tags.slice(0, 3).map((t, i) => (
-      <span key={t}>
-        {i ? ', ' : ''}
-        {str(t)}
-      </span>
-    ))}
-    {'],'}
-  </>,
-  <>{'};'}</>,
+export const personLines = (p: Person) => [
+  <>meeting: {str(p.meeting)}</>,
+  <>contact: {str(p.contact)}</>,
+  <>tags: {str(p.tags.slice(0, 3).join(' · '))}</>,
 ];
 
 const PersonCard = ({
@@ -78,7 +58,8 @@ const PersonCard = ({
   <article className="profile">
     <div className="file-tab">
       <span className="file-icon">ts</span>
-      {person.name}.profile.ts<span className="tab-end">{demo ? 'demo' : '×'}</span>
+      {person.name}.profile.ts
+      <span className="tab-end">{demo ? 'demo' : <X className="ico" aria-hidden="true" />}</span>
     </div>
     <button
       className="card-photo"
@@ -137,7 +118,7 @@ export const PersonRow = ({
       </strong>
       <small className="truncate">{note ?? `${person.job} · ${person.location}`}</small>
     </span>
-    {end ?? <time>›</time>}
+    {end ?? <ChevronRight className="ico" aria-hidden="true" />}
   </button>
 );
 

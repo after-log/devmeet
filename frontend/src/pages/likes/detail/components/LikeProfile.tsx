@@ -51,7 +51,7 @@ const LikeProfile = ({
       <div className="file-tab">
         <span className="file-icon">ts</span>
         {profile.name}.profile.ts
-        <Heart size={14} className="ml-auto text-purple" />
+        <Heart size={14} className="ml-auto text-sub" />
       </div>
       <img className="detail-photo" src={profile.photo} alt={`${profile.name} 프로필 사진`} />
       <div className="profile-heading">
@@ -66,7 +66,7 @@ const LikeProfile = ({
         </div>
         <span className="tag">{demo ? '가상 프로필' : '인증 전'}</span>
       </div>
-      <CodeLines lines={personLines(profile, profile.id)} />
+      <CodeLines lines={personLines(profile)} />
       <div className="profile-body">
         <p className="section-comment">// about me</p>
         <p className="bio whitespace-pre-wrap">{profile.intro}</p>

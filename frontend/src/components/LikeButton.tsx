@@ -1,3 +1,4 @@
+import { Check, Heart } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -27,7 +28,7 @@ const LikeButton = ({
   const [pop, setPop] = useState(0);
   const sent = liked.includes(person.id);
   const dev = (user?.profile?.role ?? 'developer') === 'developer';
-  const text = label ?? (dev ? '♡ LGTM! · 좋아요' : '♡ 좋아요');
+  const text = label ?? (dev ? 'LGTM! · 좋아요' : '좋아요');
 
   return (
     <span className="like-wrap">
@@ -51,7 +52,17 @@ const LikeButton = ({
           }
         }}
       >
-        {pending ? <PixelLoader /> : sent ? '✓ 보냈어요' : text}
+        {pending ? (
+          <PixelLoader />
+        ) : sent ? (
+          <>
+            <Check className="ico" aria-hidden="true" /> 보냈어요
+          </>
+        ) : (
+          <>
+            <Heart className="ico" fill="currentColor" aria-hidden="true" /> {text}
+          </>
+        )}
       </button>
     </span>
   );

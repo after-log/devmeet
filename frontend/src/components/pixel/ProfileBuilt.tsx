@@ -1,3 +1,4 @@
+import { ArrowRight } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import type { Profile } from '@/types';
 import { drawMosaic, frame, loadImage, palette, play, prefersReducedMotion } from '@/lib/pixel';
@@ -39,7 +40,7 @@ const ProfileBuilt = ({ profile, onContinue }: { profile: Profile; onContinue: (
       if (prefersReducedMotion()) {
         drawMosaic(p, img, 0, 0, W, H, 0, col.l);
         drawBar(10);
-        setShown(lines.length + 2);
+        setShown(lines.length);
         return setBuilt(true);
       }
       drawBar(0);
@@ -48,9 +49,9 @@ const ProfileBuilt = ({ profile, onContinue }: { profile: Profile; onContinue: (
         await frame(130, signal);
       }
       drawMosaic(p, img, 0, 0, W, H, 0, col.l);
-      for (let i = 1; i <= lines.length + 2; i++) {
+      for (let i = 1; i <= lines.length; i++) {
         setShown(i);
-        drawBar(Math.round((i / (lines.length + 2)) * 8));
+        drawBar(Math.round((i / lines.length) * 8));
         await frame(110, signal);
       }
       drawBar(9);
@@ -77,20 +78,12 @@ const ProfileBuilt = ({ profile, onContinue }: { profile: Profile; onContinue: (
     });
   }, [profile.photo]);
 
-  const str = (v: string) => <span className="string">{JSON.stringify(v)}</span>;
-  const code = [
+  const str = (v: string) => <span className="string">{v}</span>;
+  const code = lines.map(([k, v]) => (
     <>
-      <span className="keyword">const</span> <span className="variable">me</span>
-      {' = {'}
-    </>,
-    ...lines.map(([k, v]) => (
-      <>
-        {'\u00a0\u00a0'}
-        {k}: {str(v)},
-      </>
-    )),
-    <>{'};'}</>,
-  ];
+      {k}: {str(v)}
+    </>
+  ));
 
   return (
     <div className="relative">
@@ -109,7 +102,6 @@ const ProfileBuilt = ({ profile, onContinue }: { profile: Profile; onContinue: (
         <div className="code-block" aria-hidden="true">
           {code.slice(0, shown).map((line, i) => (
             <div className="code-line pixel-stepin" key={i}>
-              <i>{String(i + 1).padStart(2, '0')}</i>
               <code>{line}</code>
             </div>
           ))}
@@ -123,7 +115,7 @@ const ProfileBuilt = ({ profile, onContinue }: { profile: Profile; onContinue: (
       </article>
       <canvas ref={burst} className="built-burst" width={60} height={60} aria-hidden="true" />
       <button className="btn full" onClick={onContinue}>
-        오늘의 추천 3명 보기 →
+        오늘의 추천 3명 보기 <ArrowRight className="ico" aria-hidden="true" />
       </button>
     </div>
   );

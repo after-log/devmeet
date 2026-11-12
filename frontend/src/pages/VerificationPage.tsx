@@ -1,3 +1,4 @@
+import { ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const VerificationPage = () => (
@@ -12,7 +13,7 @@ const VerificationPage = () => (
           회사 이메일로 인증번호를 받아 확인해요.
         </p>
       </div>
-      <span aria-hidden="true">›</span>
+      <ChevronRight className="ico" aria-hidden="true" />
     </Link>
     <Link className="settings-row gap-4" to="/me/verification/github">
       <div className="min-w-0">
@@ -21,7 +22,7 @@ const VerificationPage = () => (
           GitHub 계정을 연결해 본인 소유인지 확인해요.
         </p>
       </div>
-      <span aria-hidden="true">›</span>
+      <ChevronRight className="ico" aria-hidden="true" />
     </Link>
   </>
 );

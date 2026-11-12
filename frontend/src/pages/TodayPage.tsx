@@ -1,3 +1,4 @@
+import { ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { reasonFor, useApp } from '../stores/app';
 import PersonCard, { Empty } from '@/components/PersonCard';
@@ -75,7 +76,7 @@ const TodayPage = () => {
           />
           <div className="mt-[18px] grid grid-cols-[1fr_1.5fr] gap-[10px]">
             <button className="btn secondary" onClick={() => navigate(`/people/${p.id}`)}>
-              프로필 보기 <span>→</span>
+              프로필 보기 <ArrowRight className="ico" aria-hidden="true" />
             </button>
             <LikeButton person={p} />
           </div>

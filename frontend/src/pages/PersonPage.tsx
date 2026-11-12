@@ -1,3 +1,4 @@
+import { ArrowRight } from 'lucide-react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { findPerson, reasonFor, useApp } from '../stores/app';
 import { CodeLines, personLines } from '@/components/PersonCard';
@@ -54,7 +55,7 @@ const PersonPage = () => {
                 : '검수 중'}
           </span>
         </div>
-        <CodeLines lines={personLines(p, p.id)} />
+        <CodeLines lines={personLines(p)} />
         <div className="profile-body">
           <p className="section-comment">// about me</p>
           <p className="bio whitespace-pre-wrap">{p.intro}</p>
@@ -88,14 +89,14 @@ const PersonPage = () => {
       </article>
       {matched ? (
         <button className="btn full" onClick={() => navigate(`/chat/${p.id}`)}>
-          대화하기 →
+          대화하기 <ArrowRight className="ico" aria-hidden="true" />
         </button>
       ) : (
         <span className="mt-6 block">
           <LikeButton
             person={p}
             disabled={sent || !inToday}
-            label={dev ? '♡ LGTM! · 좋아요 보내기' : '♡ 좋아요 보내기'}
+            label={dev ? 'LGTM! · 좋아요 보내기' : '좋아요 보내기'}
           />
         </span>
       )}

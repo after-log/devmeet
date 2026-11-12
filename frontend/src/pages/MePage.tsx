@@ -1,3 +1,4 @@
+import { ChevronRight, Heart } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useApp } from '../stores/app';
 import { Avatar } from '@/components/PersonCard';
@@ -56,21 +57,19 @@ const MePage = () => {
       )}
       <Link className="values-entry" to="/me/values">
         <span className="values-entry-icon" aria-hidden="true">
-          ♡
+          <Heart className="size-5" fill="currentColor" />
         </span>
         <span className="min-w-0 flex-1">
           <strong className="block text-sm">나의 가치관</strong>
           <span className="mt-1 block text-xs text-fg-3">
             일상부터 연애까지, 나다운 답을 골라보세요.
           </span>
-          <span className="mt-3 block font-mono text-[11px] text-blue">
+          <span className="mt-3 block font-mono text-[11px] text-point">
             {answered} / {catalogLoading && !total ? '…' : total} 답변 · 프로필 공개{' '}
             {publicAnswers.length} / {PUBLIC_VALUE_LIMIT}
           </span>
         </span>
-        <span className="text-xl text-fg-3" aria-hidden="true">
-          ›
-        </span>
+        <ChevronRight className="size-5 text-fg-3" aria-hidden="true" />
       </Link>
       {publicAnswers.length > 0 && (
         <section className="panel" aria-label="프로필에 공개하는 가치관">
@@ -107,7 +106,10 @@ const MePage = () => {
         )}
       </div>
       <Link className="settings-row" to="/me/verification">
-        인증 관리<span>회사 · GitHub ›</span>
+        인증 관리
+        <span>
+          회사 · GitHub <ChevronRight className="ico" aria-hidden="true" />
+        </span>
       </Link>
       {!demo && p && (
         <button
@@ -117,25 +119,38 @@ const MePage = () => {
             navigate('/onboarding');
           }}
         >
-          프로필 편집<span>›</span>
+          프로필 편집
+          <span>
+            <ChevronRight className="ico" aria-hidden="true" />
+          </span>
         </button>
       )}
       <button className="settings-row" onClick={() => openSheet({ kind: 'filters' })}>
         추천 조건
         <span>
           {p?.region ? `${p.region} · ` : ''}
-          {p ? `${p.minAge}–${p.maxAge}세` : '변경'} ›
+          {p ? `${p.minAge}–${p.maxAge}세` : '변경'}{' '}
+          <ChevronRight className="ico" aria-hidden="true" />
         </span>
       </button>
       <button className="settings-row" onClick={() => openSheet({ kind: 'blocked' })}>
-        차단한 프로필<span>›</span>
+        차단한 프로필
+        <span>
+          <ChevronRight className="ico" aria-hidden="true" />
+        </span>
       </button>
       <button className="settings-row" onClick={() => openSheet({ kind: 'privacy' })}>
-        개인정보 안내<span>›</span>
+        개인정보 안내
+        <span>
+          <ChevronRight className="ico" aria-hidden="true" />
+        </span>
       </button>
       {!demo && user?.admin && (
         <Link className="settings-row" to="/admin">
-          운영자 관리<span>›</span>
+          운영자 관리
+          <span>
+            <ChevronRight className="ico" aria-hidden="true" />
+          </span>
         </Link>
       )}
       <button
@@ -146,7 +161,9 @@ const MePage = () => {
         }}
       >
         {demo ? '둘러보기 종료' : '로그아웃'}
-        <span>›</span>
+        <span>
+          <ChevronRight className="ico" aria-hidden="true" />
+        </span>
       </button>
       <p className="tip">
         {demo ? '가상 프로필을 둘러보는 중이에요.' : '프로필과 대화는 서버에 안전하게 저장돼요.'}

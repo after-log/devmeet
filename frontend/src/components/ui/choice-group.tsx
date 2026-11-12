@@ -26,8 +26,8 @@ export const ChoiceGroup = ({
             checked={value === option}
             onChange={() => onValueChange(option)}
           />
-          <span className="flex min-h-12 items-center justify-center gap-2 rounded-md border border-line-strong bg-surface px-3 py-3 text-center text-[13px] text-fg-3 transition-colors peer-checked:border-blue peer-checked:bg-mine peer-checked:text-mine-fg peer-focus-visible:ring-2 peer-focus-visible:ring-blue peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-canvas hover:border-hover-line">
-            {value === option && <Check className="size-3.5 text-blue" />}
+          <span className="flex min-h-12 items-center justify-center gap-2 rounded-md border border-line-strong bg-surface px-3 py-3 text-center text-[13px] text-fg-3 transition-colors peer-checked:border-point peer-checked:bg-mine peer-checked:text-mine-fg peer-focus-visible:ring-2 peer-focus-visible:ring-point peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-canvas hover:border-hover-line">
+            {value === option && <Check className="size-3.5 text-point" />}
             {option}
           </span>
         </label>
