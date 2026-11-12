@@ -18,7 +18,7 @@ public class MatchingService {
   private final ProfileRepository profiles;
   private final JdbcTemplate jdbc;
   private final EventHub events;
-  private final Set<String> matchingQuestions;
+  private final QuestionCatalog catalog;
   private final boolean requireGithub;
 
   public MatchingService(
@@ -33,14 +33,7 @@ public class MatchingService {
     this.jdbc = jdbc;
     this.events = events;
     this.requireGithub = requireGithub;
-    matchingQuestions = new HashSet<>();
-    catalog
-        .sections()
-        .forEach(
-            section ->
-                section.questions().stream()
-                    .filter(q -> q.purpose().equals("매칭"))
-                    .forEach(q -> matchingQuestions.add(q.id())));
+    this.catalog = catalog;
   }
 
   public static LocalDate today() {
@@ -81,7 +74,7 @@ public class MatchingService {
         && (!me.preference().equals("비개발자") || candidate.role().equals("non-developer"));
   }
 
-  private int score(Profile me, Profile other) {
+  private int score(Profile me, Profile other, Set<String> matchingQuestions) {
     var a = me.view();
     var b = other.view();
     int score =
@@ -135,6 +128,7 @@ public class MatchingService {
           "INSERT INTO recommendation_batches(owner_id,day) VALUES(UUID_TO_BIN(?),?)",
           me.toString(),
           day);
+      var matchingQuestions = catalog.matchingIds();
       var candidates =
           jdbc
               .queryForList(
@@ -163,7 +157,7 @@ public class MatchingService {
               .filter(this::eligible)
               .filter(p -> wants(mine.view(), p.view()) && wants(p.view(), mine.view()))
               .sorted(
-                  Comparator.<Profile>comparingInt(p -> score(mine, p))
+                  Comparator.<Profile>comparingInt(p -> score(mine, p, matchingQuestions))
                       .reversed()
                       .thenComparing(
                           p ->
@@ -308,6 +302,7 @@ public class MatchingService {
         var p = access.profile(target);
         if (eligible(p)) {
           var view = p.publicView();
+          view.put("valueAnswers", catalog.publicAnswers(p.getValueAnswers()));
           view.put("githubVerified", github(target));
           result.add(view);
         }

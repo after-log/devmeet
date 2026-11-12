@@ -36,7 +36,7 @@ public class SecurityConfig {
   }
 
   @Bean
-  UserDetailsService userDetailsService(AccountRepository accounts, AdminPolicy admins) {
+  UserDetailsService userDetailsService(AccountRepository accounts) {
     return email ->
         accounts
             .findByEmail(email.strip().toLowerCase(Locale.ROOT))
@@ -45,10 +45,7 @@ public class SecurityConfig {
                     User.withUsername(account.getEmail())
                         .password(account.getPasswordHash())
                         .disabled(account.isSuspended())
-                        .roles(
-                            admins.isAdmin(account.getEmail())
-                                ? new String[] {"MEMBER", "ADMIN"}
-                                : new String[] {"MEMBER"})
+                        .roles("MEMBER")
                         .build())
             .orElseThrow(() -> new UsernameNotFoundException("계정을 찾을 수 없어요."));
   }

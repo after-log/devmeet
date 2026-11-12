@@ -27,4 +27,4 @@ public record ProfileRequest(
     @NotNull @Min(19) @Max(80) Integer minAge,
     @NotNull @Min(19) @Max(80) Integer maxAge,
     @NotNull @Size(max = 40) String region,
-    @Size(max = 80) Map<String, ValueAnswer> valueAnswers) {}
+    @Size(max = 5000) Map<String, ValueAnswer> valueAnswers) {}
