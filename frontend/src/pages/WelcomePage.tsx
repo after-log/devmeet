@@ -11,7 +11,6 @@ const WelcomePage = () => {
     <>
       <p className="prompt">
         <span>$</span>devmeet init
-        <i className="cursor" />
       </p>
       <h2 className="onboard-hero">
         당신의 일상에,
