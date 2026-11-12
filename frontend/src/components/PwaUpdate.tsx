@@ -1,31 +1,23 @@
 import { useRegisterSW } from 'virtual:pwa-register/react';
 
-const PwaUpdate = () => {
-  const {
-    needRefresh: [needRefresh, setNeedRefresh],
-    updateServiceWorker,
-  } = useRegisterSW();
+/** 새 버전을 확인하는 간격. 탭을 오래 열어 둬도 배포가 곧 반영되게 한다. */
+const CHECK_EVERY = 60_000;
 
-  if (!needRefresh) return null;
-  return (
-    <aside
-      aria-label="앱 업데이트"
-      className="fixed inset-x-4 bottom-28 z-40 mx-auto max-w-[448px] rounded-lg border border-line-strong bg-surface p-4 shadow-lg"
-    >
-      <p role="status" className="m-0 text-sm">
-        새 버전이 준비됐어요.
-      </p>
-      <p className="mt-1 text-xs text-fg-3">작성 중인 내용을 저장한 뒤 업데이트해 주세요.</p>
-      <div className="flex justify-end gap-4 text-xs">
-        <button onClick={() => setNeedRefresh(false)} className="min-h-10 text-fg-3">
-          나중에
-        </button>
-        <button onClick={() => void updateServiceWorker(true)} className="min-h-10 text-point">
-          업데이트
-        </button>
-      </div>
-    </aside>
-  );
+/**
+ * 서비스 워커를 등록한다. 새 버전이 배포되면 자동으로 받아 바로 적용하고 화면을 새로 고친다.
+ * (예전에는 '업데이트' 버튼을 눌러야 해서, 누르기 전까지 옛 화면이 계속 보였다.)
+ */
+const PwaUpdate = () => {
+  useRegisterSW({
+    immediate: true,
+    onRegisteredSW(_url, registration) {
+      if (!registration) return;
+      setInterval(() => {
+        if (navigator.onLine) void registration.update();
+      }, CHECK_EVERY);
+    },
+  });
+  return null;
 };
 
 export default PwaUpdate;

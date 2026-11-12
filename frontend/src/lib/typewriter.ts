@@ -1,5 +1,5 @@
 // 화면 안의 라벨 → 제목 → 본문을 한글 자모 조합 방식(ㅇ → 오 → 오늘)으로 타이핑한다.
-// 두꺼운 파란 블록 커서가 따라오다 끝나면 사라진다.
+// 두꺼운 포인트 컬러 블록 커서가 따라오다 끝나면 사라진다.
 // React가 관리하는 DOM 노드를 바꾸지 않도록 텍스트 노드의 nodeValue만 바꾸고, 커서는 body에 떠 있는 별도 요소로 그린다.
 import { useEffect } from 'react';
 import { prefersReducedMotion } from './pixel';
