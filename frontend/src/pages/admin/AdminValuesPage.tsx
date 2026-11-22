@@ -12,7 +12,7 @@ export default function AdminValuesPage() {
   const active = questions.filter((q) => q.active).length;
   return (
     <>
-      <div className="mb-6 flex flex-wrap items-center gap-[26px] rounded-[10px] border border-[#e5e5e5] bg-white px-[23px] py-[17px] text-[13px] text-neutral-600 max-xl:gap-[17px] max-sm:gap-[18px] max-sm:p-[15px] max-sm:text-[12px]">
+      <div className="mb-6 flex flex-wrap items-center gap-6.5 rounded-[10px] border border-[#e5e5e5] bg-white px-5.75 py-4.25 text-[13px] text-neutral-600 max-xl:gap-4.25 max-sm:gap-4.5 max-sm:p-3.75 max-sm:text-[12px]">
         <span className="flex items-center gap-2">
           전체 문항 <b className="text-[15px] text-neutral-700">{questions.length}</b>
         </span>

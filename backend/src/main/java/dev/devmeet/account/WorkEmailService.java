@@ -26,6 +26,7 @@ public class WorkEmailService {
   private final PasswordEncoder passwords;
   private final ObjectProvider<JavaMailSender> mail;
   private final String from;
+  private final CompanyEmailService companies;
   private final SecureRandom random = new SecureRandom();
 
   public WorkEmailService(
@@ -33,11 +34,13 @@ public class WorkEmailService {
       JdbcTemplate jdbc,
       PasswordEncoder passwords,
       ObjectProvider<JavaMailSender> mail,
+      CompanyEmailService companies,
       @Value("${app.mail-from:no-reply@devmeet.invalid}") String from) {
     this.access = access;
     this.jdbc = jdbc;
     this.passwords = passwords;
     this.mail = mail;
+    this.companies = companies;
     this.from = from;
   }
 
@@ -45,7 +48,8 @@ public class WorkEmailService {
 
   public record PendingEmail(String company, String email, Instant expiresAt, Instant resendAt) {}
 
-  public record Status(boolean available, VerifiedEmail verified, PendingEmail pending) {}
+  public record Status(boolean available, VerifiedEmail verified, PendingEmail pending,
+                       CompanyEmailService.Review companyReview, boolean sharedDomain) {}
 
   @Transactional(readOnly = true)
   public Status status(String principal) {
@@ -74,7 +78,9 @@ public class WorkEmailService {
     return new Status(
         mail.getIfAvailable() != null,
         verified.isEmpty() ? null : verified.getFirst(),
-        pending.isEmpty() ? null : pending.getFirst());
+        pending.isEmpty() ? null : pending.getFirst(),
+        companies.current(id),
+        !verified.isEmpty() && CompanyEmailPolicy.shared(CompanyEmailPolicy.emailDomain(verified.getFirst().email())));
   }
 
   @Transactional
@@ -152,6 +158,7 @@ public class WorkEmailService {
     jdbc.update(
         "UPDATE work_email_challenges SET attempts=attempts+1 WHERE id=UUID_TO_BIN(?)", challenge);
     if (!passwords.matches(code, row.get("code_hash").toString())) throw invalid();
+    companies.lockRegistry();
     try {
       if (jdbc.queryForObject(
               "SELECT COUNT(*) FROM work_email_verifications WHERE account_id=UUID_TO_BIN(?)",
@@ -159,9 +166,10 @@ public class WorkEmailService {
               id)
           > 0)
         jdbc.update(
-            "UPDATE work_email_verifications SET company=?,email=?,verified_at=CURRENT_TIMESTAMP(6)"
+            "UPDATE work_email_verifications SET company=?,company_review_id=IF(email=?,company_review_id,NULL),email=?,verified_at=CURRENT_TIMESTAMP(6)"
                 + " WHERE account_id=UUID_TO_BIN(?)",
             row.get("company"),
+            row.get("email"),
             row.get("email"),
             id);
       else
@@ -174,6 +182,7 @@ public class WorkEmailService {
     } catch (DuplicateKeyException error) {
       throw new ApiException(HttpStatus.CONFLICT, "이미 다른 회원이 인증한 이메일이에요.");
     }
+    companies.onEmailVerified(id, row.get("email").toString());
     jdbc.update(
         "UPDATE work_email_challenges SET consumed=true WHERE id=UUID_TO_BIN(?)", challenge);
     return status(principal);

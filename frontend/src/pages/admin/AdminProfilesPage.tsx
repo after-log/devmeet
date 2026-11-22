@@ -27,7 +27,7 @@ export default function AdminProfilesPage() {
       <Toolbar search={search} onSearch={setSearch} placeholder="이름, 이메일 또는 회원 ID 검색">
         <ResultCount total={filtered.length} allTotal={members.length} />
       </Toolbar>
-      <div className="grid grid-cols-4 gap-[19px] max-[900px]:grid-cols-2 max-xl:grid-cols-3 max-sm:gap-[11px]">
+      <div className="grid grid-cols-4 gap-4.75 max-[900px]:grid-cols-2 max-xl:grid-cols-3 max-sm:gap-2.75">
         {filtered.slice(page * 8, page * 8 + 8).map((member) => (
           <ProfileCard key={member.id} member={member} onReview={openReview} />
         ))}

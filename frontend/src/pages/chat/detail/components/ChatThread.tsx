@@ -1,3 +1,6 @@
+import { useSchemaForm } from '@/hooks/useSchemaForm';
+import { messageSchema } from '@/validation/community';
+import { FormErrors } from '@/components/ui/form-errors';
 import type { ChatRoom } from '@/types/chats';
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { ArrowUp, ArrowUpRight, ShieldCheck } from 'lucide-react';
@@ -23,7 +26,9 @@ const ChatThread = ({
   hasOlder: boolean;
   onLoadOlder: () => Promise<void>;
 }) => {
-  const [draft, setDraft] = useState('');
+  const form = useSchemaForm(messageSchema, { defaultValues: { text: '' } });
+  const draft = form.watch('text');
+  const textRegistration = form.register('text');
   const [loadingOlder, setLoadingOlder] = useState(false);
   const preserveScroll = useRef(false);
   const [sending, setSending] = useState(false);
@@ -46,9 +51,8 @@ const ChatThread = ({
     scrollToLatest();
   }, [room.messages.length]);
 
-  const send = async () => {
-    if (!draft.trim() || sendingRef.current || loading) return;
-    const text = draft.trim();
+  const send = form.handleSubmit(async ({ text }) => {
+    if (sendingRef.current || loading) return;
     // 대화방의 첫 메시지일 때만 종이비행기를 띄운다
     const first = room.messages.length === 0;
     sendingRef.current = true;
@@ -57,7 +61,7 @@ const ChatThread = ({
     try {
       await onSend(text);
       if (first) setPlane((n) => n + 1);
-      setDraft('');
+      form.reset({ text: '' });
       input.current?.focus();
     } catch (err) {
       setSendError(`전송 실패 · ${(err as Error).message} 입력 내용을 유지했어요.`);
@@ -65,7 +69,7 @@ const ChatThread = ({
       sendingRef.current = false;
       setSending(false);
     }
-  };
+  });
 
   return (
     <section className="chat-thread" aria-label={`${profile.name}님과의 대화`}>
@@ -127,7 +131,7 @@ const ChatThread = ({
             <button
               className="mt-4 flex w-full items-center justify-between gap-2 text-left text-xs leading-[1.8] text-fg-2 hover:text-point"
               onClick={() => {
-                setDraft(room.starter);
+                form.setValue('text', room.starter);
                 input.current?.focus();
               }}
             >
@@ -187,7 +191,9 @@ const ChatThread = ({
             {sendError}
           </p>
         )}
+        <FormErrors errors={form.formState.errors} />
         <form
+          noValidate
           className="chat-composer"
           onSubmit={(event) => {
             event.preventDefault();
@@ -195,14 +201,16 @@ const ChatThread = ({
           }}
         >
           <textarea
-            ref={input}
+            {...textRegistration}
+            ref={(node) => {
+              input.current = node;
+              textRegistration.ref(node);
+            }}
             rows={2}
             readOnly={sending}
             aria-label="메시지"
             placeholder="편하게 이야기를 건네보세요"
             maxLength={1000}
-            value={draft}
-            onChange={(event) => setDraft(event.target.value)}
             onKeyDown={(event) => {
               if (
                 event.key === 'Enter' &&
@@ -217,7 +225,7 @@ const ChatThread = ({
           />
           <button
             type="submit"
-            disabled={!draft.trim() || sending || loading}
+            disabled={!messageSchema.safeParse({ text: draft }).success || sending || loading}
             aria-label="메시지 보내기"
           >
             <ArrowUp size={18} />

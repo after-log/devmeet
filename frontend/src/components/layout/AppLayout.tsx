@@ -7,7 +7,8 @@ import BottomNav from '@/components/layout/BottomNav';
 import AppSheets from '@/components/AppSheets';
 import { Toaster } from '@/components/ui/sonner';
 import { applyTheme, getTheme } from '../../lib/theme';
-import { useChatsStore } from '@/stores/chats';
+import { useMemberSession } from '@/hooks/queries/useMemberSession';
+import { useMemberEvents } from '@/hooks/queries/useMemberEvents';
 import { usePwaInstall } from '@/hooks/usePwaInstall';
 import { PwaInstallBanner } from '@/components/PwaInstall';
 import PwaUpdate from '@/components/PwaUpdate';
@@ -15,9 +16,10 @@ import PwaUpdate from '@/components/PwaUpdate';
 const TABS = ['/today', '/likes', '/chat', '/me'];
 
 const AppLayout = () => {
+  const { reconnect } = useMemberSession();
   const navigate = useNavigate();
   const installState = usePwaInstall();
-  const { booted, boot, demo, user, error, exitDemo, step, openSheet, refresh } = useApp();
+  const { booted, demo, error, exitDemo, step, openSheet, refresh } = useApp();
   const { pathname } = useLocation();
   // 라벨 → 제목 → 본문 타이핑. 상세 화면은 사람과 상관없이 한 화면으로 보고, 온보딩은 단계마다 따로 센다
   const mainRef = useRef<HTMLElement>(null);
@@ -34,41 +36,7 @@ const AppLayout = () => {
     applyTheme(next);
     setTheme(next);
   };
-  useEffect(() => {
-    void boot();
-  }, [boot]);
-  useEffect(() => {
-    if (demo || !user) return;
-    const events = new EventSource('/api/events');
-    const refreshAll = () => void refresh();
-    const message = (event: MessageEvent) => {
-      const { peerId } = JSON.parse(event.data);
-      void useChatsStore
-        .getState()
-        .loadMessages(peerId)
-        .catch(() => void refresh());
-    };
-    ['like', 'match', 'connections', 'profile'].forEach((kind) =>
-      events.addEventListener(kind, refreshAll),
-    );
-    events.addEventListener('message', message);
-    const interval = window.setInterval(() => {
-      if (document.visibilityState === 'visible') {
-        void refresh();
-        useApp.getState().connections.matches.forEach(
-          (p) =>
-            void useChatsStore
-              .getState()
-              .loadMessages(p.id)
-              .catch(() => undefined),
-        );
-      }
-    }, 30_000);
-    return () => {
-      events.close();
-      window.clearInterval(interval);
-    };
-  }, [demo, user?.id, refresh]);
+  useMemberEvents();
   useEffect(() => {
     window.scrollTo(0, 0);
     openSheet(null);
@@ -77,9 +45,9 @@ const AppLayout = () => {
   }, [pathname, step, openSheet, refresh]);
   return (
     <>
-      <div className="mx-auto max-w-[480px] min-[650px]:pt-[35px]">
+      <div className="mx-auto max-w-120 min-[650px]:pt-8.75">
         <div
-          className={`min-h-dvh border-x border-line bg-canvas max-[480px]:border-0 min-[650px]:min-h-[calc(100dvh-35px)] min-[650px]:rounded-t-xl min-[650px]:border min-[650px]:border-b-0 min-[650px]:border-line ${isValuesPage ? 'min-[650px]:overflow-clip' : 'min-[650px]:overflow-hidden'} ${isChatDetail ? 'chat-detail-layout' : 'pb-[94px]'}`}
+          className={`min-h-dvh border-x border-line bg-canvas max-[480px]:border-0 min-[650px]:min-h-[calc(100dvh-35px)] min-[650px]:rounded-t-xl min-[650px]:border min-[650px]:border-b-0 min-[650px]:border-line ${isValuesPage ? 'min-[650px]:overflow-clip' : 'min-[650px]:overflow-hidden'} ${isChatDetail ? 'chat-detail-layout' : 'pb-23.5'}`}
         >
           <AppHeader theme={theme} onToggleTheme={toggleTheme} />
           {(pathname === '/' || TABS.includes(pathname)) && (
@@ -103,13 +71,13 @@ const AppLayout = () => {
             className={
               isChatDetail
                 ? 'chat-detail-main'
-                : 'px-6 pt-7 pb-6 max-[480px]:px-5 max-[480px]:py-[23px] max-[360px]:px-[15px]'
+                : 'px-6 pt-7 pb-6 max-[480px]:px-5 max-[480px]:py-5.75 max-[360px]:px-3.75'
             }
           >
             {error && !demo && (
               <div role="alert" className="mb-5 rounded-lg border border-sub p-3 text-xs text-sub">
                 {error}
-                <button className="ml-3 underline" onClick={() => void boot()}>
+                <button className="ml-3 underline" onClick={() => void reconnect()}>
                   다시 연결
                 </button>
               </div>

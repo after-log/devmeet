@@ -1,28 +1,30 @@
-import { useEffect, useState } from 'react';
+import { Controller } from 'react-hook-form';
+import { useSchemaForm } from '@/hooks/useSchemaForm';
+import { preferencesSchema } from '@/validation/profile';
+import { reportSchema } from '@/validation/community';
+import { FormErrors } from '@/components/ui/form-errors';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useApp } from '../stores/app';
-import { api } from '../lib/api';
+import { useProfileMutations } from '@/hooks/queries/useProfileMutations';
+import { useSafetyMutations, useBlockedPeople } from '@/hooks/queries/useSafety';
 import { REPORT_REASONS } from '@/data/options';
-import type { Person } from '@/types';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Select } from '@/components/ui/select';
 import SocialButtons from '@/components/SocialButtons';
 
 const FiltersSheet = ({ close }: { close: () => void }) => {
-  const { user, demo, draft, setDraft, setUser } = useApp();
+  const { user, demo, draft, setDraft } = useApp();
+  const profileMutations = useProfileMutations();
   const p = user?.profile ?? draft;
-  const [region, setRegion] = useState(p.region ?? '');
-  const [minAge, setMinAge] = useState(String(p.minAge ?? 19));
-  const [maxAge, setMaxAge] = useState(String(p.maxAge ?? 60));
-  const save = async () => {
+  const form = useSchemaForm(preferencesSchema, {
+    defaultValues: { region: p.region ?? '', minAge: p.minAge ?? 19, maxAge: p.maxAge ?? 60 },
+  });
+  const save = async (patch: { region: string; minAge: number; maxAge: number }) => {
     try {
-      if (Number(minAge) > Number(maxAge)) return toast('최소 나이는 최대 나이보다 작아야 해요.');
-      const patch = { region, minAge: Number(minAge), maxAge: Number(maxAge) };
       if (demo || !user?.profile) setDraft(patch);
       else {
-        const { profile } = await api.saveProfile({ ...user.profile, ...patch });
-        setUser({ ...user, profile });
+        await profileMutations.saveProfile({ ...user.profile, ...patch });
       }
       close();
       toast('추천 조건을 저장했어요.');
@@ -31,22 +33,29 @@ const FiltersSheet = ({ close }: { close: () => void }) => {
     }
   };
   return (
-    <>
+    <form noValidate onSubmit={form.handleSubmit(save)}>
       <p className="eyebrow">// preferences</p>
       <DialogTitle>추천 조건</DialogTitle>
       <label className="formlabel" htmlFor="filter-region">
         지역
       </label>
-      <Select
-        id="filter-region"
-        value={region || 'all'}
-        onValueChange={(v) => setRegion(v === 'all' ? '' : v)}
-        options={[
-          { value: 'all', label: '서울·경기 전체' },
-          { value: '서울', label: '서울시' },
-          { value: '경기', label: '경기도' },
-        ]}
+      <Controller
+        name="region"
+        control={form.control}
+        render={({ field }) => (
+          <Select
+            id="filter-region"
+            value={field.value || 'all'}
+            onValueChange={(value) => field.onChange(value === 'all' ? '' : value)}
+            options={[
+              { value: 'all', label: '서울·경기 전체' },
+              { value: '서울', label: '서울시' },
+              { value: '경기', label: '경기도' },
+            ]}
+          />
+        )}
       />
+
       <div className="grid grid-cols-2 gap-2">
         <label className="formlabel">
           최소 나이
@@ -55,8 +64,7 @@ const FiltersSheet = ({ close }: { close: () => void }) => {
             type="number"
             min={19}
             max={80}
-            value={minAge}
-            onChange={(e) => setMinAge(e.target.value)}
+            {...form.register('minAge', { valueAsNumber: true })}
           />
         </label>
         <label className="formlabel">
@@ -66,26 +74,27 @@ const FiltersSheet = ({ close }: { close: () => void }) => {
             type="number"
             min={19}
             max={80}
-            value={maxAge}
-            onChange={(e) => setMaxAge(e.target.value)}
+            {...form.register('maxAge', { valueAsNumber: true })}
           />
         </label>
       </div>
-      <DialogDescription className="secure mt-[22px]">
+      <DialogDescription className="secure mt-5.5">
         변경한 조건은 다음 날 새 추천에 적용돼요.
         <br />
         오늘 이미 배정된 인연은 유지돼요.
       </DialogDescription>
-      <button className="btn full" onClick={save}>
+      <FormErrors errors={form.formState.errors} />
+      <button type="submit" className="btn full" disabled={form.formState.isSubmitting}>
         조건 저장
       </button>
-    </>
+    </form>
   );
 };
 
 const SafetySheet = ({ id, close }: { id: string; close: () => void }) => {
+  const safety = useSafetyMutations();
   const navigate = useNavigate();
-  const { demo, demoBlock, openSheet, refresh } = useApp();
+  const { demo, demoBlock, openSheet } = useApp();
   return (
     <>
       <p className="eyebrow">// safety</p>
@@ -95,13 +104,12 @@ const SafetySheet = ({ id, close }: { id: string; close: () => void }) => {
         신고하기
       </button>
       <button
-        className="btn secondary mt-[10px] w-full"
+        className="btn secondary mt-2.5 w-full"
         onClick={async () => {
           try {
             if (demo) demoBlock(id);
             else {
-              await api.block(id);
-              await refresh();
+              await safety.block(id);
             }
             close();
             navigate('/chat');
@@ -119,8 +127,11 @@ const SafetySheet = ({ id, close }: { id: string; close: () => void }) => {
 };
 
 const ReportSheet = ({ id, close }: { id: string; close: () => void }) => {
+  const safety = useSafetyMutations();
   const demo = useApp((s) => s.demo);
-  const [reason, setReason] = useState(REPORT_REASONS[0]);
+  const form = useSchemaForm(reportSchema.omit({ id: true }), {
+    defaultValues: { reason: REPORT_REASONS[0] },
+  });
   return (
     <>
       <p className="eyebrow">// report</p>
@@ -128,27 +139,35 @@ const ReportSheet = ({ id, close }: { id: string; close: () => void }) => {
       <label className="formlabel" htmlFor="report-reason">
         어떤 문제가 있었나요?
       </label>
-      <Select
-        id="report-reason"
-        value={reason}
-        onValueChange={setReason}
-        options={REPORT_REASONS}
+      <Controller
+        name="reason"
+        control={form.control}
+        render={({ field }) => (
+          <Select
+            id="report-reason"
+            value={field.value}
+            onValueChange={field.onChange}
+            options={REPORT_REASONS}
+          />
+        )}
       />
+      <FormErrors errors={form.formState.errors} />
       <button
         className="btn full"
-        onClick={async () => {
+        disabled={form.formState.isSubmitting}
+        onClick={form.handleSubmit(async ({ reason }) => {
           if (demo) {
             close();
             return toast('둘러보기에서는 실제 신고가 접수되지 않아요.');
           }
           try {
-            const r = await api.report(id, reason);
+            const r = await safety.report(id, reason);
             close();
             toast(`신고를 기록했어요 · ${r.id.slice(0, 8)}`);
           } catch (err) {
             toast((err as Error).message);
           }
-        }}
+        })}
       >
         신고 기록하기
       </button>
@@ -161,24 +180,18 @@ const ReportSheet = ({ id, close }: { id: string; close: () => void }) => {
 
 const BlockedSheet = () => {
   const demo = useApp((s) => s.demo);
-  const refresh = useApp((s) => s.refresh);
-  const [people, setPeople] = useState<Person[] | null>(null);
-  const load = () => {
-    if (demo) setPeople([]);
-    else
-      void api
-        .blocks()
-        .then((r) => setPeople(r.people))
-        .catch((err: Error) => {
-          setPeople([]);
-          toast(err.message);
-        });
-  };
-  useEffect(load, [demo]);
+  const safety = useSafetyMutations();
+  const blocked = useBlockedPeople();
+  const people = demo ? [] : (blocked.data?.people ?? (blocked.isPending ? null : []));
   return (
     <>
       <p className="eyebrow">// blocked</p>
       <DialogTitle>차단한 프로필</DialogTitle>
+      {blocked.error && (
+        <p role="alert" className="text-sub">
+          {blocked.error.message}
+        </p>
+      )}
       {people === null ? (
         <p className="muted">불러오는 중…</p>
       ) : people.length ? (
@@ -189,9 +202,8 @@ const BlockedSheet = () => {
               className="tag"
               onClick={async () => {
                 try {
-                  await api.block(p.id, true);
-                  await refresh();
-                  load();
+                  await safety.block(p.id, true);
+
                   toast('차단을 해제했어요.');
                 } catch (err) {
                   toast((err as Error).message);

@@ -43,7 +43,7 @@ export default function AdminDataTable<T extends { id: string }>({
         <ResultCount total={total} allTotal={data.length} />
       </header>
       <div className="overflow-x-auto">
-        <table className="w-full border-collapse text-left text-sm whitespace-nowrap [&_small]:mt-1 [&_small]:block [&_small]:text-[12px] [&_small]:text-neutral-600 [&_strong]:font-semibold [&_strong]:text-neutral-800 [&_tbody_tr:hover]:bg-[#fafafa] [&_td]:border-b [&_td]:border-[#f5f5f5] [&_td]:px-[23px] [&_td]:py-[19px] [&_td]:text-neutral-700 max-xl:[&_td]:px-4 max-sm:[&_td]:py-3.5 [&_th]:border-y [&_th]:border-[#f5f5f5] [&_th]:bg-[#fafafa] [&_th]:px-[23px] [&_th]:py-[13px] [&_th]:text-[13px] [&_th]:font-semibold [&_th]:text-neutral-600 max-xl:[&_th]:px-4">
+        <table className="w-full border-collapse text-left text-sm whitespace-nowrap [&_small]:mt-1 [&_small]:block [&_small]:text-[12px] [&_small]:text-neutral-600 [&_strong]:font-semibold [&_strong]:text-neutral-800 [&_tbody_tr:hover]:bg-[#fafafa] [&_td]:border-b [&_td]:border-[#f5f5f5] [&_td]:px-5.75 [&_td]:py-4.75 [&_td]:text-neutral-700 max-xl:[&_td]:px-4 max-sm:[&_td]:py-3.5 [&_th]:border-y [&_th]:border-[#f5f5f5] [&_th]:bg-[#fafafa] [&_th]:px-5.75 [&_th]:py-3.25 [&_th]:text-[13px] [&_th]:font-semibold [&_th]:text-neutral-600 max-xl:[&_th]:px-4">
           <caption className="sr-only">{caption}</caption>
           <thead>
             {table.getHeaderGroups().map((group) => (

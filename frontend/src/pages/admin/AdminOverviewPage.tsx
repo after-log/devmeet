@@ -4,6 +4,9 @@ import { ArrowRight, ChevronRight, Flag, ShieldCheck } from 'lucide-react';
 import { useAdmin } from './hooks/useAdmin';
 import { Badge, EmptyState, Panel } from './components/AdminUI';
 import OverviewStats from './components/OverviewStats';
+import { lazy, Suspense } from 'react';
+
+const UserStatistics = lazy(() => import('./components/UserStatistics'));
 
 export default function AdminOverviewPage() {
   const { members, reports, openReview, openReport } = useAdmin();
@@ -11,8 +14,17 @@ export default function AdminOverviewPage() {
   const openReports = reports.filter((r) => r.status === 'OPEN');
   return (
     <>
+      <Suspense
+        fallback={
+          <p role="status" className="mb-6 text-sm text-neutral-600">
+            통계 화면을 불러오는 중…
+          </p>
+        }
+      >
+        <UserStatistics />
+      </Suspense>
       <OverviewStats />
-      <div className="my-[25px] flex items-center gap-[18px] rounded-[11px] border border-[#e5e5e5] bg-neutral-100 p-6 max-[900px]:flex-wrap max-[900px]:gap-3 max-[900px]:p-[19px]">
+      <div className="my-6.25 flex items-center gap-4.5 rounded-[11px] border border-[#e5e5e5] bg-neutral-100 p-6 max-[900px]:flex-wrap max-[900px]:gap-3 max-[900px]:p-4.75">
         <div className="grid size-12 shrink-0 place-items-center rounded-xl bg-[#e5e5e5] text-neutral-600">
           <ShieldCheck size={26} />
         </div>
@@ -27,21 +39,21 @@ export default function AdminOverviewPage() {
           </p>
         </div>
         <Link
-          className="ml-auto inline-flex min-h-[41px] items-center justify-center gap-2 rounded-[7px] border border-[#262626] bg-[#262626] px-[15px] py-2.5 text-sm font-medium whitespace-nowrap text-white hover:bg-[#404040] max-[900px]:ml-[60px]"
+          className="ml-auto inline-flex min-h-10.25 items-center justify-center gap-2 rounded-[7px] border border-[#262626] bg-[#262626] px-3.75 py-2.5 text-sm font-medium whitespace-nowrap text-white hover:bg-[#404040] max-[900px]:ml-15"
           to="/admin/profiles"
         >
           프로필 검수하기 <ArrowRight size={16} />
         </Link>
       </div>
-      <div className="grid grid-cols-[1.1fr_1fr] gap-[23px] max-[900px]:grid-cols-1 max-xl:gap-[15px]">
+      <div className="grid grid-cols-[1.1fr_1fr] gap-5.75 max-[900px]:grid-cols-1 max-xl:gap-3.75">
         <Panel>
-          <div className="flex items-center justify-between border-b border-[#f5f5f5] px-[23px] py-[21px]">
+          <div className="flex items-center justify-between border-b border-[#f5f5f5] px-5.75 py-5.25">
             <h2 className="text-[14px] font-semibold">
               최근 검수 대기{' '}
-              <span className="ml-[7px] text-[13px] text-neutral-600">{pending.length}</span>
+              <span className="ml-1.75 text-[13px] text-neutral-600">{pending.length}</span>
             </h2>
             <Link
-              className="flex items-center gap-[3px] text-[12px] text-neutral-600"
+              className="flex items-center gap-0.75 text-[12px] text-neutral-600"
               to="/admin/profiles"
             >
               전체 보기 <ChevronRight size={15} />
@@ -49,12 +61,12 @@ export default function AdminOverviewPage() {
           </div>
           {pending.slice(0, 4).map((m) => (
             <button
-              className="flex w-full items-center gap-3 border-0 border-b border-[#f5f5f5] bg-white px-[23px] py-[17px] text-left hover:bg-[#fafafa]"
+              className="flex w-full items-center gap-3 border-0 border-b border-[#f5f5f5] bg-white px-5.75 py-4.25 text-left hover:bg-[#fafafa]"
               key={m.id}
               onClick={() => openReview(m)}
             >
               <AdminPhoto
-                className="h-[45px] w-[42px] rounded-[7px] object-cover"
+                className="h-11.25 w-10.5 rounded-[7px] object-cover"
                 src={m.photos[0]}
                 alt=""
               />
@@ -71,13 +83,13 @@ export default function AdminOverviewPage() {
           {!pending.length && <EmptyState />}
         </Panel>
         <Panel>
-          <div className="flex items-center justify-between border-b border-[#f5f5f5] px-[23px] py-[21px]">
+          <div className="flex items-center justify-between border-b border-[#f5f5f5] px-5.75 py-5.25">
             <h2 className="text-[14px] font-semibold">
               확인이 필요한 신고{' '}
-              <span className="ml-[7px] text-[13px] text-neutral-600">{openReports.length}</span>
+              <span className="ml-1.75 text-[13px] text-neutral-600">{openReports.length}</span>
             </h2>
             <Link
-              className="flex items-center gap-[3px] text-[12px] text-neutral-600"
+              className="flex items-center gap-0.75 text-[12px] text-neutral-600"
               to="/admin/members?tab=reports"
             >
               전체 보기 <ChevronRight size={15} />
@@ -85,11 +97,11 @@ export default function AdminOverviewPage() {
           </div>
           {openReports.map((r) => (
             <button
-              className="flex w-full items-center gap-3 border-0 border-b border-[#f5f5f5] bg-white px-[23px] py-[22px] text-left hover:bg-[#fafafa]"
+              className="flex w-full items-center gap-3 border-0 border-b border-[#f5f5f5] bg-white px-5.75 py-5.5 text-left hover:bg-[#fafafa]"
               key={r.id}
               onClick={() => openReport(r)}
             >
-              <span className="grid size-[35px] place-items-center rounded-[9px] bg-[#f5f5f5] text-neutral-600">
+              <span className="grid size-8.75 place-items-center rounded-[9px] bg-[#f5f5f5] text-neutral-600">
                 <Flag size={17} />
               </span>
               <div className="flex-1">
@@ -102,7 +114,7 @@ export default function AdminOverviewPage() {
             </button>
           ))}
           {!openReports.length && <EmptyState />}
-          <div className="mx-[23px] my-[17px] flex items-center gap-[7px] text-[12px] text-neutral-600">
+          <div className="mx-5.75 my-4.25 flex items-center gap-1.75 text-[12px] text-neutral-600">
             <ShieldCheck size={15} /> 신고 내용은 검토 후 신중하게 처리해 주세요.
           </div>
         </Panel>

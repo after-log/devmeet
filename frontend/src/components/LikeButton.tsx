@@ -1,3 +1,4 @@
+import { useMemberActions } from '@/hooks/queries/useMemberActions';
 import { Check, Heart } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -22,8 +23,9 @@ const LikeButton = ({
   className?: string;
   label?: string;
 }) => {
+  const { like } = useMemberActions();
   const navigate = useNavigate();
-  const { liked, remaining, like, user } = useApp();
+  const { liked, remaining, user } = useApp();
   const [pending, setPending] = useState(false);
   const [pop, setPop] = useState(0);
   const sent = liked.includes(person.id);

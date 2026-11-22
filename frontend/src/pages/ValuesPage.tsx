@@ -1,10 +1,14 @@
+import { z } from 'zod';
+import { useSchemaForm } from '@/hooks/useSchemaForm';
+import { createValueAnswersSchema } from '@/validation/profile';
+import { FormErrors } from '@/components/ui/form-errors';
 import { useRef, useState, type KeyboardEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Check, Eye, LockKeyhole } from 'lucide-react';
 import { toast } from 'sonner';
 import { useValueCatalog, type ValueSection } from '@/hooks/useValueCatalog';
 import { useApp } from '@/stores/app';
-import { api } from '@/lib/api';
+import { useProfileMutations } from '@/hooks/queries/useProfileMutations';
 import type { ValueAnswer, ValueAnswers } from '@/types';
 import { normalizeValueAnswers, publicValueAnswers, PUBLIC_VALUE_LIMIT } from '@/lib/value-answers';
 
@@ -47,13 +51,21 @@ const ValuesPage = () => {
 };
 
 const ValuesEditor = ({ sections }: { sections: ValueSection[] }) => {
+  const profileMutations = useProfileMutations();
   const questions = sections.flatMap((section) => section.questions);
   const total = questions.length;
-  const { user, demo, demoValueAnswers, setDemoValueAnswers, setUser } = useApp();
+  const { user, demo, demoValueAnswers, setDemoValueAnswers } = useApp();
   const initial = demo ? demoValueAnswers : (user?.profile?.valueAnswers ?? {});
-  const [answers, setAnswers] = useState<ValueAnswers>(() =>
-    normalizeValueAnswers(initial, questions),
-  );
+  const form = useSchemaForm(z.object({ valueAnswers: createValueAnswersSchema(questions) }), {
+    defaultValues: { valueAnswers: normalizeValueAnswers(initial, questions) },
+  });
+  const answers = form.watch('valueAnswers');
+  const setAnswers = (next: ValueAnswers | ((current: ValueAnswers) => ValueAnswers)) =>
+    form.setValue(
+      'valueAnswers',
+      typeof next === 'function' ? next(form.getValues('valueAnswers')) : next,
+      { shouldValidate: true, shouldDirty: true },
+    );
   const [saved, setSaved] = useState(() => normalizeValueAnswers(initial, questions));
   const [active, setActive] = useState(0);
   const [saving, setSaving] = useState(false);
@@ -76,8 +88,12 @@ const ValuesEditor = ({ sections }: { sections: ValueSection[] }) => {
   const togglePublic = (id: string) => {
     const answer = answers[id];
     if (!answer?.choice) return;
-    if (answer.private && publicCount >= PUBLIC_VALUE_LIMIT) {
-      toast('프로필에는 최대 10개까지 공개할 수 있어요. 다른 답변의 공개를 먼저 해제해 주세요.');
+    const next = createValueAnswersSchema(questions).safeParse({
+      ...answers,
+      [id]: { ...answer, private: !answer.private },
+    });
+    if (!next.success) {
+      toast(next.error.issues[0].message);
       return;
     }
     update(id, { private: !answer.private });
@@ -98,17 +114,15 @@ const ValuesEditor = ({ sections }: { sections: ValueSection[] }) => {
     event.preventDefault();
     changeSection(next, true);
   };
-  const save = async () => {
+  const save = form.handleSubmit(async ({ valueAnswers: answers }) => {
     setSaving(true);
     setError('');
     try {
       let savedAnswers = answers;
       if (demo) setDemoValueAnswers(answers);
       else {
-        const { profile } = await api.saveValues(answers);
+        const { profile } = await profileMutations.saveValues(answers);
         savedAnswers = normalizeValueAnswers(profile.valueAnswers ?? {}, questions);
-        const currentUser = useApp.getState().user;
-        if (currentUser) setUser({ ...currentUser, profile });
       }
       setAnswers(savedAnswers);
       setSaved(savedAnswers);
@@ -118,7 +132,7 @@ const ValuesEditor = ({ sections }: { sections: ValueSection[] }) => {
     } finally {
       setSaving(false);
     }
-  };
+  });
 
   return (
     <div className="values-page">
@@ -285,6 +299,7 @@ const ValuesEditor = ({ sections }: { sections: ValueSection[] }) => {
         )}
       </div>
       <div className="values-save">
+        <FormErrors errors={form.formState.errors} />
         {error && (
           <p role="alert" className="mb-2 text-xs text-sub">
             {error}
@@ -301,7 +316,12 @@ const ValuesEditor = ({ sections }: { sections: ValueSection[] }) => {
                 ? '변경한 답변을 저장해 주세요.'
                 : '저장한 답변은 언제든 바꿀 수 있어요.'}
           </p>
-          <button type="button" className="btn shrink-0" disabled={saving || !dirty} onClick={save}>
+          <button
+            type="button"
+            className="btn shrink-0"
+            disabled={saving || !dirty}
+            onClick={() => void save()}
+          >
             {saving ? '저장 중…' : '저장하기'}
           </button>
         </div>

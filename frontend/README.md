@@ -13,6 +13,8 @@ npm run dev
 개발 서버: http://localhost:5173
 
 ```bash
+npm run lint       # Tailwind 표준 클래스 표기 검사
+npm run lint:fix   # Tailwind 표준 클래스 표기로 자동 수정
 npm run format     # Prettier 포맷 및 Tailwind 클래스 정렬
 npm run format:check # 포맷 검사
 npm run typecheck  # TypeScript strict 검사
@@ -22,6 +24,7 @@ npm run preview    # http://localhost:4173 에서 빌드 결과 확인
 
 현재 로컬 Node.js 20.12에서도 실행할 수 있도록 Vite 6을 사용합니다.
 CI와 Docker 빌드는 Node.js 22를 사용합니다.
+ESLint는 Node.js 20.19 이상 또는 22.13 이상(24 이상 포함)이 필요하며, Node.js 22.13 이상을 권장합니다.
 
 ## 화면 흐름
 
@@ -152,3 +155,89 @@ npm run preview # http://localhost:4173
 문항 추가·활성 전환은 사용자 가치관 화면과 새 추천 계산에도 반영됩니다.
 관리자 전용 세션 및 CSRF를 사용하며, 새로고침하면 서버에서 로그인 상태를 확인합니다.
 관리자 테이블은 TanStack React Table, 스타일은 컴포넌트의 Tailwind 클래스를 사용합니다.
+
+## 폼 검증
+
+사용자·관리자 폼은 `src/hooks/useSchemaForm.ts`에서 React Hook Form과 `zodResolver`를 연결합니다.
+입력 규칙과 정규화는 `src/validation/`의 기능별 Zod 스키마에 정의합니다. 기본 검증 시점은
+`onChange`이며, 제출에는 `handleSubmit`이 반환하는 검증된 값을 사용합니다.
+일반 입력은 `register`, 커스텀 선택·슬라이더는 `Controller`로 연결하고 오류는 공통 `FormErrors`로 표시합니다.
+서버 실패는 `setFormError`로 필드 또는 `root.server` 오류에 연결합니다.
+
+브라우저별 검증 메시지 대신 스키마 오류를 표시하도록 폼에 `noValidate`를 적용합니다.
+`required`, `maxLength`, `inputMode` 등의 입력 힌트와 편집 제한은 함께 사용할 수 있습니다.
+API 요청 직전에도 같은 스키마를 검사하며, 서버의 인증·권한·업무 규칙 검증은 서버에서 수행합니다.
+온보딩 단계, 동적 가치관 선택지, 추천 나이 범위, 비밀번호 UTF-8 바이트 길이 같은 교차 필드 규칙도
+스키마에서 관리합니다. 관련 검증·resolver·API 회귀 검사는 `npm test`로 실행합니다.
+
+## HTTP 클라이언트
+
+API 통신은 `src/lib/axios.ts`에서 내보내는 공통 `axios` 인스턴스를 사용합니다.
+기본 경로는 `/api`이며 쿠키 인증과 캐시 방지 헤더를 공통 적용합니다.
+요청 인터셉터는 전송 전 Zod 검증을 수행하고, 변경 요청에 사용자·관리자 영역별 CSRF 토큰을 넣습니다.
+동시 요청은 토큰 조회를 공유하며 CSRF 403 오류만 한 번 재시도합니다.
+로그인·가입·로그아웃 후에는 해당 영역의 토큰 캐시를 갱신합니다.
+응답 오류는 기존 `ApiError(status, message)` 형식으로 통일하며 취소·폼 검증 오류는 그대로 전달합니다.
+파일 업로드는 FormData를 전달하고 multipart 경계 헤더는 런타임이 처리합니다.
+
+```ts
+import { axios } from '@/lib/axios';
+
+const { data } = await axios.get('/me');
+```
+
+기존 `request`와 `adminRequest`는 이 인스턴스를 사용하는 응답 데이터 래퍼입니다.
+SSE 구독은 `EventSource`를 사용합니다.
+
+## 서버 데이터와 훅
+
+TanStack Query v5를 사용하며 `main.tsx`의 `QueryClientProvider`에서 공통 클라이언트를 제공합니다.
+컴포넌트는 API를 직접 호출하지 않고 `src/hooks/queries` 또는 기능 폴더의 `hooks`를 사용합니다.
+조회는 `useQuery`/`useQueries`, 변경은 `useMutation`으로 처리합니다.
+프로필, 차단, 관리자 승인 및 매칭 프리셋 저장 후 관련 쿼리를 무효화해 화면을 갱신합니다.
+
+- `useMemberSession`: 세션과 추천·연결 조회, 초기 진입 준비 및 30초 갱신
+- `useProfileMutations`, `useSafetyMutations`: 프로필·가치관·사진, 차단·신고
+- `useWorkEmail`, `useWorkEmailMutations`, `useSocialAuth`, `useRecovery`: 인증
+- `useChatRooms`, `useChatActions`: 대화 조회·전송·이전 기록, SSE 갱신과 메시지 중복 병합
+- 관리자 `hooks`: 세션, 회원/신고/문항, 통계, 기업 인증, 매칭 설정
+
+쿼리 키는 `member`, `admin`, `public` 영역을 구분하며 회원 데이터에는 회원 ID를 포함합니다.
+로그아웃·401 응답에서는 해당 영역의 진행 중인 조회를 취소하고 캐시를 제거합니다.
+조회는 기본 30초 동안 캐시를 사용하고, 4xx는 자동 재시도하지 않습니다. 변경 요청도 자동 재시도하지 않습니다.
+Zustand는 데모 데이터, 폼 초안, 화면 상태와 기존 화면에서 사용하는 데이터 투영을 유지합니다.
+API 함수는 서버 요청만 정의합니다. 프로필 기본값·필드 정리는 `useProfileMutations`, 사진 검증·리사이즈·JPEG 변환·FormData 생성은 `usePhotoUpload`에서 처리합니다.
+Axios 인터셉터는 공통 통신 검증을 담당하고, 조회 주기와 캐시 갱신은 훅에서 관리합니다.
+
+`@lukemorales/query-key-factory`의 `createQueryKeys`, `createMutationKeys`, `mergeQueryKeys`로
+`src/lib/query-keys.ts`의 `queryKeys`와 `mutationKeys`를 생성합니다.
+조회, 캐시 직접 갱신, 무효화, 세션 종료 처리 모두 같은 정의를 사용하며 키 배열을 직접 만들지 않습니다.
+회원 ID·관리자 계정·통계 기간·채팅 상대·페이지 커서는 키 팩토리의 인자로 전달합니다.
+`_def`는 영역 전체, `account(...).queryKey`는 계정 전체,
+`account(...)._ctx.messages(...).queryKey`는 해당 대화의 모든 페이지에 사용합니다.
+
+```ts
+import { queryKeys } from '@/lib/query-keys';
+
+queryKey: queryKeys.member.account(owner)._ctx.workEmail.queryKey;
+await client.invalidateQueries({ queryKey: queryKeys.member.account(owner).queryKey });
+```
+
+## Tailwind 클래스 자동 수정
+
+`eslint.config.js`에서 `eslint-plugin-better-tailwindcss`의
+`enforce-canonical-classes` 규칙을 사용합니다. `src/style.css`의 Tailwind v4 테마를 기준으로
+TSX의 `className`, `cn()`·`clsx()` 호출과 CSS의 `@apply`를 검사합니다.
+예를 들어 `!mt-2`는 `mt-2!`, `h-[68px]`는 `h-17`, `aspect-[3/4]`는 `aspect-3/4`로 수정합니다.
+Prettier는 기존처럼 클래스 정렬과 코드 포맷을 담당합니다.
+
+```sh
+cd frontend
+npm run lint:fix
+npm run lint
+```
+
+VS Code에서 권장 확장인 **ESLint**(`dbaeumer.vscode-eslint`)를 설치하면 파일 저장 시 자동 수정합니다.
+저장 시 수정 설정은 저장소 루트를 열 때와 `frontend` 폴더를 열 때 모두 적용됩니다.
+Tailwind IntelliSense의 `suggestCanonicalClasses`는 같은 내용을 중복 표시하지 않도록 끄고,
+ESLint에서 해당 규칙을 오류로 검사합니다.

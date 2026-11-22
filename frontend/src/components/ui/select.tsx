@@ -38,7 +38,7 @@ export const Select = ({
       <SelectPrimitive.Trigger
         id={id}
         className={cn(
-          'flex min-h-12 w-full items-center justify-between gap-3 rounded-md border border-line-strong bg-surface px-[13px] py-3 text-left text-[14px] text-fg transition-colors outline-none hover:border-hover-line focus-visible:ring-2 focus-visible:ring-point disabled:cursor-default disabled:opacity-50 data-[placeholder]:text-fg-4 data-[state=open]:border-point',
+          'flex min-h-12 w-full items-center justify-between gap-3 rounded-md border border-line-strong bg-surface px-3.25 py-3 text-left text-[14px] text-fg transition-colors outline-none hover:border-hover-line focus-visible:ring-2 focus-visible:ring-point disabled:cursor-default disabled:opacity-50 data-placeholder:text-fg-4 data-[state=open]:border-point',
           className,
         )}
       >
@@ -52,7 +52,7 @@ export const Select = ({
           position="popper"
           sideOffset={6}
           collisionPadding={16}
-          className="z-[100] max-h-[min(360px,var(--radix-select-content-available-height))] w-[var(--radix-select-trigger-width)] overflow-hidden rounded-lg border border-line-strong bg-surface text-fg shadow-[0_12px_40px_#0006]"
+          className="z-100 max-h-[min(360px,var(--radix-select-content-available-height))] w-(--radix-select-trigger-width) overflow-hidden rounded-lg border border-line-strong bg-surface text-fg shadow-[0_12px_40px_#0006]"
         >
           <SelectPrimitive.ScrollUpButton className="flex h-7 items-center justify-center bg-lift text-fg-3">
             <ChevronUp className="size-4" />
@@ -64,7 +64,7 @@ export const Select = ({
                 <SelectPrimitive.Item
                   key={item.value}
                   value={item.value}
-                  className="relative flex min-h-12 cursor-pointer items-center rounded-md py-3 pr-10 pl-3 text-[13px] outline-none select-none data-[highlighted]:bg-mine data-[highlighted]:text-mine-fg data-[state=checked]:text-point"
+                  className="relative flex min-h-12 cursor-pointer items-center rounded-md py-3 pr-10 pl-3 text-[13px] outline-none select-none data-highlighted:bg-mine data-highlighted:text-mine-fg data-[state=checked]:text-point"
                 >
                   <SelectPrimitive.ItemText>{item.label}</SelectPrimitive.ItemText>
                   <SelectPrimitive.ItemIndicator className="absolute right-3 text-point">

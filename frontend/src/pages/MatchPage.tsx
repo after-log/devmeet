@@ -17,7 +17,7 @@ const MatchPage = () => {
       <p className="eyebrow">// connection established</p>
       <PixelMerge me={me.photo} you={p.photo} onDone={() => setMerged(true)} />
       <div className={merged ? 'pixel-stepin' : 'invisible'} aria-live="polite">
-        <div className="gradient-title !mt-2">{dev ? 'git merge --no-ff' : 'match = true;'}</div>
+        <div className="gradient-title mt-2!">{dev ? 'git merge --no-ff' : 'match = true;'}</div>
         <h2 className="onboard-hero">
           서로의 마음이
           <br />
@@ -27,14 +27,14 @@ const MatchPage = () => {
         <p className="onboard-lead">{p.name}님과 첫 인사를 건네볼까요?</p>
         <div className="panel text-left">
           <p className="section-comment">// shared rhythm</p>
-          <p className="!m-0">{reasonFor(p)}</p>
+          <p className="m-0!">{reasonFor(p)}</p>
         </div>
       </div>
       <button className="btn full" onClick={() => navigate(`/chat/${p.id}`)}>
         첫 인사 보내기
       </button>
       <button
-        className="btn secondary mt-[10px] w-full"
+        className="btn secondary mt-2.5 w-full"
         onClick={() => {
           if (index < people.length - 1) setIndex(index + 1);
           navigate('/today');

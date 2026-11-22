@@ -20,6 +20,8 @@ public class MatchingService {
   private final EventHub events;
   private final QuestionCatalog catalog;
   private final boolean requireGithub;
+  private final MatchingPresets presets;
+  private final tools.jackson.databind.json.JsonMapper json;
 
   public MatchingService(
       MemberAccess access,
@@ -27,6 +29,8 @@ public class MatchingService {
       JdbcTemplate jdbc,
       EventHub events,
       QuestionCatalog catalog,
+      MatchingPresets presets,
+      tools.jackson.databind.json.JsonMapper json,
       @Value("${app.require-github:false}") boolean requireGithub) {
     this.access = access;
     this.profiles = profiles;
@@ -34,6 +38,8 @@ public class MatchingService {
     this.events = events;
     this.requireGithub = requireGithub;
     this.catalog = catalog;
+    this.presets = presets;
+    this.json = json;
   }
 
   public static LocalDate today() {
@@ -74,22 +80,6 @@ public class MatchingService {
         && (!me.preference().equals("비개발자") || candidate.role().equals("non-developer"));
   }
 
-  private int score(Profile me, Profile other, Set<String> matchingQuestions) {
-    var a = me.view();
-    var b = other.view();
-    int score =
-        (a.meeting().equals(b.meeting()) ? 20 : 0) + (a.contact().equals(b.contact()) ? 20 : 0);
-    for (String id : matchingQuestions) {
-      var mine = me.getValueAnswers().get(id);
-      var theirs = other.getValueAnswers().get(id);
-      if (mine != null
-          && theirs != null
-          && mine.choice() != null
-          && mine.choice().equals(theirs.choice())) score++;
-    }
-    return score;
-  }
-
   @Transactional(isolation = org.springframework.transaction.annotation.Isolation.READ_COMMITTED)
   public Object recommendations(String email) {
     UUID me = access.account(email).getId();
@@ -124,11 +114,13 @@ public class MatchingService {
             me.toString(),
             day)
         == 0) {
-      jdbc.update(
-          "INSERT INTO recommendation_batches(owner_id,day) VALUES(UUID_TO_BIN(?),?)",
-          me.toString(),
-          day);
+      var preset = presets.active();
       var matchingQuestions = catalog.matchingIds();
+      jdbc.update(
+          "INSERT INTO recommendation_batches(owner_id,day,preset_id,generated_at,matching_question_ids)"
+              + " VALUES(UUID_TO_BIN(?),?,UUID_TO_BIN(?),?,?)",
+          me.toString(), day, preset.id(), java.sql.Timestamp.from(Instant.now()),
+          json.writeValueAsString(new TreeSet<>(matchingQuestions)));
       var candidates =
           jdbc
               .queryForList(
@@ -157,7 +149,7 @@ public class MatchingService {
               .filter(this::eligible)
               .filter(p -> wants(mine.view(), p.view()) && wants(p.view(), mine.view()))
               .sorted(
-                  Comparator.<Profile>comparingInt(p -> score(mine, p, matchingQuestions))
+                  Comparator.<Profile>comparingDouble(p -> MatchingPresets.score(mine, p, matchingQuestions, preset))
                       .reversed()
                       .thenComparing(
                           p ->

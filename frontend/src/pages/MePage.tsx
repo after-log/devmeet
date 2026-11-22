@@ -1,3 +1,4 @@
+import { useMemberActions } from '@/hooks/queries/useMemberActions';
 import { ChevronRight, Heart } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useApp } from '../stores/app';
@@ -7,8 +8,9 @@ import { demoProfilePhoto } from '@/data/members';
 import { publicValueAnswers, PUBLIC_VALUE_LIMIT } from '@/lib/value-answers';
 
 const MePage = () => {
+  const { logout } = useMemberActions();
   const navigate = useNavigate();
-  const { user, demo, demoValueAnswers, resetDraft, openSheet, logout } = useApp();
+  const { user, demo, demoValueAnswers, resetDraft, openSheet } = useApp();
   const { sections: valueSections, loading: catalogLoading } = useValueCatalog(demo);
   const questions = valueSections.flatMap((section) => section.questions);
   const p = user?.profile;
@@ -33,7 +35,7 @@ const MePage = () => {
             {name}
             {p ? <span className="ml-2 font-mono text-[14px] text-fg-3">{p.age}</span> : null}
           </h3>
-          <p className="m-0 text-xs leading-relaxed break-words text-fg-3">
+          <p className="m-0 text-xs leading-relaxed wrap-break-word text-fg-3">
             {p ? `${p.location} · ${p.job}` : '가입 없이 둘러보는 중이에요'}
           </p>
         </div>

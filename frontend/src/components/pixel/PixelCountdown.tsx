@@ -33,7 +33,7 @@ const PixelCountdown = ({ label = '내일 새 추천까지' }: { label?: string 
   }, [left]);
   return (
     <div className="pixel-countdown">
-      <p className="section-comment !mb-2">// {label}</p>
+      <p className="section-comment mb-2!">// {label}</p>
       <canvas
         ref={canvas}
         width={41}

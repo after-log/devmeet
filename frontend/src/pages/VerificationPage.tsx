@@ -10,7 +10,7 @@ const VerificationPage = () => (
       <div className="min-w-0">
         <strong className="block text-sm">회사 인증</strong>
         <p className="mt-2 mb-0 text-xs leading-relaxed text-fg-3">
-          회사 이메일로 인증번호를 받아 확인해요.
+          이메일 소유 확인 후 기업 도메인 또는 관리자 검토로 인증해요.
         </p>
       </div>
       <ChevronRight className="ico" aria-hidden="true" />

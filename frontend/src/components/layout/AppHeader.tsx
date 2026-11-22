@@ -45,7 +45,7 @@ const AppHeader = ({ theme, onToggleTheme }: { theme: Theme; onToggleTheme: () =
   };
 
   return (
-    <header className="flex h-[68px] shrink-0 items-center gap-3 border-b border-line px-6 max-[480px]:h-[62px] max-[480px]:px-5">
+    <header className="flex h-17 shrink-0 items-center gap-3 border-b border-line px-6 max-[480px]:h-15.5 max-[480px]:px-5">
       {detail ? (
         <>
           <button

@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { chatKey, useChatsStore } from '@/stores/chats';
 import { useApp } from '@/stores/app';
+import { useChatActions } from '../hooks/useChatActions';
 import { useChatRooms } from '../hooks/useChatRooms';
 import ChatThread from './components/ChatThread';
 
@@ -11,8 +12,7 @@ const ChatPage = () => {
   const room = rooms.find((room) => room.profileId === profileId);
   const profile = profiles.find((profile) => profile.id === profileId);
   const markRead = useChatsStore((s) => s.markRead);
-  const sendMessage = useChatsStore((s) => s.sendMessage);
-  const loadOlder = useChatsStore((s) => s.loadOlder);
+  const { sendMessage, loadOlder } = useChatActions(profileId ?? '');
   const owner = useApp((s) => s.user?.id);
   const cursor = useChatsStore((s) =>
     owner && profileId ? s.cursors[chatKey(owner, profileId)] : null,
@@ -30,9 +30,9 @@ const ChatPage = () => {
       profile={profile}
       loading={loading}
       error={error}
-      onSend={(text) => sendMessage(room.profileId, text)}
+      onSend={(text) => sendMessage(text)}
       hasOlder={!!cursor}
-      onLoadOlder={() => loadOlder(room.profileId)}
+      onLoadOlder={() => loadOlder()}
     />
   );
 };

@@ -32,7 +32,7 @@ export default function QuestionsTable({
         enableGlobalFilter: false,
         filterFn: 'equalsString',
         cell: ({ row }) => (
-          <span className="rounded-[5px] bg-[#f5f5f5] px-2 py-[3px] text-[12px] text-neutral-600">
+          <span className="rounded-[5px] bg-[#f5f5f5] px-2 py-0.75 text-[12px] text-neutral-600">
             {row.original.section}
           </span>
         ),
@@ -41,9 +41,9 @@ export default function QuestionsTable({
         accessorKey: 'text',
         header: '문항 / 선택지',
         cell: ({ row: { original: question } }) => (
-          <div className="min-w-[264px] whitespace-normal">
+          <div className="min-w-66 whitespace-normal">
             <strong className="text-sm">{question.text}</strong>
-            <small className="max-w-[540px] leading-[1.8]">{question.options.join(' · ')}</small>
+            <small className="max-w-135 leading-[1.8]">{question.options.join(' · ')}</small>
           </div>
         ),
       },
@@ -58,7 +58,7 @@ export default function QuestionsTable({
           <>
             <button
               className={cn(
-                'inline-flex h-6 w-10 items-center rounded-full border-0 p-[3px]',
+                'inline-flex h-6 w-10 items-center rounded-full border-0 p-0.75',
                 question.active ? 'bg-emerald-600' : 'bg-neutral-300',
               )}
               role="switch"
@@ -68,7 +68,7 @@ export default function QuestionsTable({
             >
               <span
                 className={cn(
-                  'block size-[18px] rounded-full bg-white shadow-sm transition-transform motion-reduce:transition-none',
+                  'block size-4.5 rounded-full bg-white shadow-sm transition-transform motion-reduce:transition-none',
                   question.active && 'translate-x-4',
                 )}
               />

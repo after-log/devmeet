@@ -75,7 +75,7 @@ const TodayPage = () => {
             demo={demo}
             onOpen={() => navigate(`/people/${p.id}`)}
           />
-          <div className="mt-[18px] grid grid-cols-[1fr_1.5fr] gap-[10px]">
+          <div className="mt-4.5 grid grid-cols-[1fr_1.5fr] gap-2.5">
             <button className="btn secondary" onClick={() => navigate(`/people/${p.id}`)}>
               프로필 보기 <ArrowRight className="ico" aria-hidden="true" />
             </button>
@@ -86,7 +86,7 @@ const TodayPage = () => {
             <PixelHearts remaining={remaining} />
             <b>{Math.max(0, remaining)} / 3</b>
           </div>
-          <p className="footnote !mt-1">
+          <p className="footnote mt-1!">
             {remaining <= 0 ? '오늘의 좋아요를 모두 사용했어요.' : ''}
             {dev && !sent && remaining > 0 ? 'LGTM!은 마음에 드는 프로필에 보내는 좋아요예요.' : ''}
           </p>

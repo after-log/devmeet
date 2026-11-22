@@ -11,10 +11,13 @@ export default function AdminLayout() {
   const { pathname } = useLocation();
   const title =
     (
-      { profiles: '프로필 검수', members: '회원 관리', values: '가치관 관리' } as Record<
-        string,
-        string
-      >
+      {
+        profiles: '프로필 검수',
+        members: '회원 관리',
+        values: '가치관 관리',
+        matching: '매칭 설정',
+        companies: '기업 이메일 인증',
+      } as Record<string, string>
     )[pathname.split('/')[2]] ?? '대시보드';
   if (booting)
     return (
@@ -26,13 +29,13 @@ export default function AdminLayout() {
   return (
     <AdminSurface className="flex min-h-dvh bg-[#fafafa] max-sm:block">
       <AdminSidebar />
-      <div className="ml-[244px] flex min-h-dvh min-w-0 flex-1 flex-col max-[900px]:ml-[180px] max-xl:ml-[216px] max-sm:ml-0">
-        <header className="flex h-[76px] items-center justify-between border-b border-[#e5e5e5] bg-white px-[43px] max-[900px]:h-[65px] max-xl:px-[25px] max-sm:h-[52px] max-sm:px-5">
-          <div className="flex items-center gap-[13px] text-[13px] text-neutral-600 max-sm:gap-[7px] max-sm:text-[12px]">
+      <div className="ml-61 flex min-h-dvh min-w-0 flex-1 flex-col max-[900px]:ml-45 max-xl:ml-54 max-sm:ml-0">
+        <header className="flex h-19 items-center justify-between border-b border-[#e5e5e5] bg-white px-10.75 max-[900px]:h-16.25 max-xl:px-6.25 max-sm:h-13 max-sm:px-5">
+          <div className="flex items-center gap-3.25 text-[13px] text-neutral-600 max-sm:gap-1.75 max-sm:text-[12px]">
             워크스페이스 <ChevronRight size={14} />
             <strong className="font-medium text-neutral-700">{title}</strong>
           </div>
-          <div className="flex items-center gap-[13px] text-[13px] text-neutral-600 max-sm:gap-[7px]">
+          <div className="flex items-center gap-3.25 text-[13px] text-neutral-600 max-sm:gap-1.75">
             <AdminAvatar />
             <span>{username}</span>
             <IconButton
@@ -47,7 +50,7 @@ export default function AdminLayout() {
             </IconButton>
           </div>
         </header>
-        <main className="mx-auto w-full max-w-[1550px] flex-1 px-[43px] pt-[39px] pb-[30px] max-xl:px-[25px] max-xl:pt-[30px] max-sm:px-[18px] max-sm:py-[25px]">
+        <main className="mx-auto w-full max-w-[1550px] flex-1 px-10.75 pt-9.75 pb-7.5 max-xl:px-6.25 max-xl:pt-7.5 max-sm:px-4.5 max-sm:py-6.25">
           {error && (
             <div
               role="alert"
@@ -70,7 +73,7 @@ export default function AdminLayout() {
       <AdminDialogs />
       {notice && (
         <div
-          className="fixed bottom-7 left-[calc(50%+100px)] z-90 flex max-w-[calc(100%-30px)] -translate-x-1/2 items-center gap-2.5 rounded-[9px] border border-[#525252] bg-[#262626] px-5 py-[13px] text-sm text-white shadow-lg max-sm:left-1/2 max-sm:w-max max-sm:text-[13px]"
+          className="fixed bottom-7 left-[calc(50%+100px)] z-90 flex max-w-[calc(100%-30px)] -translate-x-1/2 items-center gap-2.5 rounded-[9px] border border-[#525252] bg-[#262626] px-5 py-3.25 text-sm text-white shadow-lg max-sm:left-1/2 max-sm:w-max max-sm:text-[13px]"
           role="status"
         >
           <Check size={17} className="shrink-0 text-emerald-300" />
