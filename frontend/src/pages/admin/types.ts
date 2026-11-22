@@ -51,3 +51,37 @@ export type AdminStatistics = {
     chatParticipants: number;
   }[];
 };
+
+export type MatchingPreset = {
+  id: string;
+  seriesId: string;
+  version: number;
+  name: string;
+  description: string;
+  valuesWeight: number;
+  meetingWeight: number;
+  contactWeight: number;
+  legacyScoring: boolean;
+  createdAt: string;
+  deletedAt: string | null;
+};
+export type MatchingPresetDraft = {
+  baseId: string | null;
+  name: string;
+  description: string;
+  valuesWeight: number;
+  meetingWeight: number;
+  contactWeight: number;
+};
+export type MatchingSettings = {
+  activeId: string;
+  updatedAt: string;
+  presets: MatchingPreset[];
+  performance: {
+    presetId: string;
+    recommendations: number;
+    members: number;
+    likes: number;
+    matches: number;
+  }[];
+};

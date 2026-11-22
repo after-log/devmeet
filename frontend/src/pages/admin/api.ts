@@ -1,6 +1,9 @@
 import { ApiError } from '@/lib/api';
 import type {
   AdminStatistics,
+  MatchingPreset,
+  MatchingPresetDraft,
+  MatchingSettings,
   Category,
   Member,
   Question,
@@ -81,6 +84,11 @@ export const adminApi = {
       csrf = null;
     }
   },
+  matching: () => adminRequest<MatchingSettings>('/matching'),
+  createMatchingPreset: (draft: MatchingPresetDraft) =>
+    adminRequest<MatchingPreset>('/matching', 'POST', draft),
+  deleteMatchingPreset: (id: string) => adminRequest<void>('/matching/' + id, 'DELETE'),
+  activateMatchingPreset: (id: string) => adminRequest<void>('/matching/active', 'PUT', { id }),
   statistics: (days: 7 | 30) => adminRequest<AdminStatistics>('/statistics?days=' + days),
   members: () => adminRequest<Member[]>('/accounts'),
   reports: () => adminRequest<Report[]>('/reports'),

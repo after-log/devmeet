@@ -11,10 +11,12 @@ export default function AdminLayout() {
   const { pathname } = useLocation();
   const title =
     (
-      { profiles: '프로필 검수', members: '회원 관리', values: '가치관 관리' } as Record<
-        string,
-        string
-      >
+      {
+        profiles: '프로필 검수',
+        members: '회원 관리',
+        values: '가치관 관리',
+        matching: '매칭 설정',
+      } as Record<string, string>
     )[pathname.split('/')[2]] ?? '대시보드';
   if (booting)
     return (

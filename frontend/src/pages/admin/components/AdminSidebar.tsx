@@ -5,6 +5,7 @@ import {
   ClipboardCheck,
   LayoutDashboard,
   SlidersHorizontal,
+  Sliders,
   Users,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -14,6 +15,7 @@ const menu = [
   { path: '', label: '대시보드', icon: LayoutDashboard },
   { path: '/profiles', label: '프로필 검수', icon: ClipboardCheck },
   { path: '/members', label: '회원 관리', icon: Users },
+  { path: '/matching', label: '매칭 설정', icon: Sliders },
   { path: '/values', label: '가치관 관리', icon: SlidersHorizontal },
 ];
 export default function AdminSidebar() {

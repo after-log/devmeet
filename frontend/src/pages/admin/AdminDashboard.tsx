@@ -6,6 +6,7 @@ import AdminMembersPage from './AdminMembersPage';
 import AdminOverviewPage from './AdminOverviewPage';
 import AdminProfilesPage from './AdminProfilesPage';
 import AdminValuesPage from './AdminValuesPage';
+import AdminMatchingPage from './AdminMatchingPage';
 
 export default function AdminDashboard() {
   return (
@@ -16,6 +17,7 @@ export default function AdminDashboard() {
           <Route index element={<AdminOverviewPage />} />
           <Route path="profiles" element={<AdminProfilesPage />} />
           <Route path="members" element={<AdminMembersPage />} />
+          <Route path="matching" element={<AdminMatchingPage />} />
           <Route path="values" element={<AdminValuesPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/admin" replace />} />
