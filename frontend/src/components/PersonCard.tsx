@@ -1,4 +1,4 @@
-import { ChevronRight, X } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import type { ReactNode } from 'react';
 import type { Person } from '@/types';
 import PixelPhoto from './pixel/PixelPhoto';
@@ -74,11 +74,6 @@ const PersonCard = ({
   demo: boolean;
 }) => (
   <article className="profile">
-    <div className="file-tab">
-      <span className="file-icon">ts</span>
-      {person.name}.profile.ts
-      <span className="tab-end">{demo ? 'demo' : <X className="ico" aria-hidden="true" />}</span>
-    </div>
     <button
       className="card-photo"
       onClick={onOpen}

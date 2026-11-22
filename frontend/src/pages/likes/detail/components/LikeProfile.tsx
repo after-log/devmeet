@@ -48,11 +48,6 @@ const LikeProfile = ({
           : `${profile.name}님에게 호감을 보냈어요. 답변을 기다려 주세요.`}
     </p>
     <article className="profile">
-      <div className="file-tab">
-        <span className="file-icon">ts</span>
-        {profile.name}.profile.ts
-        <Heart size={14} className="ml-auto text-sub" />
-      </div>
       <img className="detail-photo" src={profile.photo} alt={`${profile.name} 프로필 사진`} />
       <div className="profile-heading">
         <div className="min-w-0">

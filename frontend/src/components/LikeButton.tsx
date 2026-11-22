@@ -25,12 +25,11 @@ const LikeButton = ({
 }) => {
   const { like } = useMemberActions();
   const navigate = useNavigate();
-  const { liked, remaining, user } = useApp();
+  const { liked, remaining } = useApp();
   const [pending, setPending] = useState(false);
   const [pop, setPop] = useState(0);
   const sent = liked.includes(person.id);
-  const dev = (user?.profile?.role ?? 'developer') === 'developer';
-  const text = label ?? (dev ? 'LGTM! · 좋아요' : '좋아요');
+  const text = label ?? '좋아요';
 
   return (
     <span className="like-wrap">

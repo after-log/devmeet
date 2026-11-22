@@ -55,7 +55,7 @@ const AppLayout = () => {
           )}
           {demo && (
             <div className="demo-banner">
-              <span>// demo · 가상 인물 · 실제 전송 안 됨</span>
+              <span>// 둘러보기 · 가상 인물 · 실제 전송 안 됨</span>
               <button
                 onClick={() => {
                   exitDemo();

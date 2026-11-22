@@ -113,9 +113,6 @@ const ChatThread = ({
           서로의 마음이 연결되었어요.
         </p>
         <article className="profile mb-6 bg-surface">
-          <div className="file-tab h-9">
-            <span className="file-icon">&lt;/&gt;</span>our.common.ts
-          </div>
           <div className="p-4">
             <p className="section-comment">// 대화의 시작이 될 상대의 관심사</p>
             <div className="flex flex-wrap gap-2">
