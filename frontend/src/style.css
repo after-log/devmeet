@@ -1,5 +1,28 @@
 @import 'tailwindcss';
 
+/* 이모지 글꼴: Mona12ColorEmoji (눈누, OFL-1.1). 이모지 글자에만 쓰도록 범위를 제한한다. */
+@font-face {
+  font-family: 'Mona12Emoji';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2603-1@1.0/Mona12ColorEmoji.woff2')
+    format('woff2');
+  font-weight: normal;
+  font-display: swap;
+  unicode-range:
+    U+00A9, U+00AE, U+203C, U+2049, U+2122, U+2139, U+2194-2199, U+21A9-21AA, U+231A-231B, U+2328,
+    U+23CF, U+23E9-23FA, U+24C2, U+25AA-25AB, U+25B6, U+25C0, U+25FB-25FE, U+2600-27BF, U+2934-2935,
+    U+2B05-2B07, U+2B1B-2B1C, U+2B50, U+2B55, U+3030, U+303D, U+3297, U+3299, U+FE0F, U+200D,
+    U+1F000-1FAFF;
+}
+
+/* 본문 글꼴: 델타돋움체 (눈누, OFL-1.1, 상업 이용·웹폰트 가능). 굵기는 400 하나뿐이다. */
+@font-face {
+  font-family: 'DeltaDotum';
+  src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/2611112258@deltadotumkr/deltadotumkr/DeltaDotumKR.woff2')
+    format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+
 @theme {
   --color-canvas: #1e1f22;
   --color-surface: #242529;
@@ -26,10 +49,11 @@
   --color-tag-blue: #2f6b25;
   --color-backdrop: #0d0f14bb;
   --font-sans:
-    'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Noto Sans KR', sans-serif;
+    'Mona12Emoji', 'DeltaDotum', 'Pretendard Variable', Pretendard, -apple-system,
+    BlinkMacSystemFont, 'Noto Sans KR', sans-serif;
   /* 제목류는 픽셀 글꼴을 유지한다 */
-  --font-display: 'Galmuri9', 'Noto Sans KR', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --font-display: 'Mona12Emoji', 'Galmuri9', 'Noto Sans KR', sans-serif;
+  --font-mono: 'Mona12Emoji', 'JetBrains Mono', monospace;
 
   @keyframes pixel-load {
     0%,
