@@ -1,8 +1,7 @@
 import { readFile, stat } from 'node:fs/promises';
 import ts from 'typescript';
 
-const cache = new Map();
-async function sourceUrl(url) {
+async function sourceUrl(url, cache, version) {
   const key = url.href;
   if (cache.has(key)) return cache.get(key);
   const pending = (async () => {
@@ -25,18 +24,28 @@ async function sourceUrl(url) {
         } catch {
           target = new URL(target.href + '.ts');
         }
-        resolved = await sourceUrl(target);
+        resolved = await sourceUrl(target, cache, version);
       } else resolved = import.meta.resolve(specifier);
       compiled = compiled
         .replaceAll(`'${specifier}'`, JSON.stringify(resolved))
         .replaceAll(`"${specifier}"`, JSON.stringify(resolved));
     }
-    return 'data:text/javascript;base64,' + Buffer.from(compiled).toString('base64');
+    return (
+      'data:text/javascript;base64,' +
+      Buffer.from(compiled).toString('base64') +
+      '#module-' +
+      version
+    );
   })();
   cache.set(key, pending);
   return pending;
 }
 let version = 0;
+export async function loadTypeScriptModules(urls) {
+  const instance = version++;
+  const cache = new Map();
+  return Promise.all(urls.map(async (url) => import(await sourceUrl(url, cache, instance))));
+}
 export async function loadTypeScript(url) {
-  return import((await sourceUrl(url)) + '#test-' + version++);
+  return (await loadTypeScriptModules([url]))[0];
 }

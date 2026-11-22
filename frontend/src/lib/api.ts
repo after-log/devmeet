@@ -1,4 +1,5 @@
-import { validateRequestBody } from '@/validation/requests';
+import { axios } from './axios';
+export { ApiError } from './api-error';
 import { parseForm } from '@/validation/forms';
 import { photoFileSchema, photoDimensionsSchema } from '@/validation/profile';
 import type {
@@ -11,75 +12,17 @@ import type {
   ValueAnswers,
 } from '@/types';
 
-export class ApiError extends Error {
-  constructor(
-    public status: number,
-    message: string,
-  ) {
-    super(message);
-  }
-}
-let csrf: Promise<{ token: string; headerName: string }> | null = null;
-async function token() {
-  if (!csrf)
-    csrf = fetch('/api/csrf', { credentials: 'same-origin', cache: 'no-store' })
-      .then(async (response) => {
-        if (!response.ok) throw new ApiError(response.status, '서버에 연결할 수 없어요.');
-        return response.json();
-      })
-      .catch((error) => {
-        csrf = null;
-        throw error;
-      });
-  return csrf;
-}
 export async function request<T>(
   path: string,
   method = 'GET',
   body?: unknown,
   retry = true,
 ): Promise<T> {
-  body = validateRequestBody(path, method, body);
-  const headers: Record<string, string> = {};
-  const changing = !['GET', 'HEAD'].includes(method);
-  if (changing) {
-    const value = await token();
-    headers[value.headerName] = value.token;
-  }
-  if (body !== undefined && !(body instanceof FormData))
-    headers['Content-Type'] = 'application/json';
-  let response: Response;
-  try {
-    response = await fetch('/api' + path, {
-      method,
-      credentials: 'same-origin',
-      cache: 'no-store',
-      headers,
-      body: body === undefined ? undefined : body instanceof FormData ? body : JSON.stringify(body),
-    });
-  } catch {
-    throw new ApiError(0, '서버에 연결할 수 없어요. 잠시 후 다시 시도해 주세요.');
-  }
-  const data = response.status === 204 ? undefined : await response.json().catch(() => undefined);
-  if (!response.ok) {
-    if (retry && response.status === 403 && data?.message?.includes('CSRF')) {
-      csrf = null;
-      return request(path, method, body, false);
-    }
-    const first = data?.errors?.[0];
-    throw new ApiError(
-      response.status,
-      first?.message || data?.message || '요청을 처리하지 못했어요.',
-    );
-  }
-  return data as T;
+  const response = await axios.request<T>({ url: path, method, data: body, csrfRetried: !retry });
+  return response.data;
 }
-async function authenticate(path: string, email: string, password: string) {
-  try {
-    return await request<{ user: User }>(path, 'POST', { email, password });
-  } finally {
-    csrf = null;
-  }
+function authenticate(path: string, email: string, password: string) {
+  return request<{ user: User }>(path, 'POST', { email, password });
 }
 const profileKeys: (keyof Profile)[] = [
   'name',
@@ -109,13 +52,7 @@ export const api = {
   me: () => request<{ user: User | null }>('/me'),
   register: (email: string, password: string) => authenticate('/register', email, password),
   login: (email: string, password: string) => authenticate('/login', email, password),
-  logout: async () => {
-    try {
-      await request<void>('/logout', 'POST');
-    } finally {
-      csrf = null;
-    }
-  },
+  logout: () => request<void>('/logout', 'POST'),
   saveProfile: (input: Partial<Profile>) =>
     request<{ profile: Profile }>('/profile', 'PUT', {
       preference: '상관없어요',

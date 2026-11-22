@@ -166,3 +166,22 @@ npm run preview # http://localhost:4173
 API 요청 직전에도 같은 스키마를 검사하며, 서버의 인증·권한·업무 규칙 검증은 서버에서 수행합니다.
 온보딩 단계, 동적 가치관 선택지, 추천 나이 범위, 비밀번호 UTF-8 바이트 길이 같은 교차 필드 규칙도
 스키마에서 관리합니다. 관련 검증·resolver·API 회귀 검사는 `npm test`로 실행합니다.
+
+## HTTP 클라이언트
+
+API 통신은 `src/lib/axios.ts`에서 내보내는 공통 `axios` 인스턴스를 사용합니다.
+기본 경로는 `/api`이며 쿠키 인증과 캐시 방지 헤더를 공통 적용합니다.
+요청 인터셉터는 전송 전 Zod 검증을 수행하고, 변경 요청에 사용자·관리자 영역별 CSRF 토큰을 넣습니다.
+동시 요청은 토큰 조회를 공유하며 CSRF 403 오류만 한 번 재시도합니다.
+로그인·가입·로그아웃 후에는 해당 영역의 토큰 캐시를 갱신합니다.
+응답 오류는 기존 `ApiError(status, message)` 형식으로 통일하며 취소·폼 검증 오류는 그대로 전달합니다.
+파일 업로드는 FormData를 전달하고 multipart 경계 헤더는 런타임이 처리합니다.
+
+```ts
+import { axios } from '@/lib/axios';
+
+const { data } = await axios.get('/me');
+```
+
+기존 `request`와 `adminRequest`는 이 인스턴스를 사용하는 응답 데이터 래퍼입니다.
+SSE 구독은 `EventSource`를 사용합니다.

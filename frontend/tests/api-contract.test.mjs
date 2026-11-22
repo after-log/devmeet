@@ -1,8 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { loadTypeScript } from './helpers/load-typescript.mjs';
+import { mockClient } from './helpers/mock-axios.mjs';
 
-const client = () => loadTypeScript(new URL('../src/lib/api.ts', import.meta.url));
+const client = () => mockClient(new URL('../src/lib/api.ts', import.meta.url));
 const response = (body, status = 200) =>
   new Response(JSON.stringify(body), {
     status,
