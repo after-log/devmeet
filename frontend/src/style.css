@@ -14,12 +14,19 @@
     U+1F000-1FAFF;
 }
 
-/* 본문 글꼴: 델타돋움체 (눈누, OFL-1.1, 상업 이용·웹폰트 가능). 굵기는 400 하나뿐이다. */
+/* 제목 글꼴(오늘의 추천 같은 제목류): Mona10 픽셀 글꼴 (눈누, OFL-1.1, 상업 이용·웹폰트 가능). 보통·굵게 두 가지 */
 @font-face {
-  font-family: 'DeltaDotum';
-  src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/2611112258@deltadotumkr/deltadotumkr/DeltaDotumKR.woff2')
+  font-family: 'Mona10';
+  src: url('https://cdn.jsdelivr.net/gh/MonadABXY/mona-font@2026.10.09/web/Mona10.woff2')
     format('woff2');
   font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Mona10';
+  src: url('https://cdn.jsdelivr.net/gh/MonadABXY/mona-font@2026.10.09/web/Mona10-Bold.woff2')
+    format('woff2');
+  font-weight: 700;
   font-display: swap;
 }
 
@@ -49,10 +56,10 @@
   --color-tag-blue: #2f6b25;
   --color-backdrop: #0d0f14bb;
   --font-sans:
-    'Mona12Emoji', 'DeltaDotum', 'Pretendard Variable', Pretendard, -apple-system,
-    BlinkMacSystemFont, 'Noto Sans KR', sans-serif;
-  /* 제목류는 픽셀 글꼴을 유지한다 */
-  --font-display: 'Mona12Emoji', 'Galmuri9', 'Noto Sans KR', sans-serif;
+    'Mona12Emoji', 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont,
+    'Noto Sans KR', sans-serif;
+  /* 제목류는 Mona10 픽셀 글꼴 */
+  --font-display: 'Mona12Emoji', 'Mona10', 'Pretendard Variable', 'Noto Sans KR', sans-serif;
   --font-mono: 'Mona12Emoji', 'JetBrains Mono', monospace;
 
   @keyframes pixel-load {
