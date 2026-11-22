@@ -1,25 +1,7 @@
 import type { MatchingPreset } from '../types';
 
-export const matchingWeights = [
-  {
-    key: 'valuesWeight',
-    label: '가치관',
-    detail: '활성 매칭 문항 전체 중 같은 답변의 비율',
-    color: 'bg-indigo-500',
-  },
-  {
-    key: 'meetingWeight',
-    label: '만남 방식',
-    detail: '선호하는 만남 방식이 같으면 반영',
-    color: 'bg-emerald-500',
-  },
-  {
-    key: 'contactWeight',
-    label: '연락 방식',
-    detail: '선호하는 연락 방식이 같으면 반영',
-    color: 'bg-sky-500',
-  },
-] as const;
+import { matchingWeights } from '../matchingPresets';
+
 export default function WeightBar({ preset }: { preset: MatchingPreset }) {
   if (preset.legacyScoring)
     return (
