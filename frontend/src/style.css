@@ -349,6 +349,13 @@
   .eyebrow {
     @apply mt-0 mb-3.75 font-mono text-xs leading-[normal] tracking-normal text-fg-4;
   }
+  /* 화면 위쪽 픽셀 캐릭터 장면. 그림 바탕색과 같은 상자에 담는다 */
+  .page-scene {
+    @apply m-0 mb-6 overflow-hidden rounded-lg border border-line bg-[#161819];
+  }
+  .page-scene img {
+    @apply block h-auto w-full [image-rendering:pixelated];
+  }
   .intro {
     @apply mt-3 mb-6.75 text-[13px] text-fg-3;
   }

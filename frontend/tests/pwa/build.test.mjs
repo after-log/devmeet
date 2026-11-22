@@ -55,7 +55,7 @@ test('offline cache contains existing app assets and excludes API data and user 
   for (const entry of calls.precache) {
     assert.match(
       entry.url,
-      /^(?:assets\/|icons\/|index\.html$|manifest\.webmanifest$|favicon\.svg$)/,
+      /^(?:assets\/|icons\/|scenes\/|index\.html$|manifest\.webmanifest$|favicon\.svg$)/,
     );
     await readFile(new URL(entry.url, dist));
   }

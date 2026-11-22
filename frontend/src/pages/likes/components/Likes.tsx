@@ -4,6 +4,7 @@ import type { Person } from '@/types';
 import type { LikeDirection, LikeEntry } from '@/types/likes';
 import LikeListItem from './LikeListItem';
 import { FilterTabs } from '@/components/ui/filter-tabs';
+import PageScene from '@/components/pixel/PageScene';
 
 interface LikesProps {
   entries: LikeEntry[];
@@ -33,6 +34,7 @@ const Likes = ({ entries, profiles, matchedIds, onOpen, onDiscover }: LikesProps
         </span>
       </div>
       <p className="intro">작은 관심이 모여, 새로운 인연이 시작돼요.</p>
+      <PageScene name="like" />
       <FilterTabs<LikeDirection>
         label="호감 목록 구분"
         options={[

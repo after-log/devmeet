@@ -61,17 +61,15 @@ test('numeric constraints, missing values and reversed ages are rejected', () =>
 test('onboarding validates only the current step and enforces integer profile fields', () => {
   assert.equal(profile.createOnboardingSchema(0).safeParse({ role: 'developer' }).success, true);
   assert.equal(
-    profile
-      .createOnboardingSchema(1)
-      .safeParse({
-        name: '지원',
-        age: 25,
-        height: 170.5,
-        city: '서울',
-        district: '성동구',
-        job: '개발자',
-        education: '대학교',
-      }).success,
+    profile.createOnboardingSchema(1).safeParse({
+      name: '지원',
+      age: 25,
+      height: 170.5,
+      city: '서울',
+      district: '성동구',
+      job: '개발자',
+      education: '대학교',
+    }).success,
     false,
   );
   assert.equal(
