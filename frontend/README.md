@@ -185,3 +185,37 @@ const { data } = await axios.get('/me');
 
 기존 `request`와 `adminRequest`는 이 인스턴스를 사용하는 응답 데이터 래퍼입니다.
 SSE 구독은 `EventSource`를 사용합니다.
+
+## 서버 데이터와 훅
+
+TanStack Query v5를 사용하며 `main.tsx`의 `QueryClientProvider`에서 공통 클라이언트를 제공합니다.
+컴포넌트는 API를 직접 호출하지 않고 `src/hooks/queries` 또는 기능 폴더의 `hooks`를 사용합니다.
+조회는 `useQuery`/`useQueries`, 변경은 `useMutation`으로 처리합니다.
+프로필, 차단, 관리자 승인 및 매칭 프리셋 저장 후 관련 쿼리를 무효화해 화면을 갱신합니다.
+
+- `useMemberSession`: 세션과 추천·연결 조회, 초기 진입 준비 및 30초 갱신
+- `useProfileMutations`, `useSafetyMutations`: 프로필·가치관·사진, 차단·신고
+- `useWorkEmail`, `useWorkEmailMutations`, `useSocialAuth`, `useRecovery`: 인증
+- `useChatRooms`, `useChatActions`: 대화 조회·전송·이전 기록, SSE 갱신과 메시지 중복 병합
+- 관리자 `hooks`: 세션, 회원/신고/문항, 통계, 기업 인증, 매칭 설정
+
+쿼리 키는 `member`, `admin`, `public` 영역을 구분하며 회원 데이터에는 회원 ID를 포함합니다.
+로그아웃·401 응답에서는 해당 영역의 진행 중인 조회를 취소하고 캐시를 제거합니다.
+조회는 기본 30초 동안 캐시를 사용하고, 4xx는 자동 재시도하지 않습니다. 변경 요청도 자동 재시도하지 않습니다.
+Zustand는 데모 데이터, 폼 초안, 화면 상태와 기존 화면에서 사용하는 데이터 투영을 유지합니다.
+API 함수는 서버 요청만 정의합니다. 프로필 기본값·필드 정리는 `useProfileMutations`, 사진 검증·리사이즈·JPEG 변환·FormData 생성은 `usePhotoUpload`에서 처리합니다.
+Axios 인터셉터는 공통 통신 검증을 담당하고, 조회 주기와 캐시 갱신은 훅에서 관리합니다.
+
+`@lukemorales/query-key-factory`의 `createQueryKeys`, `createMutationKeys`, `mergeQueryKeys`로
+`src/lib/query-keys.ts`의 `queryKeys`와 `mutationKeys`를 생성합니다.
+조회, 캐시 직접 갱신, 무효화, 세션 종료 처리 모두 같은 정의를 사용하며 키 배열을 직접 만들지 않습니다.
+회원 ID·관리자 계정·통계 기간·채팅 상대·페이지 커서는 키 팩토리의 인자로 전달합니다.
+`_def`는 영역 전체, `account(...).queryKey`는 계정 전체,
+`account(...)._ctx.messages(...).queryKey`는 해당 대화의 모든 페이지에 사용합니다.
+
+```ts
+import { queryKeys } from '@/lib/query-keys';
+
+queryKey: queryKeys.member.account(owner)._ctx.workEmail.queryKey;
+await client.invalidateQueries({ queryKey: queryKeys.member.account(owner).queryKey });
+```

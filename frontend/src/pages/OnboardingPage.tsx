@@ -8,7 +8,7 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import ProfileBuilt from '@/components/pixel/ProfileBuilt';
 import SignupBuildLog from '@/components/pixel/SignupBuildLog';
-import { api } from '../lib/api';
+import { useProfileMutations } from '@/hooks/queries/useProfileMutations';
 import { useApp } from '../stores/app';
 import {
   CONTACT,
@@ -104,8 +104,9 @@ const RoleOption = ({
 );
 
 const OnboardingPage = () => {
+  const profileMutations = useProfileMutations();
   const navigate = useNavigate();
-  const { user, draft, setDraft, step, setStep, setUser, refresh } = useApp();
+  const { user, draft, setDraft, step, setStep } = useApp();
   const [error, setError] = useState('');
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -237,15 +238,13 @@ const OnboardingPage = () => {
         .split(',')
         .map((t) => t.trim())
         .filter(Boolean);
-      const { profile } = await api.saveProfile({
+      const { profile } = await profileMutations.saveProfile({
         ...draft,
         photos,
         location: `${draft.city} ${draft.district}`,
         preference: draft.role === 'non-developer' ? '개발자' : draft.preference,
         tags,
       });
-      setUser({ ...user, profile });
-      await refresh();
       if (editing) {
         navigate('/me');
         toast('프로필을 저장했어요.');
@@ -438,7 +437,7 @@ const OnboardingPage = () => {
                   const uploaded = [...photos];
                   try {
                     for (const file of files) {
-                      const { photo } = await api.photo(file);
+                      const { photo } = await profileMutations.photo(file);
                       uploaded.push(photo);
                       updatePhotos([...uploaded]);
                     }

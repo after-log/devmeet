@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { create } from 'zustand';
+import { queryKeys } from '@/lib/query-keys';
+import { useQuery } from '@tanstack/react-query';
 import demoSections from '@/data/value-questions.json';
 import { request } from '@/lib/api';
 
@@ -12,50 +12,16 @@ export type ValueSection = {
   description: string;
   questions: ValueQuestion[];
 };
-let pending: Promise<void> | null = null;
-const useCatalogStore = create<{
-  sections: ValueSection[];
-  loaded: boolean;
-  loading: boolean;
-  error: string;
-  load: () => Promise<void>;
-}>((set) => ({
-  sections: [],
-  loaded: false,
-  loading: false,
-  error: '',
-  load: () => {
-    if (pending) return pending;
-    set({ loading: true, error: '' });
-    pending = request<{ sections: ValueSection[] }>('/value-questions')
-      .then(({ sections }) => {
-        set({ sections, loaded: true });
-      })
-      .catch((error) => {
-        set({ error: error instanceof Error ? error.message : '가치관 문항을 불러오지 못했어요.' });
-      })
-      .finally(() => {
-        pending = null;
-        set({ loading: false });
-      });
-    return pending;
-  },
-}));
 export function useValueCatalog(demo = false) {
-  const { sections, loaded, loading, error, load } = useCatalogStore();
-  useEffect(() => {
-    if (demo) return;
-    void load();
-    const refresh = () => {
-      void load();
-    };
-    window.addEventListener('focus', refresh);
-    return () => window.removeEventListener('focus', refresh);
-  }, [demo, load]);
+  const query = useQuery({
+    queryKey: queryKeys.public.valueCatalog.queryKey,
+    queryFn: () => request<{ sections: ValueSection[] }>('/value-questions'),
+    enabled: !demo,
+  });
   return {
-    sections: demo ? demoSections : sections,
-    loading: !demo && (!loaded || loading),
-    error: demo ? '' : error,
-    refresh: load,
+    sections: demo ? demoSections : (query.data?.sections ?? []),
+    loading: !demo && query.isPending,
+    error: demo ? '' : (query.error?.message ?? ''),
+    refresh: () => query.refetch(),
   };
 }

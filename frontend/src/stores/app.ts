@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 import { api, ApiError } from '../lib/api';
+import { queryClient, clearQueryScope } from '@/lib/query-client';
+import { sessionQuery, memberSnapshotQuery } from '@/lib/member-queries';
 import { demoPeople } from '@/data/members';
 import type { Connections, Draft, Message, Person, User, ValueAnswers } from '@/types';
 
@@ -44,7 +46,6 @@ interface AppState {
   draft: Draft;
   step: number;
   sheet: Sheet;
-  boot: () => Promise<void>;
   setUser: (user: User | null) => void;
   refresh: () => Promise<void>;
   setIndex: (index: number) => void;
@@ -77,44 +78,36 @@ export const useApp = create<AppState>()((set, get) => ({
   draft: freshDraft(),
   step: 0,
   sheet: null,
-  boot: async () => {
-    try {
-      const { user } = await api.me();
-      set({ user, error: '' });
-      // 추천·매칭을 먼저 불러온 뒤 화면을 그려야 /chat/:id 같은 주소로 바로 들어와도 튕기지 않는다
-      if (user?.profile)
-        await get()
-          .refresh()
-          .catch(() => undefined);
-    } catch (error) {
-      set({ error: (error as Error).message });
-    } finally {
-      set({ booted: true });
-    }
-  },
   setUser: (user) => set({ user }),
   refresh: async () => {
     if (get().demo || !get().user?.profile) return;
+    const owner = get().user!.id;
     try {
-      const [r, connections, me] = await Promise.all([
-        api.recommendations(),
-        api.connections(),
-        api.me(),
-      ]);
+      const {
+        recommendations: r,
+        connections,
+        user,
+      } = await queryClient.fetchQuery({ ...memberSnapshotQuery(owner), staleTime: 0 });
+      if (get().demo || get().user?.id !== owner) return;
       set((s) => ({
         people: r.people,
         liked: r.liked,
         remaining: r.remaining,
         connections,
         index: Math.min(s.index, Math.max(0, r.people.length - 1)),
-        user: me.user,
+        user,
         notice: r.notice ?? '',
         error: '',
       }));
     } catch (error) {
+      if (get().demo || get().user?.id !== owner) return;
       set({ error: (error as Error).message });
       if (error instanceof ApiError && [401, 403].includes(error.status)) {
-        set({ user: null, people: [], connections: emptyConnections() });
+        if (error.status === 403) {
+          await clearQueryScope('member');
+          queryClient.setQueryData(sessionQuery.queryKey, { user: null });
+        }
+        set({ user: null, people: [], liked: [], connections: emptyConnections() });
       }
     }
   },
@@ -171,6 +164,8 @@ export const useApp = create<AppState>()((set, get) => ({
   logout: async () => {
     if (get().demo) return get().exitDemo();
     await api.logout();
+    await clearQueryScope('member');
+    queryClient.setQueryData(sessionQuery.queryKey, { user: null });
     set({
       user: null,
       people: [],

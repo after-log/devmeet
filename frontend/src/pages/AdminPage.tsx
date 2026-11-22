@@ -1,46 +1,23 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { request } from '@/lib/api';
+import { useLegacyAdmin } from '@/hooks/queries/useLegacyAdmin';
 import { useApp } from '@/stores/app';
 import { toast } from 'sonner';
 
-type Dashboard = {
-  counts: Record<string, number>;
-  photos: { id: string; name: string; photo: string; photos: string[]; status: string }[];
-  reports: { id: string; senderId: string; targetId: string; reason: string; status: string }[];
-  pool: { role: string; count: number }[];
-};
 const AdminPage = () => {
   const user = useApp((s) => s.user);
-  const [data, setData] = useState<Dashboard | null>(null);
-  const [error, setError] = useState('');
   const [page, setPage] = useState(0);
-  const [busy, setBusy] = useState(false);
+  const { data, error, busy, act: saveAction } = useLegacyAdmin(page, !!user?.admin);
   const [notes, setNotes] = useState<Record<string, string>>({});
   const [target, setTarget] = useState('');
   const [suspensionReason, setSuspensionReason] = useState('');
-  const load = useCallback(async () => {
-    try {
-      setData(await request<Dashboard>('/admin?page=' + page));
-      setError('');
-    } catch (err) {
-      setError((err as Error).message);
-    }
-  }, [page]);
-  useEffect(() => {
-    if (user?.admin) void load();
-  }, [user?.admin, load]);
   if (!user?.admin) return <Navigate to="/" replace />;
   const act = async (path: string, body: unknown) => {
-    setBusy(true);
     try {
-      await request(path, 'PUT', body);
-      await load();
+      await saveAction(path, body);
       toast('처리했어요.');
     } catch (err) {
       toast((err as Error).message);
-    } finally {
-      setBusy(false);
     }
   };
   return (

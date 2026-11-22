@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { useSchemaForm } from '@/hooks/useSchemaForm';
 import { setFormError } from '@/hooks/setFormError';
 import { workEmailRequestSchema } from '@/validation/companyEmail';
-import { request } from '@/lib/api';
+import { useWorkEmailMutations } from '@/hooks/queries/useWorkEmail';
 import type { WorkEmailStatus } from '@/lib/workEmail';
 import { FormErrors } from './ui/form-errors';
 
@@ -19,6 +19,7 @@ export default function WorkEmailRequestForm({
   onBusyChange: (busy: boolean) => void;
   onComplete: (status: WorkEmailStatus) => void;
 }) {
+  const emailMutations = useWorkEmailMutations();
   const form = useSchemaForm(workEmailRequestSchema, {
     values: {
       company: status.pending?.company ?? status.verified?.company ?? '',
@@ -33,7 +34,7 @@ export default function WorkEmailRequestForm({
     onBusyChange(true);
     form.clearErrors('root');
     try {
-      onComplete(await request<WorkEmailStatus>('/work-email/request', 'POST', input));
+      onComplete(await emailMutations.send(input));
     } catch (error) {
       setFormError(form.setError, error);
     } finally {

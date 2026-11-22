@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { adminApi } from '../api';
+import { useMatchingMutations } from './useAdminQueries';
 import { createMatchingPresetDraft, isMatchingPresetDraftValid } from '../matchingPresets';
 import type { MatchingPreset, MatchingPresetDraft } from '../types';
 import type useMatchingSettings from './useMatchingSettings';
@@ -7,10 +7,9 @@ import type useMatchingSettings from './useMatchingSettings';
 type Confirmation = { action: 'apply' | 'delete'; preset: MatchingPreset };
 export default function useMatchingPresetDialogs({
   data,
-  setData,
   setNotice,
-  refresh,
 }: ReturnType<typeof useMatchingSettings>) {
+  const mutations = useMatchingMutations();
   const [draft, setDraft] = useState<MatchingPresetDraft>(createMatchingPresetDraft);
   const [busy, setBusy] = useState(false);
   const [workspace, setWorkspace] = useState<'edit' | 'select' | null>(null);
@@ -47,15 +46,13 @@ export default function useMatchingPresetDialogs({
     setWorkspaceError('');
     setNotice('');
     try {
-      const saved = await adminApi.createMatchingPreset(input);
-      setData((current) => current && { ...current, presets: [saved, ...current.presets] });
+      const saved = await mutations.create(input);
       setDraft(createMatchingPresetDraft());
       setSelectedPresetId(saved.id);
       setWorkspace('select');
       setNotice(
         `${saved.name} v${saved.version}을 저장했어요. 적용 버튼을 누르면 새 추천부터 사용합니다.`,
       );
-      refresh();
     } catch (error) {
       setWorkspaceError(error instanceof Error ? error.message : '프리셋을 저장하지 못했어요.');
     } finally {
@@ -81,29 +78,18 @@ export default function useMatchingPresetDialogs({
     setNotice('');
     try {
       if (action === 'delete') {
-        await adminApi.deleteMatchingPreset(preset.id);
-        setData(
-          (current) =>
-            current && {
-              ...current,
-              presets: current.presets.map((item) =>
-                item.id === preset.id ? { ...item, deletedAt: new Date().toISOString() } : item,
-              ),
-            },
-        );
+        await mutations.remove(preset.id);
         if (draft.baseId === preset.id) setDraft(createMatchingPresetDraft());
         if (selectedPresetId === preset.id) setSelectedPresetId(data?.activeId ?? '');
         setNotice(`${preset.name} v${preset.version}을 삭제했어요. 과거 성과 기록은 유지됩니다.`);
       } else {
-        await adminApi.activateMatchingPreset(preset.id);
-        setData((current) => current && { ...current, activeId: preset.id });
+        await mutations.activate(preset.id);
         setWorkspace(null);
         setNotice(
           `${preset.name} v${preset.version}을 적용했어요. 이미 배정된 오늘의 추천은 유지됩니다.`,
         );
       }
       setPending(null);
-      refresh();
     } catch (error) {
       setDialogError(
         error instanceof Error

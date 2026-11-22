@@ -4,9 +4,10 @@ import { setFormError } from '@/hooks/setFormError';
 import { recoveryFormSchema } from '@/validation/auth';
 import { FormErrors } from '@/components/ui/form-errors';
 import { useLocation, useSearchParams } from 'react-router-dom';
-import { request } from '@/lib/api';
+import { useRecovery } from '@/hooks/queries/useRecovery';
 
 export default function RecoveryPage() {
+  const recovery = useRecovery();
   const { pathname } = useLocation();
   const [query] = useSearchParams();
   const verify = pathname.endsWith('/verify');
@@ -25,23 +26,7 @@ export default function RecoveryPage() {
         onSubmit={form.handleSubmit(async (input) => {
           form.clearErrors('root');
           try {
-            if (input.mode === 'verify') {
-              await request('/auth/email/verify', 'POST', { token: input.token });
-              setMessage('이메일 확인이 완료됐어요.');
-            } else if (input.mode === 'reset') {
-              await request('/auth/password/reset', 'POST', {
-                token: input.token,
-                password: input.password,
-              });
-              setMessage('비밀번호를 바꿨어요. 다시 로그인해 주세요.');
-            } else {
-              const response = await request<{ message: string }>(
-                '/auth/password/request',
-                'POST',
-                { email: input.email },
-              );
-              setMessage(response.message);
-            }
+            setMessage(await recovery.mutateAsync(input));
           } catch (error) {
             setFormError(form.setError, error);
           }

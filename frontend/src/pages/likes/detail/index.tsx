@@ -1,3 +1,4 @@
+import { useMemberActions } from '@/hooks/queries/useMemberActions';
 import { useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -7,9 +8,10 @@ import LikeProfile from './components/LikeProfile';
 
 const LikeDetailPage = () => {
   const { profileId } = useParams();
+  const { like } = useMemberActions();
   const navigate = useNavigate();
   const entries = useLikes();
-  const { connections, people, liked, remaining, like, demo } = useApp();
+  const { connections, people, liked, remaining, demo } = useApp();
   const [pending, setPending] = useState(false);
   const profile = findPerson(profileId);
   const entry = entries.find((entry) => entry.profileId === profileId);

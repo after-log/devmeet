@@ -8,7 +8,7 @@ import { ArrowRight, Check, Eye, LockKeyhole } from 'lucide-react';
 import { toast } from 'sonner';
 import { useValueCatalog, type ValueSection } from '@/hooks/useValueCatalog';
 import { useApp } from '@/stores/app';
-import { api } from '@/lib/api';
+import { useProfileMutations } from '@/hooks/queries/useProfileMutations';
 import type { ValueAnswer, ValueAnswers } from '@/types';
 import { normalizeValueAnswers, publicValueAnswers, PUBLIC_VALUE_LIMIT } from '@/lib/value-answers';
 
@@ -51,9 +51,10 @@ const ValuesPage = () => {
 };
 
 const ValuesEditor = ({ sections }: { sections: ValueSection[] }) => {
+  const profileMutations = useProfileMutations();
   const questions = sections.flatMap((section) => section.questions);
   const total = questions.length;
-  const { user, demo, demoValueAnswers, setDemoValueAnswers, setUser } = useApp();
+  const { user, demo, demoValueAnswers, setDemoValueAnswers } = useApp();
   const initial = demo ? demoValueAnswers : (user?.profile?.valueAnswers ?? {});
   const form = useSchemaForm(z.object({ valueAnswers: createValueAnswersSchema(questions) }), {
     defaultValues: { valueAnswers: normalizeValueAnswers(initial, questions) },
@@ -120,10 +121,8 @@ const ValuesEditor = ({ sections }: { sections: ValueSection[] }) => {
       let savedAnswers = answers;
       if (demo) setDemoValueAnswers(answers);
       else {
-        const { profile } = await api.saveValues(answers);
+        const { profile } = await profileMutations.saveValues(answers);
         savedAnswers = normalizeValueAnswers(profile.valueAnswers ?? {}, questions);
-        const currentUser = useApp.getState().user;
-        if (currentUser) setUser({ ...currentUser, profile });
       }
       setAnswers(savedAnswers);
       setSaved(savedAnswers);

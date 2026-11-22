@@ -1,35 +1,17 @@
 import { useEffect, useState } from 'react';
-import { request } from '@/lib/api';
+import { useWorkEmail } from '@/hooks/queries/useWorkEmail';
 
-import type { WorkEmailStatus as EmailStatus } from '@/lib/workEmail';
 import CompanyEmailReviewForm from './CompanyEmailReviewForm';
 import WorkEmailRequestForm from './WorkEmailRequestForm';
 import WorkEmailCodeForm from './WorkEmailCodeForm';
 
 export default function WorkEmailVerification() {
-  const [status, setStatus] = useState<EmailStatus | null>(null);
+  const { data: status, setStatus, refetch, error: queryError } = useWorkEmail();
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState('');
+  const [formError, setError] = useState('');
+  const error = formError || queryError?.message || '';
   const [notice, setNotice] = useState('');
   const [now, setNow] = useState(Date.now());
-  const [reload, setReload] = useState(0);
-
-  useEffect(() => {
-    let active = true;
-    void request<EmailStatus>('/work-email')
-      .then((value) => {
-        if (!active) return;
-        setStatus(value);
-        setError('');
-      })
-      .catch((err: Error) => {
-        if (active) setError(err.message);
-      });
-    return () => {
-      active = false;
-    };
-  }, [reload]);
-
   useEffect(() => {
     if (!status?.pending) return;
     const timer = window.setInterval(() => setNow(Date.now()), 1000);
@@ -82,7 +64,7 @@ export default function WorkEmailVerification() {
             type="button"
             disabled={busy}
             className="mt-2 text-xs underline"
-            onClick={() => setReload((value) => value + 1)}
+            onClick={() => void refetch()}
           >
             상태 새로고침
           </button>
@@ -111,7 +93,7 @@ export default function WorkEmailVerification() {
         </p>
       )}
       {!status && error && (
-        <button className="btn secondary full" onClick={() => setReload(reload + 1)}>
+        <button className="btn secondary full" onClick={() => void refetch()}>
           다시 불러오기
         </button>
       )}

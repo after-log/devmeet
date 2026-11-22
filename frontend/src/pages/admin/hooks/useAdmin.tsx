@@ -1,3 +1,4 @@
+import { queryKeys, mutationKeys, isSessionQueryKey } from '@/lib/query-keys';
 import {
   createContext,
   useCallback,
@@ -7,9 +8,11 @@ import {
   useState,
   type ReactNode,
 } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { clearQueryScope } from '@/lib/query-client';
 import { ApiError } from '@/lib/api';
 import { adminApi, adminDate } from '../api';
-import type { Category, Member, Question, QuestionDraft, Report, ReviewStatus } from '../types';
+import type { Member, Question, QuestionDraft, Report, ReviewStatus } from '../types';
 
 type AdminDialog =
   | { type: 'profile'; member: Member }
@@ -18,126 +21,112 @@ type AdminDialog =
   | { type: 'question' }
   | null;
 function useAdminState() {
-  const [authenticated, setAuthenticated] = useState(false);
-  const [booting, setBooting] = useState(true);
-  const [loading, setLoading] = useState(false);
-  const [busy, setBusy] = useState(false);
-  const [username, setUsername] = useState('');
-  const [members, setMembers] = useState<Member[]>([]);
-  const [reports, setReports] = useState<Report[]>([]);
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [dialog, setDialog] = useState<AdminDialog>(null);
-  const [notice, setNotice] = useState('');
-  const [error, setError] = useState('');
-  const inFlight = useRef(false);
-  const generation = useRef(0);
-  useEffect(() => {
-    if (!notice) return;
-    const timer = window.setTimeout(() => setNotice(''), 4000);
-    return () => clearTimeout(timer);
-  }, [notice]);
-  const clearSession = useCallback(() => {
-    generation.current++;
-    setBooting(false);
-    setLoading(false);
-    setAuthenticated(false);
-    setUsername('');
-    setMembers([]);
-    setReports([]);
-    setQuestions([]);
-    setCategories([]);
-    setDialog(null);
-  }, []);
-  const handleError = useCallback(
-    (error: unknown) => {
-      if (error instanceof ApiError && error.status === 401) clearSession();
-      setError(error instanceof Error ? error.message : '서버 요청을 처리하지 못했어요.');
-    },
-    [clearSession],
-  );
-  const refresh = useCallback(async () => {
-    const version = generation.current;
-    setLoading(true);
-    try {
+  const client = useQueryClient();
+  const session = useQuery({
+    queryKey: queryKeys.admin.session.queryKey,
+    queryFn: adminApi.me,
+    staleTime: 0,
+  });
+  const authenticated = session.data?.authenticated ?? false;
+  const username = session.data?.username ?? '';
+  const directory = useQuery({
+    queryKey: queryKeys.admin.account(username)._ctx.directory.queryKey,
+    enabled: authenticated,
+    queryFn: async () => {
       const [members, reports, catalog] = await Promise.all([
         adminApi.members(),
         adminApi.reports(),
         adminApi.questions(),
       ]);
-      if (version !== generation.current) return;
-      setMembers(members.map((member) => ({ ...member, joined: adminDate(member.joined) })));
-      setReports(reports.map((report) => ({ ...report, date: adminDate(report.date, true) })));
-      setQuestions(catalog.questions);
-      setCategories(catalog.sections.map(({ id, label }) => ({ id, label })));
-      setError('');
-    } catch (error) {
-      if (version === generation.current) handleError(error);
-    } finally {
-      if (version === generation.current) setLoading(false);
-    }
-  }, [handleError]);
-  const initialize = useCallback(async () => {
-    const version = ++generation.current;
-    setBooting(true);
-    setError('');
-    try {
-      const session = await adminApi.me();
-      if (version !== generation.current) return;
-      setAuthenticated(session.authenticated);
-      setUsername(session.username);
-      if (session.authenticated) await refresh();
-    } catch (error) {
-      if (version === generation.current) handleError(error);
-    } finally {
-      if (version === generation.current) setBooting(false);
-    }
-  }, [refresh, handleError]);
+      return {
+        members: members.map((member) => ({ ...member, joined: adminDate(member.joined) })),
+        reports: reports.map((report) => ({ ...report, date: adminDate(report.date, true) })),
+        questions: catalog.questions,
+        categories: catalog.sections.map(({ id, label }) => ({ id, label })),
+      };
+    },
+  });
+  const members = directory.data?.members ?? [];
+  const reports = directory.data?.reports ?? [];
+  const questions = directory.data?.questions ?? [];
+  const categories = directory.data?.categories ?? [];
+  const booting = session.isPending;
+  const loading = directory.isFetching;
+  const action = useMutation({
+    mutationKey: mutationKeys.admin.action.mutationKey,
+    mutationFn: (run: () => Promise<unknown>) => run(),
+  });
+  const busy = action.isPending;
+  const [dialog, setDialog] = useState<AdminDialog>(null);
+  const [notice, setNotice] = useState('');
+  const [error, setError] = useState('');
+  const inFlight = useRef(false);
   useEffect(() => {
-    void initialize();
-    return () => {
-      generation.current++;
-    };
-  }, [initialize]);
+    if (!notice) return;
+    const timer = window.setTimeout(() => setNotice(''), 4000);
+    return () => clearTimeout(timer);
+  }, [notice]);
+  const clearSession = useCallback(async () => {
+    await clearQueryScope('admin');
+    client.setQueryData(queryKeys.admin.session.queryKey, { authenticated: false, username: '' });
+    setDialog(null);
+  }, [client]);
+  const handleError = useCallback(
+    (error: unknown) => {
+      if (error instanceof ApiError && error.status === 401) void clearSession();
+      setError(error instanceof Error ? error.message : '서버 요청을 처리하지 못했어요.');
+    },
+    [clearSession],
+  );
+  useEffect(() => {
+    const error = session.error ?? directory.error;
+    if (error) handleError(error);
+  }, [session.error, directory.error, handleError]);
+  const refresh = useCallback(async () => {
+    await client.invalidateQueries({
+      queryKey: queryKeys.admin._def,
+      predicate: (query) => !isSessionQueryKey(query.queryKey),
+    });
+  }, [client]);
+  const initialize = async () => {
+    await session.refetch();
+  };
   const login = async (id: string, password: string) => {
     if (inFlight.current) return false;
     inFlight.current = true;
-    setBusy(true);
     try {
-      const session = await adminApi.login(id, password);
-      setAuthenticated(session.authenticated);
-      setUsername(session.username);
+      const session = (await action.mutateAsync(() => adminApi.login(id, password))) as Awaited<
+        ReturnType<typeof adminApi.login>
+      >;
+      await clearSession();
+      client.setQueryData(queryKeys.admin.session.queryKey, session);
       setError('');
       await refresh();
       return true;
     } finally {
       inFlight.current = false;
-      setBusy(false);
     }
   };
   const logout = async () => {
     if (inFlight.current) return;
     inFlight.current = true;
-    setBusy(true);
     try {
-      await adminApi.logout();
-      clearSession();
+      await action.mutateAsync(adminApi.logout);
+      await clearSession();
       setError('');
     } catch (error) {
       handleError(error);
     } finally {
       inFlight.current = false;
-      setBusy(false);
-      setLoading(false);
     }
   };
-  const run = async (action: () => Promise<unknown>, message: string) => {
+  const run = async (mutationAction: () => Promise<unknown>, message: string) => {
     if (inFlight.current) return;
     inFlight.current = true;
-    setBusy(true);
     setError('');
     try {
-      await action();
+      await action.mutateAsync(mutationAction);
+      await client.invalidateQueries({ queryKey: queryKeys.public.valueCatalog.queryKey });
       setDialog(null);
       setNotice(message);
       await refresh();
@@ -145,7 +134,6 @@ function useAdminState() {
       handleError(error);
     } finally {
       inFlight.current = false;
-      setBusy(false);
     }
   };
   return {

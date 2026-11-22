@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { useSchemaForm } from '@/hooks/useSchemaForm';
 import { workEmailCodeSchema } from '@/validation/companyEmail';
 import { formErrorMessage } from '@/validation/forms';
-import { request } from '@/lib/api';
+import { useWorkEmailMutations } from '@/hooks/queries/useWorkEmail';
 import type { WorkEmailStatus } from '@/lib/workEmail';
 import { FormErrors } from './ui/form-errors';
 
@@ -23,6 +23,7 @@ export default function WorkEmailCodeForm({
   onRefresh: (status: WorkEmailStatus) => void;
   onError: (message: string) => void;
 }) {
+  const emailMutations = useWorkEmailMutations();
   const form = useSchemaForm(workEmailCodeSchema, { defaultValues: { code: '' } });
   const inFlight = useRef(false);
   const busy = disabled || form.formState.isSubmitting;
@@ -32,11 +33,11 @@ export default function WorkEmailCodeForm({
     onBusyChange(true);
     onError('');
     try {
-      onComplete(await request<WorkEmailStatus>('/work-email/verify', 'POST', input));
+      onComplete(await emailMutations.verify(input));
     } catch (error) {
       onError(formErrorMessage(error));
       try {
-        onRefresh(await request<WorkEmailStatus>('/work-email'));
+        onRefresh(await emailMutations.refresh());
       } catch {
         /* Preserve verification error. */
       }

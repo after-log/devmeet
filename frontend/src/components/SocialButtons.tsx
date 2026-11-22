@@ -1,27 +1,11 @@
-import { useEffect, useState } from 'react';
-import { api } from '@/lib/api';
+import { useSocialAuth } from '@/hooks/queries/useSocialAuth';
 import { toast } from 'sonner';
 
 export default function SocialButtons({ link = false }: { link?: boolean }) {
-  const [providers, setProviders] = useState<Record<'github' | 'kakao', boolean> | null>(null);
-  const [error, setError] = useState('');
-  useEffect(() => {
-    let active = true;
-    void api
-      .providers()
-      .then((value) => {
-        if (active) setProviders(value);
-      })
-      .catch((err: Error) => {
-        if (active) setError(err.message);
-      });
-    return () => {
-      active = false;
-    };
-  }, []);
+  const { providers, error, link: linkProvider } = useSocialAuth();
   const connect = async (provider: 'github' | 'kakao') => {
     try {
-      const url = link ? (await api.link(provider)).url : '/oauth2/authorization/' + provider;
+      const url = link ? (await linkProvider(provider)).url : '/oauth2/authorization/' + provider;
       window.location.assign(url);
     } catch (err) {
       toast((err as Error).message);

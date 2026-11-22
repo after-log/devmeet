@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Heart, MessageCircle, UserPlus, Users, RefreshCw } from 'lucide-react';
 import {
   Area,
@@ -12,44 +12,16 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { adminApi, adminDate } from '../api';
-import { useAdmin } from '../hooks/useAdmin';
-import type { AdminStatistics } from '../types';
+import { adminDate } from '../api';
+import { useAdminStatistics } from '../hooks/useAdminQueries';
 
 const number = new Intl.NumberFormat('ko-KR');
 const axis = { tickLine: false, axisLine: false, tick: { fill: '#737373', fontSize: 12 } };
 const tooltipStyle = { border: '1px solid #e5e5e5', borderRadius: 10, fontSize: 13 };
 
 export default function UserStatistics() {
-  const { loading: refreshing } = useAdmin();
   const [days, setDays] = useState<7 | 30>(30);
-  const [data, setData] = useState<AdminStatistics | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [retry, setRetry] = useState(0);
-  useEffect(() => {
-    let active = true;
-    setData(null);
-    setLoading(true);
-    setError('');
-    if (!refreshing) {
-      adminApi
-        .statistics(days)
-        .then((result) => {
-          if (active) setData(result);
-        })
-        .catch((error: unknown) => {
-          if (active)
-            setError(error instanceof Error ? error.message : '통계를 불러오지 못했어요.');
-        })
-        .finally(() => {
-          if (active) setLoading(false);
-        });
-    }
-    return () => {
-      active = false;
-    };
-  }, [days, refreshing, retry]);
+  const { data, loading, error, refresh } = useAdminStatistics(days);
 
   const sum = (key: 'signups' | 'likes' | 'matches' | 'messages') =>
     data?.daily.reduce((total, day) => total + day[key], 0) ?? 0;
@@ -124,11 +96,7 @@ export default function UserStatistics() {
           className="rounded-xl border border-red-200 bg-red-50 p-5 text-sm text-red-800"
         >
           {error}
-          <button
-            type="button"
-            className="ml-3 underline"
-            onClick={() => setRetry((value) => value + 1)}
-          >
+          <button type="button" className="ml-3 underline" onClick={() => refresh()}>
             다시 불러오기
           </button>
         </div>

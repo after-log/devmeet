@@ -1,6 +1,6 @@
 import { useSchemaForm } from '@/hooks/useSchemaForm';
 import { companyDomainActivationSchema } from '@/validation/companyEmail';
-import { adminApi } from '../api';
+import { useCompanyEmailMutations } from '../hooks/useAdminQueries';
 import type { CompanyEmailDomain } from '../types';
 import CompanyEmailActionDialog, {
   type CompanyEmailDialogCallbacks,
@@ -10,6 +10,7 @@ export default function CompanyDomainActivationDialog({
   domain,
   ...callbacks
 }: CompanyEmailDialogCallbacks & { domain: CompanyEmailDomain }) {
+  const companyMutations = useCompanyEmailMutations();
   const form = useSchemaForm(companyDomainActivationSchema, {
     defaultValues: { active: !domain.active, note: '' },
   });
@@ -22,7 +23,7 @@ export default function CompanyDomainActivationDialog({
       submitLabel={label}
       danger={domain.active}
       form={form}
-      onSubmit={(input) => adminApi.activateCompanyDomain(domain.domain, input.active, input.note)}
+      onSubmit={(input) => companyMutations.activate(domain.domain, input.active, input.note)}
     >
       <p className="mb-3! text-base font-semibold">
         {domain.company} · {domain.domain}

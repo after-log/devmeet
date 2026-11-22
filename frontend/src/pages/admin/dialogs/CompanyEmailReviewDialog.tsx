@@ -1,6 +1,6 @@
 import { useSchemaForm } from '@/hooks/useSchemaForm';
 import { companyEmailDecisionSchema } from '@/validation/companyEmail';
-import { adminApi } from '../api';
+import { useCompanyEmailMutations } from '../hooks/useAdminQueries';
 import { canReviewCompanyEmail } from '../companyEmail';
 import type { CompanyEmailRequest } from '../types';
 import { Field } from '../components/AdminUI';
@@ -13,6 +13,7 @@ export default function CompanyEmailReviewDialog({
   request,
   ...callbacks
 }: CompanyEmailDialogCallbacks & { request: CompanyEmailRequest }) {
+  const companyMutations = useCompanyEmailMutations();
   const form = useSchemaForm(companyEmailDecisionSchema, {
     defaultValues: { status: 'APPROVED', scope: 'MEMBER', note: '' },
   });
@@ -29,7 +30,7 @@ export default function CompanyEmailReviewDialog({
       danger={decision === 'REJECTED'}
       submitLabel={decision === 'APPROVED' ? '승인' : '반려'}
       form={form}
-      onSubmit={canReview ? (input) => adminApi.reviewCompanyEmail(request.id, input) : undefined}
+      onSubmit={canReview ? (input) => companyMutations.review(request.id, input) : undefined}
     >
       <CompanyEmailRequestDetails request={request} />
       {canReview && (

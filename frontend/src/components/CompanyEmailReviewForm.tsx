@@ -3,7 +3,7 @@ import { useSchemaForm } from '@/hooks/useSchemaForm';
 import { setFormError } from '@/hooks/setFormError';
 import { companyEmailReviewSchema } from '@/validation/companyEmail';
 import { FormErrors } from '@/components/ui/form-errors';
-import { request } from '@/lib/api';
+import { useWorkEmailMutations } from '@/hooks/queries/useWorkEmail';
 import type { WorkEmailStatus } from '@/lib/workEmail';
 
 export default function CompanyEmailReviewForm({
@@ -17,6 +17,7 @@ export default function CompanyEmailReviewForm({
   disabled: boolean;
   onBusyChange: (busy: boolean) => void;
 }) {
+  const emailMutations = useWorkEmailMutations();
   const form = useSchemaForm(companyEmailReviewSchema, {
     defaultValues: {
       company: status.companyReview?.company ?? status.verified?.company ?? '',
@@ -32,7 +33,7 @@ export default function CompanyEmailReviewForm({
     onBusyChange(true);
     form.clearErrors('root');
     try {
-      onComplete(await request<WorkEmailStatus>('/work-email/company-review', 'POST', input));
+      onComplete(await emailMutations.review(input));
     } catch (error) {
       setFormError(form.setError, error);
     } finally {

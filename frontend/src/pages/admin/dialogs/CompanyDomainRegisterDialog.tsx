@@ -1,12 +1,13 @@
 import { useSchemaForm } from '@/hooks/useSchemaForm';
 import { companyDomainRegistrationSchema } from '@/validation/companyEmail';
-import { adminApi } from '../api';
+import { useCompanyEmailMutations } from '../hooks/useAdminQueries';
 import { Field } from '../components/AdminUI';
 import CompanyEmailActionDialog, {
   type CompanyEmailDialogCallbacks,
 } from './CompanyEmailActionDialog';
 
 export default function CompanyDomainRegisterDialog(callbacks: CompanyEmailDialogCallbacks) {
+  const companyMutations = useCompanyEmailMutations();
   const form = useSchemaForm(companyDomainRegistrationSchema, {
     defaultValues: { company: '', domain: '', website: '', note: '' },
   });
@@ -19,7 +20,7 @@ export default function CompanyDomainRegisterDialog(callbacks: CompanyEmailDialo
       description="회사와 도메인의 관계를 직접 확인한 결과를 기록해 주세요."
       submitLabel="도메인 승인 및 등록"
       form={form}
-      onSubmit={(input) => adminApi.registerCompanyDomain(input)}
+      onSubmit={(input) => companyMutations.register(input)}
     >
       <Field label="회사명">
         <input required maxLength={100} {...form.register('company')} className={field} />

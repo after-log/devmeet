@@ -3,19 +3,19 @@ import { useSchemaForm } from '@/hooks/useSchemaForm';
 import { preferencesSchema } from '@/validation/profile';
 import { reportSchema } from '@/validation/community';
 import { FormErrors } from '@/components/ui/form-errors';
-import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useApp } from '../stores/app';
-import { api } from '../lib/api';
+import { useProfileMutations } from '@/hooks/queries/useProfileMutations';
+import { useSafetyMutations, useBlockedPeople } from '@/hooks/queries/useSafety';
 import { REPORT_REASONS } from '@/data/options';
-import type { Person } from '@/types';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Select } from '@/components/ui/select';
 import SocialButtons from '@/components/SocialButtons';
 
 const FiltersSheet = ({ close }: { close: () => void }) => {
-  const { user, demo, draft, setDraft, setUser } = useApp();
+  const { user, demo, draft, setDraft } = useApp();
+  const profileMutations = useProfileMutations();
   const p = user?.profile ?? draft;
   const form = useSchemaForm(preferencesSchema, {
     defaultValues: { region: p.region ?? '', minAge: p.minAge ?? 19, maxAge: p.maxAge ?? 60 },
@@ -24,8 +24,7 @@ const FiltersSheet = ({ close }: { close: () => void }) => {
     try {
       if (demo || !user?.profile) setDraft(patch);
       else {
-        const { profile } = await api.saveProfile({ ...user.profile, ...patch });
-        setUser({ ...user, profile });
+        await profileMutations.saveProfile({ ...user.profile, ...patch });
       }
       close();
       toast('추천 조건을 저장했어요.');
@@ -93,8 +92,9 @@ const FiltersSheet = ({ close }: { close: () => void }) => {
 };
 
 const SafetySheet = ({ id, close }: { id: string; close: () => void }) => {
+  const safety = useSafetyMutations();
   const navigate = useNavigate();
-  const { demo, demoBlock, openSheet, refresh } = useApp();
+  const { demo, demoBlock, openSheet } = useApp();
   return (
     <>
       <p className="eyebrow">// safety</p>
@@ -109,8 +109,7 @@ const SafetySheet = ({ id, close }: { id: string; close: () => void }) => {
           try {
             if (demo) demoBlock(id);
             else {
-              await api.block(id);
-              await refresh();
+              await safety.block(id);
             }
             close();
             navigate('/chat');
@@ -128,6 +127,7 @@ const SafetySheet = ({ id, close }: { id: string; close: () => void }) => {
 };
 
 const ReportSheet = ({ id, close }: { id: string; close: () => void }) => {
+  const safety = useSafetyMutations();
   const demo = useApp((s) => s.demo);
   const form = useSchemaForm(reportSchema.omit({ id: true }), {
     defaultValues: { reason: REPORT_REASONS[0] },
@@ -161,7 +161,7 @@ const ReportSheet = ({ id, close }: { id: string; close: () => void }) => {
             return toast('둘러보기에서는 실제 신고가 접수되지 않아요.');
           }
           try {
-            const r = await api.report(id, reason);
+            const r = await safety.report(id, reason);
             close();
             toast(`신고를 기록했어요 · ${r.id.slice(0, 8)}`);
           } catch (err) {
@@ -180,24 +180,18 @@ const ReportSheet = ({ id, close }: { id: string; close: () => void }) => {
 
 const BlockedSheet = () => {
   const demo = useApp((s) => s.demo);
-  const refresh = useApp((s) => s.refresh);
-  const [people, setPeople] = useState<Person[] | null>(null);
-  const load = () => {
-    if (demo) setPeople([]);
-    else
-      void api
-        .blocks()
-        .then((r) => setPeople(r.people))
-        .catch((err: Error) => {
-          setPeople([]);
-          toast(err.message);
-        });
-  };
-  useEffect(load, [demo]);
+  const safety = useSafetyMutations();
+  const blocked = useBlockedPeople();
+  const people = demo ? [] : (blocked.data?.people ?? (blocked.isPending ? null : []));
   return (
     <>
       <p className="eyebrow">// blocked</p>
       <DialogTitle>차단한 프로필</DialogTitle>
+      {blocked.error && (
+        <p role="alert" className="text-sub">
+          {blocked.error.message}
+        </p>
+      )}
       {people === null ? (
         <p className="muted">불러오는 중…</p>
       ) : people.length ? (
@@ -208,9 +202,8 @@ const BlockedSheet = () => {
               className="tag"
               onClick={async () => {
                 try {
-                  await api.block(p.id, true);
-                  await refresh();
-                  load();
+                  await safety.block(p.id, true);
+
                   toast('차단을 해제했어요.');
                 } catch (err) {
                   toast((err as Error).message);

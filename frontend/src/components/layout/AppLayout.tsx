@@ -7,7 +7,8 @@ import BottomNav from '@/components/layout/BottomNav';
 import AppSheets from '@/components/AppSheets';
 import { Toaster } from '@/components/ui/sonner';
 import { applyTheme, getTheme } from '../../lib/theme';
-import { useChatsStore } from '@/stores/chats';
+import { useMemberSession } from '@/hooks/queries/useMemberSession';
+import { useMemberEvents } from '@/hooks/queries/useMemberEvents';
 import { usePwaInstall } from '@/hooks/usePwaInstall';
 import { PwaInstallBanner } from '@/components/PwaInstall';
 import PwaUpdate from '@/components/PwaUpdate';
@@ -15,9 +16,10 @@ import PwaUpdate from '@/components/PwaUpdate';
 const TABS = ['/today', '/likes', '/chat', '/me'];
 
 const AppLayout = () => {
+  const { reconnect } = useMemberSession();
   const navigate = useNavigate();
   const installState = usePwaInstall();
-  const { booted, boot, demo, user, error, exitDemo, step, openSheet, refresh } = useApp();
+  const { booted, demo, error, exitDemo, step, openSheet, refresh } = useApp();
   const { pathname } = useLocation();
   // 라벨 → 제목 → 본문 타이핑. 상세 화면은 사람과 상관없이 한 화면으로 보고, 온보딩은 단계마다 따로 센다
   const mainRef = useRef<HTMLElement>(null);
@@ -34,41 +36,7 @@ const AppLayout = () => {
     applyTheme(next);
     setTheme(next);
   };
-  useEffect(() => {
-    void boot();
-  }, [boot]);
-  useEffect(() => {
-    if (demo || !user) return;
-    const events = new EventSource('/api/events');
-    const refreshAll = () => void refresh();
-    const message = (event: MessageEvent) => {
-      const { peerId } = JSON.parse(event.data);
-      void useChatsStore
-        .getState()
-        .loadMessages(peerId)
-        .catch(() => void refresh());
-    };
-    ['like', 'match', 'connections', 'profile'].forEach((kind) =>
-      events.addEventListener(kind, refreshAll),
-    );
-    events.addEventListener('message', message);
-    const interval = window.setInterval(() => {
-      if (document.visibilityState === 'visible') {
-        void refresh();
-        useApp.getState().connections.matches.forEach(
-          (p) =>
-            void useChatsStore
-              .getState()
-              .loadMessages(p.id)
-              .catch(() => undefined),
-        );
-      }
-    }, 30_000);
-    return () => {
-      events.close();
-      window.clearInterval(interval);
-    };
-  }, [demo, user?.id, refresh]);
+  useMemberEvents();
   useEffect(() => {
     window.scrollTo(0, 0);
     openSheet(null);
@@ -109,7 +77,7 @@ const AppLayout = () => {
             {error && !demo && (
               <div role="alert" className="mb-5 rounded-lg border border-sub p-3 text-xs text-sub">
                 {error}
-                <button className="ml-3 underline" onClick={() => void boot()}>
+                <button className="ml-3 underline" onClick={() => void reconnect()}>
                   다시 연결
                 </button>
               </div>
