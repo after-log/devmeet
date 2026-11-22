@@ -6,6 +6,7 @@ import { Avatar } from '@/components/PersonCard';
 import { useValueCatalog } from '@/hooks/useValueCatalog';
 import { demoProfilePhoto } from '@/data/members';
 import { publicValueAnswers, PUBLIC_VALUE_LIMIT } from '@/lib/value-answers';
+import PageScene from '@/components/pixel/PageScene';
 
 const MePage = () => {
   const { logout } = useMemberActions();
@@ -23,6 +24,7 @@ const MePage = () => {
     <>
       <p className="eyebrow">// my.profile</p>
       <h2>나의 프로필</h2>
+      <PageScene name="profile" className="mt-4" />
       <div className="profile-self">
         <div className="shrink-0">
           <Avatar

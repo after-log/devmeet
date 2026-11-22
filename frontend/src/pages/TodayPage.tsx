@@ -5,6 +5,7 @@ import PersonCard, { Empty } from '@/components/PersonCard';
 import LikeButton from '@/components/LikeButton';
 import PixelCountdown from '@/components/pixel/PixelCountdown';
 import PixelHearts from '@/components/pixel/PixelHearts';
+import PageScene from '@/components/pixel/PageScene';
 
 const TodayPage = () => {
   const navigate = useNavigate();
@@ -32,6 +33,7 @@ const TodayPage = () => {
         <br />
         하루 세 사람 · 한국 시간 자정에 새로 바뀌어요.
       </p>
+      <PageScene name="discover" />
       <div className="filter-row">
         {people.map((person, i) => (
           <button

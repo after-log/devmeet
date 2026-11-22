@@ -6,6 +6,7 @@ import { Avatar } from '@/components/PersonCard';
 import { lastActivity } from '@/data/chats';
 import ChatListItem from './ChatListItem';
 import { FilterTabs } from '@/components/ui/filter-tabs';
+import PageScene from '@/components/pixel/PageScene';
 
 const ChatList = ({
   rooms,
@@ -36,6 +37,7 @@ const ChatList = ({
         </span>
       </div>
       <p className="intro">마음이 통한 사람과, 한 줄씩 가까워져요.</p>
+      <PageScene name="chat" />
       {newMatches.length > 0 && (
         <section className="chat-matches" aria-labelledby="new-matches-title">
           <div className="flex items-center justify-between gap-2">

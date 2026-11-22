@@ -1,6 +1,7 @@
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useApp } from '../stores/app';
 import SocialButtons from '@/components/SocialButtons';
+import PageScene from '@/components/pixel/PageScene';
 
 const WelcomePage = () => {
   const navigate = useNavigate();
@@ -22,6 +23,7 @@ const WelcomePage = () => {
         <br />
         하루 세 번의 새로운 가능성.
       </p>
+      <PageScene name="welcome" className="mt-6" />
       <ul className="checks">
         <li>
           <b>01</b>매일 세 사람만 소개하고, 그날 하루 동안 유지돼요
