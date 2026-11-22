@@ -37,3 +37,17 @@ export type Question = {
 };
 export type QuestionDraft = Pick<Question, 'section' | 'text' | 'purpose' | 'options'>;
 export type Category = { id: string; label: string };
+
+export type AdminStatistics = {
+  updatedAt: string;
+  totalMembers: number;
+  chatParticipants: number;
+  daily: {
+    date: string;
+    signups: number;
+    likes: number;
+    matches: number;
+    messages: number;
+    chatParticipants: number;
+  }[];
+};

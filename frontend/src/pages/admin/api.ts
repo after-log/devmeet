@@ -1,5 +1,13 @@
 import { ApiError } from '@/lib/api';
-import type { Category, Member, Question, QuestionDraft, Report, ReviewStatus } from './types';
+import type {
+  AdminStatistics,
+  Category,
+  Member,
+  Question,
+  QuestionDraft,
+  Report,
+  ReviewStatus,
+} from './types';
 
 type Csrf = { token: string; headerName: string };
 let csrf: Promise<Csrf> | null = null;
@@ -73,6 +81,7 @@ export const adminApi = {
       csrf = null;
     }
   },
+  statistics: (days: 7 | 30) => adminRequest<AdminStatistics>('/statistics?days=' + days),
   members: () => adminRequest<Member[]>('/accounts'),
   reports: () => adminRequest<Report[]>('/reports'),
   questions: () => adminRequest<{ questions: Question[]; sections: Category[] }>('/questions'),

@@ -30,11 +30,7 @@ export default function MembersTable({
               alt=""
             />
             <div>
-              <strong>
-                {member.name}
-                <span className="ml-[7px] text-[12px] text-neutral-600">{member.id}</span>
-              </strong>
-              <small>{member.email}</small>
+              <strong>{member.name}</strong>
             </div>
           </div>
         ),

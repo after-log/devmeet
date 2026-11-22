@@ -4,6 +4,9 @@ import { ArrowRight, ChevronRight, Flag, ShieldCheck } from 'lucide-react';
 import { useAdmin } from './hooks/useAdmin';
 import { Badge, EmptyState, Panel } from './components/AdminUI';
 import OverviewStats from './components/OverviewStats';
+import { lazy, Suspense } from 'react';
+
+const UserStatistics = lazy(() => import('./components/UserStatistics'));
 
 export default function AdminOverviewPage() {
   const { members, reports, openReview, openReport } = useAdmin();
@@ -11,6 +14,15 @@ export default function AdminOverviewPage() {
   const openReports = reports.filter((r) => r.status === 'OPEN');
   return (
     <>
+      <Suspense
+        fallback={
+          <p role="status" className="mb-6 text-sm text-neutral-600">
+            통계 화면을 불러오는 중…
+          </p>
+        }
+      >
+        <UserStatistics />
+      </Suspense>
       <OverviewStats />
       <div className="my-[25px] flex items-center gap-[18px] rounded-[11px] border border-[#e5e5e5] bg-neutral-100 p-6 max-[900px]:flex-wrap max-[900px]:gap-3 max-[900px]:p-[19px]">
         <div className="grid size-12 shrink-0 place-items-center rounded-xl bg-[#e5e5e5] text-neutral-600">

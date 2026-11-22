@@ -28,7 +28,7 @@ export function AdminSurface({ children, className }: { children: ReactNode; cla
   return (
     <div
       className={cn(
-        "font-[-apple-system,BlinkMacSystemFont,'Apple_SD_Gothic_Neo','Noto_Sans_KR',sans-serif] text-[14px] leading-relaxed tracking-[-0.25px] text-[#262626] [color-scheme:light] [&_a]:no-underline [&_a:focus-visible]:outline-[#525252] [&_button]:transition-colors motion-reduce:[&_button]:transition-none [&_button:disabled]:cursor-not-allowed [&_button:disabled]:opacity-40 [&_button:focus-visible]:outline-[#525252] [&_h1]:m-0 [&_h2]:m-0 [&_h3]:m-0 [&_input:focus-visible]:outline-neutral-600 [&_p]:m-0 [&_select:focus-visible]:outline-neutral-600 [&_textarea:focus-visible]:outline-neutral-600",
+        'text-[14px] leading-relaxed tracking-[-0.25px] text-[#262626] [color-scheme:light] [--font-display:var(--font-sans)] [&_a]:no-underline [&_a:focus-visible]:outline-[#525252] [&_button]:transition-colors motion-reduce:[&_button]:transition-none [&_button:disabled]:cursor-not-allowed [&_button:disabled]:opacity-40 [&_button:focus-visible]:outline-[#525252] [&_h1]:m-0 [&_h2]:m-0 [&_h3]:m-0 [&_input:focus-visible]:outline-neutral-600 [&_p]:m-0 [&_select:focus-visible]:outline-neutral-600 [&_textarea:focus-visible]:outline-neutral-600',
         className,
       )}
     >
