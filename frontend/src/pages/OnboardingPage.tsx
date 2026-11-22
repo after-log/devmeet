@@ -7,7 +7,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import ProfileBuilt from '@/components/pixel/ProfileBuilt';
-import SignupBuildLog from '@/components/pixel/SignupBuildLog';
+import SignupWelcome from '@/components/pixel/SignupWelcome';
 import { useProfileMutations } from '@/hooks/queries/useProfileMutations';
 import { useApp } from '../stores/app';
 import {
@@ -128,10 +128,10 @@ const OnboardingPage = () => {
     }
   });
   if (!user) return <Navigate to="/" replace />;
-  // 카카오로 처음 가입해 들어왔을 때 '가입 완료' 빌드 로그를 한 번 보여 준다
+  // 카카오로 처음 가입해 들어왔을 때 환영 장면을 한 번 보여 준다
   if (welcome && !user.profile && step === 0)
     return (
-      <SignupBuildLog
+      <SignupWelcome
         name={draft.name}
         onContinue={() => {
           try {
