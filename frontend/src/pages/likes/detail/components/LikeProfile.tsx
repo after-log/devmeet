@@ -91,7 +91,7 @@ const LikeProfile = ({
       </button>
     ) : entry.direction === 'received' ? (
       <>
-        <div className="mt-[18px] grid grid-cols-[1fr_1.5fr] gap-[10px]">
+        <div className="mt-4.5 grid grid-cols-[1fr_1.5fr] gap-2.5">
           <button className="btn secondary" onClick={onBack}>
             돌아가기
           </button>

@@ -25,7 +25,7 @@ export default function MembersTable({
         cell: ({ row: { original: member } }) => (
           <div className="flex items-center gap-2.5">
             <AdminPhoto
-              className="h-[37px] w-[34px] rounded-md object-cover"
+              className="h-9.25 w-8.5 rounded-md object-cover"
               src={member.photos[0]}
               alt=""
             />
@@ -70,7 +70,7 @@ export default function MembersTable({
         header: '관리',
         cell: ({ row }) => (
           <AdminButton
-            className="min-h-0 rounded-[5px] border-[#e5e5e5] px-[9px] py-[5px] text-[12px] text-neutral-600"
+            className="min-h-0 rounded-[5px] border-[#e5e5e5] px-2.25 py-1.25 text-[12px] text-neutral-600"
             onClick={() => onDetail(row.original)}
           >
             상세 보기

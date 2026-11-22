@@ -45,9 +45,9 @@ const AppLayout = () => {
   }, [pathname, step, openSheet, refresh]);
   return (
     <>
-      <div className="mx-auto max-w-[480px] min-[650px]:pt-[35px]">
+      <div className="mx-auto max-w-120 min-[650px]:pt-8.75">
         <div
-          className={`min-h-dvh border-x border-line bg-canvas max-[480px]:border-0 min-[650px]:min-h-[calc(100dvh-35px)] min-[650px]:rounded-t-xl min-[650px]:border min-[650px]:border-b-0 min-[650px]:border-line ${isValuesPage ? 'min-[650px]:overflow-clip' : 'min-[650px]:overflow-hidden'} ${isChatDetail ? 'chat-detail-layout' : 'pb-[94px]'}`}
+          className={`min-h-dvh border-x border-line bg-canvas max-[480px]:border-0 min-[650px]:min-h-[calc(100dvh-35px)] min-[650px]:rounded-t-xl min-[650px]:border min-[650px]:border-b-0 min-[650px]:border-line ${isValuesPage ? 'min-[650px]:overflow-clip' : 'min-[650px]:overflow-hidden'} ${isChatDetail ? 'chat-detail-layout' : 'pb-23.5'}`}
         >
           <AppHeader theme={theme} onToggleTheme={toggleTheme} />
           {(pathname === '/' || TABS.includes(pathname)) && (
@@ -71,7 +71,7 @@ const AppLayout = () => {
             className={
               isChatDetail
                 ? 'chat-detail-main'
-                : 'px-6 pt-7 pb-6 max-[480px]:px-5 max-[480px]:py-[23px] max-[360px]:px-[15px]'
+                : 'px-6 pt-7 pb-6 max-[480px]:px-5 max-[480px]:py-5.75 max-[360px]:px-3.75'
             }
           >
             {error && !demo && (

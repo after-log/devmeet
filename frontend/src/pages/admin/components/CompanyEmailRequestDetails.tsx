@@ -24,7 +24,7 @@ export default function CompanyEmailRequestDetails({ request }: { request: Compa
           제출된 공식 홈페이지
         </a>
       )}
-      <p className="mt-3! break-words whitespace-pre-wrap text-neutral-600">
+      <p className="mt-3! wrap-break-word whitespace-pre-wrap text-neutral-600">
         {request.evidence || '추가 설명 없음'}
       </p>
       {request.note && (

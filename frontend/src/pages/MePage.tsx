@@ -35,7 +35,7 @@ const MePage = () => {
             {name}
             {p ? <span className="ml-2 font-mono text-[14px] text-fg-3">{p.age}</span> : null}
           </h3>
-          <p className="m-0 text-xs leading-relaxed break-words text-fg-3">
+          <p className="m-0 text-xs leading-relaxed wrap-break-word text-fg-3">
             {p ? `${p.location} · ${p.job}` : '가입 없이 둘러보는 중이에요'}
           </p>
         </div>

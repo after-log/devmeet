@@ -78,7 +78,7 @@ const FiltersSheet = ({ close }: { close: () => void }) => {
           />
         </label>
       </div>
-      <DialogDescription className="secure mt-[22px]">
+      <DialogDescription className="secure mt-5.5">
         변경한 조건은 다음 날 새 추천에 적용돼요.
         <br />
         오늘 이미 배정된 인연은 유지돼요.
@@ -104,7 +104,7 @@ const SafetySheet = ({ id, close }: { id: string; close: () => void }) => {
         신고하기
       </button>
       <button
-        className="btn secondary mt-[10px] w-full"
+        className="btn secondary mt-2.5 w-full"
         onClick={async () => {
           try {
             if (demo) demoBlock(id);

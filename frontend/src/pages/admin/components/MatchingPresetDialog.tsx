@@ -49,7 +49,7 @@ export default function MatchingPresetDialog({
           onPointerDownOutside={(event) => {
             if (busy) event.preventDefault();
           }}
-          className="fixed top-1/2 left-1/2 z-71 max-h-[90dvh] w-[calc(100%-36px)] max-w-[480px] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-[15px] bg-white p-6 shadow-[0_24px_100px_#17171730]"
+          className="fixed top-1/2 left-1/2 z-71 max-h-[90dvh] w-[calc(100%-36px)] max-w-120 -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-[15px] bg-white p-6 shadow-[0_24px_100px_#17171730]"
         >
           <AdminSurface>
             <div className="mb-4 flex items-start justify-between gap-3">

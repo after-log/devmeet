@@ -25,15 +25,15 @@ export default function MemberDetailDialog({ member }: { member: Member }) {
       description={`${member.id} · 가입 ${member.joined}`}
       close={closeDialog}
     >
-      <div className="flex items-center gap-[17px]">
+      <div className="flex items-center gap-4.25">
         <AdminPhoto
-          className="h-[85px] w-[75px] rounded-[9px] object-cover"
+          className="h-21.25 w-18.75 rounded-[9px] object-cover"
           src={member.photos[0]}
           alt={member.name}
         />
         <div>
           <h3 className="text-lg font-semibold">{member.name}</h3>
-          <p className="mt-[3px]! mb-[7px]! text-[13px] text-neutral-600">{member.email}</p>
+          <p className="mt-0.75! mb-1.75! text-[13px] text-neutral-600">{member.email}</p>
           <Badge status={member.suspended ? 'REJECTED' : 'APPROVED'}>
             {member.suspended ? '이용 제한' : '정상 회원'}
           </Badge>

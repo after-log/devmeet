@@ -29,7 +29,7 @@ export default function QuestionCreateDialog() {
           <label className="block text-[13px] font-medium text-neutral-600">
             분류
             <select
-              className="mt-[7px] block min-h-[42px] w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2.5 text-sm font-normal text-[#262626]"
+              className="mt-1.75 block min-h-10.5 w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2.5 text-sm font-normal text-[#262626]"
               {...form.register('section')}
             >
               {categories.map((c) => (
@@ -40,7 +40,7 @@ export default function QuestionCreateDialog() {
           <label className="block text-[13px] font-medium text-neutral-600">
             용도
             <select
-              className="mt-[7px] block min-h-[42px] w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2.5 text-sm font-normal text-[#262626]"
+              className="mt-1.75 block min-h-10.5 w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2.5 text-sm font-normal text-[#262626]"
               {...form.register('purpose')}
             >
               <option>매칭</option>
@@ -50,14 +50,14 @@ export default function QuestionCreateDialog() {
         </div>
         <Field label="문항 내용">
           <input
-            className="mt-[7px] block min-h-[42px] w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2.5 text-sm font-normal text-[#262626] placeholder:text-neutral-600"
+            className="mt-1.75 block min-h-10.5 w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2.5 text-sm font-normal text-[#262626] placeholder:text-neutral-600"
             required
             maxLength={200}
             {...form.register('text')}
             placeholder="예: 함께 보내는 주말은 어떤 모습인가요?"
           />
         </Field>
-        <div className="mt-[22px]">
+        <div className="mt-5.5">
           <strong className="text-[13px] font-medium text-neutral-600">
             선택지{' '}
             <span className="ml-1.5 text-[12px] font-normal text-neutral-600">
@@ -70,7 +70,7 @@ export default function QuestionCreateDialog() {
                 {String(i + 1).padStart(2, '0')}
               </span>
               <input
-                className="min-h-[42px] w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2.5 text-sm text-[#262626] placeholder:text-neutral-600"
+                className="min-h-10.5 w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2.5 text-sm text-[#262626] placeholder:text-neutral-600"
                 aria-label={`선택지 ${i + 1}`}
                 required
                 maxLength={100}

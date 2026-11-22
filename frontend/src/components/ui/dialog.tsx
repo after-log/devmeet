@@ -15,7 +15,7 @@ export const DialogOverlay = ({
 }: ComponentProps<typeof DialogPrimitive.Overlay>) => (
   <DialogPrimitive.Overlay
     data-slot="dialog-overlay"
-    className={cn('fixed inset-0 z-50 bg-backdrop backdrop-blur-[4px]', className)}
+    className={cn('fixed inset-0 z-50 bg-backdrop backdrop-blur-xs', className)}
     {...props}
   />
 );
@@ -31,7 +31,7 @@ export const DialogContent = ({
     <DialogPrimitive.Content
       data-slot="dialog-content"
       className={cn(
-        'fixed top-1/2 left-1/2 z-50 max-h-[calc(100dvh-32px)] w-[calc(100%-32px)] max-w-[410px] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-[9px] border border-line-strong bg-surface p-[25px] text-fg shadow-lg outline-none',
+        'fixed top-1/2 left-1/2 z-50 max-h-[calc(100dvh-32px)] w-[calc(100%-32px)] max-w-102.5 -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-[9px] border border-line-strong bg-surface p-6.25 text-fg shadow-lg outline-none',
         className,
       )}
       {...props}

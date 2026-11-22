@@ -13,6 +13,8 @@ npm run dev
 개발 서버: http://localhost:5173
 
 ```bash
+npm run lint       # Tailwind 표준 클래스 표기 검사
+npm run lint:fix   # Tailwind 표준 클래스 표기로 자동 수정
 npm run format     # Prettier 포맷 및 Tailwind 클래스 정렬
 npm run format:check # 포맷 검사
 npm run typecheck  # TypeScript strict 검사
@@ -22,6 +24,7 @@ npm run preview    # http://localhost:4173 에서 빌드 결과 확인
 
 현재 로컬 Node.js 20.12에서도 실행할 수 있도록 Vite 6을 사용합니다.
 CI와 Docker 빌드는 Node.js 22를 사용합니다.
+ESLint는 Node.js 20.19 이상 또는 22.13 이상(24 이상 포함)이 필요하며, Node.js 22.13 이상을 권장합니다.
 
 ## 화면 흐름
 
@@ -219,3 +222,22 @@ import { queryKeys } from '@/lib/query-keys';
 queryKey: queryKeys.member.account(owner)._ctx.workEmail.queryKey;
 await client.invalidateQueries({ queryKey: queryKeys.member.account(owner).queryKey });
 ```
+
+## Tailwind 클래스 자동 수정
+
+`eslint.config.js`에서 `eslint-plugin-better-tailwindcss`의
+`enforce-canonical-classes` 규칙을 사용합니다. `src/style.css`의 Tailwind v4 테마를 기준으로
+TSX의 `className`, `cn()`·`clsx()` 호출과 CSS의 `@apply`를 검사합니다.
+예를 들어 `!mt-2`는 `mt-2!`, `h-[68px]`는 `h-17`, `aspect-[3/4]`는 `aspect-3/4`로 수정합니다.
+Prettier는 기존처럼 클래스 정렬과 코드 포맷을 담당합니다.
+
+```sh
+cd frontend
+npm run lint:fix
+npm run lint
+```
+
+VS Code에서 권장 확장인 **ESLint**(`dbaeumer.vscode-eslint`)를 설치하면 파일 저장 시 자동 수정합니다.
+저장 시 수정 설정은 저장소 루트를 열 때와 `frontend` 폴더를 열 때 모두 적용됩니다.
+Tailwind IntelliSense의 `suggestCanonicalClasses`는 같은 내용을 중복 표시하지 않도록 끄고,
+ESLint에서 해당 규칙을 오류로 검사합니다.

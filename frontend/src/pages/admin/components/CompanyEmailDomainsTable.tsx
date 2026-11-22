@@ -64,7 +64,7 @@ export default function CompanyEmailDomainsTable({
           <AdminButton
             disabled={disabled}
             variant={row.original.active ? 'danger' : 'default'}
-            className="min-h-0 rounded-[5px] px-[9px] py-[5px] text-[12px]"
+            className="min-h-0 rounded-[5px] px-2.25 py-1.25 text-[12px]"
             onClick={(event) => onToggle(row.original, event.currentTarget)}
           >
             {row.original.active ? '비활성화' : '활성화'}

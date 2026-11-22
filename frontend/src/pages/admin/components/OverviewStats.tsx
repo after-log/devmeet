@@ -39,24 +39,24 @@ export default function OverviewStats() {
     },
   ];
   return (
-    <div className="grid grid-cols-4 gap-[17px] max-[900px]:grid-cols-2 max-xl:gap-3 max-sm:gap-2.5">
+    <div className="grid grid-cols-4 gap-4.25 max-[900px]:grid-cols-2 max-xl:gap-3 max-sm:gap-2.5">
       {stats.map(({ label, value, unit, icon: Icon, sub, tone }) => (
         <div
-          className="rounded-[11px] border border-[#e5e5e5] bg-white px-[22px] pt-[21px] pb-[17px] shadow-[0_2px_3px_#26262602] max-xl:p-4 max-sm:p-[15px]"
+          className="rounded-[11px] border border-[#e5e5e5] bg-white px-5.5 pt-5.25 pb-4.25 shadow-[0_2px_3px_#26262602] max-xl:p-4 max-sm:p-3.75"
           key={label}
         >
           <div className="flex items-center justify-between text-[13px] text-neutral-600 max-sm:text-[12px]">
             <span>{label}</span>
             <span
               className={cn(
-                'grid size-[33px] place-items-center rounded-[9px] max-sm:size-[27px]',
+                'grid size-8.25 place-items-center rounded-[9px] max-sm:size-6.75',
                 tone,
               )}
             >
               <Icon size={18} />
             </span>
           </div>
-          <strong className="mt-[9px] block text-[32px] leading-snug font-semibold tracking-[-1.2px] max-sm:text-[29px]">
+          <strong className="mt-2.25 block text-[32px] leading-snug font-semibold tracking-[-1.2px] max-sm:text-[29px]">
             {value}
             <small className="ml-1.5 text-sm font-normal text-neutral-600">{unit}</small>
           </strong>

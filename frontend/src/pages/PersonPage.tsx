@@ -38,7 +38,7 @@ const PersonPage = () => {
         <PhotoGallery photos={p.photos} photo={p.photo} name={p.name} />
         <div className="profile-heading">
           <div>
-            <p className="section-comment !mb-1">// {p.location}</p>
+            <p className="section-comment mb-1!">// {p.location}</p>
             <div className="profile-name">
               {p.name}
               <span>{p.age}</span>

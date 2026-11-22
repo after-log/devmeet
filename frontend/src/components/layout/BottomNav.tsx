@@ -40,7 +40,7 @@ const useNewLikes = () => {
 const BottomNav = () => {
   const fresh = useNewLikes();
   return (
-    <nav className="fixed bottom-0 z-5 flex w-[478px] max-w-full border-t border-line bg-nav px-2 pt-[11px] pb-[max(12px,env(safe-area-inset-bottom))] backdrop-blur-[15px] max-[480px]:w-full">
+    <nav className="fixed bottom-0 z-5 flex w-119.5 max-w-full border-t border-line bg-nav px-2 pt-2.75 pb-[max(12px,env(safe-area-inset-bottom))] backdrop-blur-[15px] max-[480px]:w-full">
       {tabs.map((tab) => (
         <NavLink
           key={tab.page}

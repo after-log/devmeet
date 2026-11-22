@@ -48,7 +48,7 @@ export default function AdminFormDialog({
           onPointerDownOutside={(event) => {
             if (busy) event.preventDefault();
           }}
-          className="fixed top-1/2 left-1/2 z-61 max-h-[90dvh] w-[calc(100%-32px)] max-w-[680px] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-[15px] bg-white shadow-[0_24px_100px_#17171730]"
+          className="fixed top-1/2 left-1/2 z-61 max-h-[90dvh] w-[calc(100%-32px)] max-w-170 -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-[15px] bg-white shadow-[0_24px_100px_#17171730]"
         >
           <AdminSurface>
             <header className="flex items-start justify-between gap-4 border-b border-neutral-100 p-6 max-sm:p-5">

@@ -389,7 +389,7 @@ const OnboardingPage = () => {
               {photos.map((photo, index) => (
                 <div key={photo} className="min-w-0 space-y-2">
                   <img
-                    className="aspect-[3/4] w-full rounded-lg object-cover"
+                    className="aspect-3/4 w-full rounded-lg object-cover"
                     src={photo}
                     alt={`등록 사진 ${index + 1}`}
                   />

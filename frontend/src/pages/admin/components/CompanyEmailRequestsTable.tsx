@@ -69,7 +69,7 @@ export default function CompanyEmailRequestsTable({
         cell: ({ row }) => (
           <AdminButton
             disabled={disabled}
-            className="min-h-0 rounded-[5px] px-[9px] py-[5px] text-[12px]"
+            className="min-h-0 rounded-[5px] px-2.25 py-1.25 text-[12px]"
             onClick={(event) => onDetail(row.original, event.currentTarget)}
           >
             {canReviewCompanyEmail(row.original) ? '검토하기' : '상세 보기'}

@@ -28,7 +28,7 @@ export function AdminSurface({ children, className }: { children: ReactNode; cla
   return (
     <div
       className={cn(
-        'text-[14px] leading-relaxed tracking-[-0.25px] text-[#262626] [color-scheme:light] [--font-display:var(--font-sans)] [&_a]:no-underline [&_a:focus-visible]:outline-[#525252] [&_button]:transition-colors motion-reduce:[&_button]:transition-none [&_button:disabled]:cursor-not-allowed [&_button:disabled]:opacity-40 [&_button:focus-visible]:outline-[#525252] [&_h1]:m-0 [&_h2]:m-0 [&_h3]:m-0 [&_input:focus-visible]:outline-neutral-600 [&_p]:m-0 [&_select:focus-visible]:outline-neutral-600 [&_textarea:focus-visible]:outline-neutral-600',
+        'text-[14px] leading-relaxed tracking-[-0.25px] text-[#262626] scheme-light [--font-display:var(--font-sans)] [&_a]:no-underline [&_a:focus-visible]:outline-[#525252] [&_button]:transition-colors motion-reduce:[&_button]:transition-none [&_button:disabled]:cursor-not-allowed [&_button:disabled]:opacity-40 [&_button:focus-visible]:outline-[#525252] [&_h1]:m-0 [&_h2]:m-0 [&_h3]:m-0 [&_input:focus-visible]:outline-neutral-600 [&_p]:m-0 [&_select:focus-visible]:outline-neutral-600 [&_textarea:focus-visible]:outline-neutral-600',
         className,
       )}
     >
@@ -47,7 +47,7 @@ export function AdminButton({
     <button
       type={type}
       className={cn(
-        'inline-flex min-h-11 items-center justify-center gap-2 rounded-[7px] border px-[15px] py-2.5 text-sm font-medium whitespace-nowrap',
+        'inline-flex min-h-11 items-center justify-center gap-2 rounded-[7px] border px-3.75 py-2.5 text-sm font-medium whitespace-nowrap',
         variant === 'primary'
           ? 'border-[#262626] bg-[#262626] text-white hover:bg-[#404040]'
           : variant === 'danger'
@@ -107,7 +107,7 @@ export function OnlineDot() {
 
 export function AdminAvatar() {
   return (
-    <span className="inline-grid size-[33px] shrink-0 place-items-center rounded-full bg-[#e5e5e5] text-sm font-semibold text-[#404040]">
+    <span className="inline-grid size-8.25 shrink-0 place-items-center rounded-full bg-[#e5e5e5] text-sm font-semibold text-[#404040]">
       A
     </span>
   );
@@ -115,7 +115,7 @@ export function AdminAvatar() {
 
 export function EmptyState() {
   return (
-    <div className="flex min-h-[220px] flex-col items-center justify-center gap-[9px] text-neutral-600">
+    <div className="flex min-h-55 flex-col items-center justify-center gap-2.25 text-neutral-600">
       <Search size={28} />
       <strong className="text-[14px] text-neutral-600">조건에 맞는 항목이 없어요</strong>
       <span className="text-[13px]">검색어나 필터를 변경해 보세요.</span>
@@ -154,12 +154,12 @@ export function Modal({
     >
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-60 bg-[#17171770] backdrop-blur-sm" />
-        <Dialog.Content className="fixed top-1/2 left-1/2 z-61 max-h-[90dvh] w-[calc(100%-36px)] max-w-[720px] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-[15px] bg-white p-[27px] shadow-[0_24px_100px_#17171730] max-sm:max-h-[92dvh] max-sm:p-[21px]">
+        <Dialog.Content className="fixed top-1/2 left-1/2 z-61 max-h-[90dvh] w-[calc(100%-36px)] max-w-180 -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-[15px] bg-white p-6.75 shadow-[0_24px_100px_#17171730] max-sm:max-h-[92dvh] max-sm:p-5.25">
           <AdminSurface>
-            <header className="mb-[22px] flex items-start justify-between gap-[15px] border-b border-[#f5f5f5] pb-5">
+            <header className="mb-5.5 flex items-start justify-between gap-3.75 border-b border-[#f5f5f5] pb-5">
               <div>
                 <Dialog.Title className="text-xl font-semibold">{title}</Dialog.Title>
-                <Dialog.Description className="mt-[5px] text-[13px] text-neutral-600">
+                <Dialog.Description className="mt-1.25 text-[13px] text-neutral-600">
                   {description}
                 </Dialog.Description>
               </div>
@@ -197,7 +197,7 @@ export function Field({
   children: ReactNode;
 }) {
   return (
-    <label className="mt-[17px] block text-[13px] font-medium text-neutral-600">
+    <label className="mt-4.25 block text-[13px] font-medium text-neutral-600">
       {label}
       {hint && <span className="ml-1.5 text-[12px] font-normal text-neutral-600">{hint}</span>}
       {children}
@@ -209,7 +209,7 @@ export function TextArea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement
   return (
     <textarea
       rows={3}
-      className="mt-[7px] block min-h-[90px] w-full resize-y rounded-lg border border-[#e5e5e5] bg-white px-3 py-2.5 text-sm font-normal text-[#262626] outline-offset-3 placeholder:text-neutral-600"
+      className="mt-1.75 block min-h-22.5 w-full resize-y rounded-lg border border-[#e5e5e5] bg-white px-3 py-2.5 text-sm font-normal text-[#262626] outline-offset-3 placeholder:text-neutral-600"
       {...props}
     />
   );
@@ -217,7 +217,7 @@ export function TextArea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement
 
 export function Guidance({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <div className="my-[18px] rounded-lg border border-[#e5e5e5] bg-[#f5f5f5] p-[15px] text-[13px] text-neutral-600">
+    <div className="my-4.5 rounded-lg border border-[#e5e5e5] bg-[#f5f5f5] p-3.75 text-[13px] text-neutral-600">
       <strong className="font-semibold text-neutral-600">{title}</strong>
       {children}
     </div>
@@ -229,7 +229,7 @@ export function DetailList({ items }: { items: [string, ReactNode][] }) {
     <dl className="my-5 text-sm">
       {items.map(([label, value]) => (
         <div key={label} className="flex border-b border-[#f5f5f5] py-3">
-          <dt className="w-[115px] shrink-0 text-neutral-600">{label}</dt>
+          <dt className="w-28.75 shrink-0 text-neutral-600">{label}</dt>
           <dd className="m-0 text-neutral-700">{value}</dd>
         </div>
       ))}
@@ -238,7 +238,7 @@ export function DetailList({ items }: { items: [string, ReactNode][] }) {
 }
 
 export function ModalActions({ children }: { children: ReactNode }) {
-  return <div className="mt-[23px] flex flex-wrap justify-end gap-[9px]">{children}</div>;
+  return <div className="mt-5.75 flex flex-wrap justify-end gap-2.25">{children}</div>;
 }
 
 export function Tabs({
@@ -255,8 +255,8 @@ export function Tabs({
   return (
     <div
       className={cn(
-        'flex gap-[25px] overflow-x-auto border-b border-[#e5e5e5] max-sm:gap-[18px]',
-        inset ? 'px-6 max-sm:px-4' : 'mb-[22px]',
+        'flex gap-6.25 overflow-x-auto border-b border-[#e5e5e5] max-sm:gap-4.5',
+        inset ? 'px-6 max-sm:px-4' : 'mb-5.5',
       )}
     >
       {options.map((option) => (
@@ -264,7 +264,7 @@ export function Tabs({
           key={option.value}
           onClick={() => onChange(option.value)}
           className={cn(
-            'border-0 border-b-2 bg-transparent px-px pt-[13px] pb-[15px] text-sm whitespace-nowrap max-sm:text-[13px]',
+            'border-0 border-b-2 bg-transparent px-px pt-3.25 pb-3.75 text-sm whitespace-nowrap max-sm:text-[13px]',
             value === option.value
               ? 'border-b-[#262626] font-semibold text-[#262626]'
               : 'border-b-transparent text-neutral-600',
@@ -274,7 +274,7 @@ export function Tabs({
           {option.count !== undefined && (
             <span
               className={cn(
-                'ml-[7px] inline-block rounded-[5px] px-1.5 py-px text-[12px]',
+                'ml-1.75 inline-block rounded-[5px] px-1.5 py-px text-[12px]',
                 value === option.value
                   ? 'bg-[#e5e5e5] text-[#404040]'
                   : 'bg-[#f5f5f5] text-neutral-600',
@@ -306,16 +306,16 @@ export function Toolbar({
     <div
       className={cn(
         'flex flex-wrap items-center justify-between gap-3.5 max-sm:gap-2',
-        inset ? 'px-6 py-5 max-sm:p-4' : 'mb-[22px]',
+        inset ? 'px-6 py-5 max-sm:p-4' : 'mb-5.5',
       )}
     >
-      <div className="relative w-[340px] max-w-full max-sm:w-full">
+      <div className="relative w-85 max-w-full max-sm:w-full">
         <Search
           size={17}
-          className="absolute top-[13px] left-[13px] text-neutral-600 max-sm:left-2.5 max-sm:size-3.5"
+          className="absolute top-3.25 left-3.25 text-neutral-600 max-sm:left-2.5 max-sm:size-3.5"
         />
         <input
-          className="min-h-[42px] w-full rounded-lg border border-[#e5e5e5] bg-white py-2.5 pr-3 pl-[39px] text-sm text-[#262626] placeholder:text-neutral-600 max-sm:pl-[31px] max-sm:text-[13px]"
+          className="min-h-10.5 w-full rounded-lg border border-[#e5e5e5] bg-white py-2.5 pr-3 pl-9.75 text-sm text-[#262626] placeholder:text-neutral-600 max-sm:pl-7.75 max-sm:text-[13px]"
           aria-label="검색"
           placeholder={placeholder}
           value={search}
@@ -391,7 +391,7 @@ export function Pager({
       aria-label="페이지 이동"
       className="flex items-center justify-center py-5 text-sm text-neutral-500"
     >
-      <div className="flex items-center gap-[5px]">
+      <div className="flex items-center gap-1.25">
         <button
           className="grid size-9 place-items-center rounded-[5px] border border-transparent bg-transparent"
           aria-label="이전 페이지"

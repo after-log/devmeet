@@ -70,7 +70,7 @@ const AdminPage = () => {
                   {person.photos.map((src, index) => (
                     <a href={src} target="_blank" rel="noreferrer" key={src}>
                       <img
-                        className="aspect-[3/4] w-full rounded-lg object-cover"
+                        className="aspect-3/4 w-full rounded-lg object-cover"
                         src={src}
                         alt={`${person.name} 검수 사진 ${index + 1}`}
                       />

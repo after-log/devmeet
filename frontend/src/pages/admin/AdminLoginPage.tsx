@@ -29,7 +29,7 @@ export default function AdminLoginPage() {
   });
   return (
     <AdminSurface className="grid min-h-dvh grid-cols-2 bg-white max-sm:block">
-      <div className="flex min-h-dvh flex-col justify-between bg-[#e5e5e5] px-[65px] py-[50px] max-[900px]:p-10 max-sm:min-h-0 max-sm:px-7 max-sm:py-[25px]">
+      <div className="flex min-h-dvh flex-col justify-between bg-[#e5e5e5] px-16.25 py-12.5 max-[900px]:p-10 max-sm:min-h-0 max-sm:px-7 max-sm:py-6.25">
         <Link to="/" className="font-mono text-[33px] font-bold tracking-[-2px] text-[#262626]">
           devmeet<span className="text-[#262626]">.</span>
         </Link>
@@ -37,17 +37,17 @@ export default function AdminLoginPage() {
           <span className="text-[12px] font-semibold tracking-[1.7px] text-neutral-600">
             DEVMEET ADMINISTRATION
           </span>
-          <h1 className="mt-[21px]! text-[38px] leading-normal font-semibold tracking-[-1.7px] text-neutral-700 max-[900px]:text-[30px]">
+          <h1 className="mt-5.25! text-[38px] leading-normal font-semibold tracking-[-1.7px] text-neutral-700 max-[900px]:text-[30px]">
             좋은 만남의 시작을,
             <br />
             함께 관리해요.
           </h1>
-          <p className="mt-[17px]! text-[14px] leading-[1.9] text-neutral-600">
+          <p className="mt-4.25! text-[14px] leading-[1.9] text-neutral-600">
             안전한 프로필과 신뢰할 수 있는 커뮤니티.
             <br />
             devmeet 운영을 위한 관리자 워크스페이스.
           </p>
-          <div className="mt-[60px] flex items-center gap-[23px] text-neutral-600">
+          <div className="mt-15 flex items-center gap-5.75 text-neutral-600">
             <ShieldCheck size={68} strokeWidth={1} />
             <span className="font-mono text-sm leading-[1.9] text-neutral-600">
               Thoughtful connections,
@@ -60,18 +60,18 @@ export default function AdminLoginPage() {
           © 2026 devmeet. All rights reserved.
         </small>
       </div>
-      <main className="grid place-items-center p-[45px] max-sm:px-7 max-sm:py-[35px]">
-        <form noValidate onSubmit={submit} className="w-full max-w-[350px] max-sm:max-w-[400px]">
-          <div className="mb-[23px] grid size-12 place-items-center rounded-xl bg-[#f5f5f5] text-neutral-600">
+      <main className="grid place-items-center p-11.25 max-sm:px-7 max-sm:py-8.75">
+        <form noValidate onSubmit={submit} className="w-full max-w-87.5 max-sm:max-w-100">
+          <div className="mb-5.75 grid size-12 place-items-center rounded-xl bg-[#f5f5f5] text-neutral-600">
             <LockKeyhole size={23} />
           </div>
           <h2 className="mb-2! text-[25px] font-semibold max-sm:text-[23px]">관리자 로그인</h2>
-          <p className="mb-[29px]! text-sm text-neutral-600">
+          <p className="mb-7.25! text-sm text-neutral-600">
             관리자 계정으로 워크스페이스에 접속하세요.
           </p>
           <Field label="아이디">
             <input
-              className="mt-[7px] block min-h-[42px] w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2.5 text-sm font-normal text-[#262626] placeholder:text-neutral-600"
+              className="mt-1.75 block min-h-10.5 w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2.5 text-sm font-normal text-[#262626] placeholder:text-neutral-600"
               autoComplete="username"
               placeholder="관리자 아이디"
               {...form.register('id')}
@@ -79,9 +79,9 @@ export default function AdminLoginPage() {
             />
           </Field>
           <Field label="비밀번호">
-            <div className="relative mt-[7px]">
+            <div className="relative mt-1.75">
               <input
-                className="min-h-[42px] w-full rounded-lg border border-[#e5e5e5] bg-white py-2.5 pr-[42px] pl-3 text-sm font-normal text-[#262626] placeholder:text-neutral-600"
+                className="min-h-10.5 w-full rounded-lg border border-[#e5e5e5] bg-white py-2.5 pr-10.5 pl-3 text-sm font-normal text-[#262626] placeholder:text-neutral-600"
                 type={showPassword ? 'text' : 'password'}
                 autoComplete="current-password"
                 placeholder="비밀번호 입력"
@@ -106,7 +106,7 @@ export default function AdminLoginPage() {
             type="submit"
             disabled={busy}
             variant="primary"
-            className="mt-[25px] w-full justify-between px-[17px] py-3"
+            className="mt-6.25 w-full justify-between px-4.25 py-3"
           >
             {busy ? '로그인 중…' : '로그인'} <ArrowRight size={17} />
           </AdminButton>
@@ -115,7 +115,7 @@ export default function AdminLoginPage() {
               서버 연결 다시 확인
             </AdminButton>
           )}
-          <Link className="mt-[26px] block text-center text-[13px] text-neutral-600" to="/">
+          <Link className="mt-6.5 block text-center text-[13px] text-neutral-600" to="/">
             ← 서비스로 돌아가기
           </Link>
         </form>
