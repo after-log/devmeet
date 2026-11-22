@@ -1,3 +1,5 @@
+import { useSchemaForm } from '@/hooks/useSchemaForm';
+import { companyDomainActivationSchema } from '@/validation/companyEmail';
 import { adminApi } from '../api';
 import type { CompanyEmailDomain } from '../types';
 import CompanyEmailActionDialog, {
@@ -8,6 +10,9 @@ export default function CompanyDomainActivationDialog({
   domain,
   ...callbacks
 }: CompanyEmailDialogCallbacks & { domain: CompanyEmailDomain }) {
+  const form = useSchemaForm(companyDomainActivationSchema, {
+    defaultValues: { active: !domain.active, note: '' },
+  });
   const label = domain.active ? '비활성화' : '활성화';
   return (
     <CompanyEmailActionDialog
@@ -16,7 +21,8 @@ export default function CompanyDomainActivationDialog({
       description="회사와 도메인의 관계를 직접 확인한 결과를 기록해 주세요."
       submitLabel={label}
       danger={domain.active}
-      onSubmit={(note) => adminApi.activateCompanyDomain(domain.domain, !domain.active, note)}
+      form={form}
+      onSubmit={(input) => adminApi.activateCompanyDomain(domain.domain, input.active, input.note)}
     >
       <p className="mb-3! text-base font-semibold">
         {domain.company} · {domain.domain}

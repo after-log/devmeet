@@ -1,3 +1,4 @@
+import { validateRequestBody } from '@/validation/requests';
 import { ApiError } from '@/lib/api';
 import type {
   AdminStatistics,
@@ -34,6 +35,7 @@ export async function adminRequest<T>(
   body?: unknown,
   retry = true,
 ): Promise<T> {
+  body = validateRequestBody('/admin' + path, method, body);
   const headers: Record<string, string> = {};
   if (!['GET', 'HEAD'].includes(method)) {
     const token = await csrfToken();

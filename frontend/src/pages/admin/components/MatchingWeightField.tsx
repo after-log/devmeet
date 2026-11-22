@@ -1,15 +1,19 @@
-import { useId } from 'react';
+import { useId, type Ref } from 'react';
 
 export default function MatchingWeightField({
   label,
   detail,
   value,
   onChange,
+  onBlur,
+  inputRef,
 }: {
   label: string;
   detail: string;
   value: number;
   onChange: (value: number) => void;
+  onBlur?: () => void;
+  inputRef?: Ref<HTMLInputElement>;
 }) {
   const id = useId();
   return (
@@ -21,6 +25,8 @@ export default function MatchingWeightField({
         <div className="flex items-center gap-1 text-sm">
           <input
             id={id}
+            ref={inputRef}
+            onBlur={onBlur}
             type="number"
             min={0}
             max={100}

@@ -1,3 +1,5 @@
+import { parseForm } from '@/validation/forms';
+import { messageTextSchema } from '@/validation/community';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import type { Message } from '@/types';
@@ -80,8 +82,7 @@ export const useChatsStore = create<ChatsState>()(
           set((s) => ({ readAt: { ...s.readAt, [chatKey(ownerId, profileId)]: Date.now() } }));
       },
       sendMessage: async (profileId, text) => {
-        const trimmed = text.trim();
-        if (!trimmed || trimmed.length > 1000) return;
+        const trimmed = parseForm(messageTextSchema, text);
         const { user, demo, demoSend, connections } = useApp.getState();
         if (!connections.matches.some((p) => p.id === profileId))
           throw new Error('서로 좋아요를 보낸 상대와만 대화할 수 있어요.');

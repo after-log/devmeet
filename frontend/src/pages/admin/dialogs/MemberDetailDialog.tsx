@@ -1,5 +1,7 @@
+import { useSchemaForm } from '@/hooks/useSchemaForm';
+import { suspensionSchema } from '@/validation/admin';
+import { FormErrors } from '@/components/ui/form-errors';
 import AdminPhoto from '../components/AdminPhoto';
-import { useState } from 'react';
 import type { Member } from '../types';
 import { useAdmin } from '../hooks/useAdmin';
 import {
@@ -14,7 +16,9 @@ import {
 
 export default function MemberDetailDialog({ member }: { member: Member }) {
   const { closeDialog, openReview, toggleSuspension } = useAdmin();
-  const [reason, setReason] = useState('');
+  const form = useSchemaForm(suspensionSchema, {
+    defaultValues: { suspended: !member.suspended, reason: '' },
+  });
   return (
     <Modal
       title="회원 상세"
@@ -45,19 +49,19 @@ export default function MemberDetailDialog({ member }: { member: Member }) {
       <Field label={member.suspended ? '이용 제한 해제 사유' : '이용 제한 사유'}>
         <TextArea
           maxLength={1000}
-          value={reason}
-          onChange={(e) => setReason(e.target.value)}
+          {...form.register('reason')}
           placeholder="처리 사유를 입력해 주세요."
         />
       </Field>
+      <FormErrors errors={form.formState.errors} className="mt-3 text-sm text-red-700" />
       <ModalActions>
         <AdminButton disabled={!member.hasProfile} onClick={() => openReview(member)}>
           프로필 사진 확인
         </AdminButton>
         <AdminButton
           variant={member.suspended ? 'primary' : 'danger'}
-          disabled={!reason.trim()}
-          onClick={() => toggleSuspension(member, reason)}
+          disabled={form.formState.isSubmitting}
+          onClick={form.handleSubmit((input) => toggleSuspension(member, input.reason))}
         >
           {member.suspended ? '이용 제한 해제' : '이용 제한'}
         </AdminButton>

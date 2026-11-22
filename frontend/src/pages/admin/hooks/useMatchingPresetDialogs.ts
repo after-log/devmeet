@@ -40,14 +40,14 @@ export default function useMatchingPresetDialogs({
     setNotice('');
     setWorkspace('select');
   };
-  const save = async () => {
-    if (!isMatchingPresetDraftValid(draft) || inFlight.current) return;
+  const save = async (input: MatchingPresetDraft) => {
+    if (!isMatchingPresetDraftValid(input) || inFlight.current) return;
     inFlight.current = true;
     setBusy(true);
     setWorkspaceError('');
     setNotice('');
     try {
-      const saved = await adminApi.createMatchingPreset(draft);
+      const saved = await adminApi.createMatchingPreset(input);
       setData((current) => current && { ...current, presets: [saved, ...current.presets] });
       setDraft(createMatchingPresetDraft());
       setSelectedPresetId(saved.id);

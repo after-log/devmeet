@@ -1,5 +1,9 @@
+import { Controller } from 'react-hook-form';
+import { useSchemaForm } from '@/hooks/useSchemaForm';
+import { createOnboardingSchema, photoUploadCountSchema } from '@/validation/profile';
+import { FormErrors } from '@/components/ui/form-errors';
 import { ArrowRight, Check, ChevronRight, Keyboard, Sparkles } from 'lucide-react';
-import { useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import ProfileBuilt from '@/components/pixel/ProfileBuilt';
@@ -106,6 +110,12 @@ const OnboardingPage = () => {
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const photos = draft.photos ?? (draft.photo ? [draft.photo] : []);
+  const form = useSchemaForm(createOnboardingSchema(step), {
+    values: { ...draft, photos, tagsText: draft.tagsText ?? draft.tags?.join(', ') ?? '' },
+  });
+  useEffect(() => {
+    void form.trigger();
+  }, [step, form.trigger]);
   const updatePhotos = (photos: string[]) => setDraft({ photos, photo: photos[0] ?? '' });
   const [built, setBuilt] = useState<Profile | null>(null);
   const welcomeKey = user ? `devmeet.welcomed.${user.id}` : '';
@@ -141,7 +151,10 @@ const OnboardingPage = () => {
     const parts = splitLocation(draft.location);
     queueMicrotask(() => setDraft(parts));
   }
-  const set = (key: keyof Draft) => (value: string) => setDraft({ [key]: value } as Draft);
+  const set = (key: keyof Draft) => (value: string) => {
+    form.setValue(key, value, { shouldValidate: true });
+    setDraft({ [key]: value } as Draft);
+  };
   const input = (
     key: 'name' | 'age' | 'height' | 'job',
     label: string,
@@ -159,73 +172,71 @@ const OnboardingPage = () => {
         max={key === 'age' ? 80 : key === 'height' ? 250 : undefined}
         maxLength={key === 'name' ? 30 : 60}
         placeholder={placeholder}
-        value={draft[key] ?? ''}
-        onChange={(e) =>
-          setDraft({
-            [key]: numeric
-              ? e.target.value === ''
-                ? undefined
-                : Number(e.target.value)
-              : e.target.value,
-          } as Draft)
-        }
+        {...form.register(key, {
+          valueAsNumber: numeric,
+          onChange: (event) =>
+            setDraft({
+              [key]: numeric
+                ? event.target.value === ''
+                  ? undefined
+                  : Number(event.target.value)
+                : event.target.value,
+            } as Draft),
+        })}
       />
     </label>
   );
-  const select = (key: keyof Draft, label: string, options: string[]) =>
-    options.length === 2 ? (
-      <ChoiceGroup
-        key={key}
-        id={key}
-        label={label}
-        options={options}
-        value={String(draft[key] ?? '')}
-        onValueChange={set(key)}
-      />
-    ) : (
-      <div key={key}>
-        <label className="formlabel" htmlFor={key}>
-          {label}
-        </label>
-        <Select
-          className="mt-2"
-          id={key}
-          value={String(draft[key] ?? '')}
-          onValueChange={set(key)}
-          options={options}
-        />
-      </div>
-    );
+  const select = (key: keyof Draft, label: string, options: string[]) => (
+    <Controller
+      key={key}
+      name={key}
+      control={form.control}
+      render={({ field }) =>
+        options.length === 2 ? (
+          <ChoiceGroup
+            id={key}
+            label={label}
+            options={options}
+            value={String(field.value ?? '')}
+            onValueChange={(value) => {
+              field.onChange(value);
+              set(key)(value);
+            }}
+          />
+        ) : (
+          <div>
+            <label className="formlabel" htmlFor={key}>
+              {label}
+            </label>
+            <Select
+              className="mt-2"
+              id={key}
+              value={String(field.value ?? '')}
+              onValueChange={(value) => {
+                field.onChange(value);
+                set(key)(value);
+              }}
+              options={options}
+            />
+          </div>
+        )
+      }
+    />
+  );
 
-  const valid = [
-    !!draft.role,
-    !!draft.name?.trim() &&
-      Number.isInteger(Number(draft.age)) &&
-      Number(draft.age) >= 19 &&
-      Number(draft.age) <= 80 &&
-      Number(draft.height) >= 100 &&
-      Number(draft.height) <= 250 &&
-      !!draft.city &&
-      !!draft.district &&
-      !!draft.job?.trim() &&
-      !!draft.education,
-    !!draft.meeting && !!draft.contact && !!draft.smoking && !!draft.drinking && !!draft.religion,
-    photos.length >= 3 && !!draft.intro?.trim(),
-  ][step];
+  const valid = form.formState.isValid;
 
   const next = async () => {
     setError('');
+    if (!(await form.trigger())) return;
     if (step < 3) return setStep(step + 1);
     if (uploading || saving) return;
-    if (photos.length < 3) return setError('프로필 사진을 최소 3장 등록해 주세요.');
-    if (!draft.intro?.trim()) return setError('자기소개를 입력해 주세요.');
     setSaving(true);
     try {
       const tags = (draft.tagsText ?? (draft.tags ?? []).join(', '))
         .split(',')
         .map((t) => t.trim())
-        .filter(Boolean)
-        .slice(0, 5);
+        .filter(Boolean);
       const { profile } = await api.saveProfile({
         ...draft,
         photos,
@@ -276,14 +287,20 @@ const OnboardingPage = () => {
             title="저는 개발자예요"
             description="개발자와 비개발자를 소개받을 수 있어요."
             draft={draft}
-            pick={(role) => setDraft({ role })}
+            pick={(role) => {
+              form.setValue('role', role, { shouldValidate: true });
+              setDraft({ role });
+            }}
           />
           <RoleOption
             role="non-developer"
             title="개발자를 만나고 싶어요"
             description="개발자 역할을 선택한 분을 소개해요."
             draft={draft}
-            pick={(role) => setDraft({ role, preference: '개발자' })}
+            pick={(role) => {
+              form.setValue('role', role, { shouldValidate: true });
+              setDraft({ role, preference: '개발자' });
+            }}
           />
           <p className="footnote">
             개발자는 내 정보에서 GitHub 인증을 진행해 주세요. 본인 소유의 계정인지 확인해요.
@@ -303,27 +320,45 @@ const OnboardingPage = () => {
               <label className="formlabel" htmlFor="city">
                 사는 지역
               </label>
-              <Select
-                className="mt-2"
-                id="city"
-                placeholder="시·도 선택"
-                value={draft.city ?? ''}
-                onValueChange={(city) => setDraft({ city, district: '' })}
-                options={Object.keys(REGIONS)}
+              <Controller
+                name="city"
+                control={form.control}
+                render={({ field }) => (
+                  <Select
+                    className="mt-2"
+                    id="city"
+                    placeholder="시·도 선택"
+                    value={field.value ?? ''}
+                    onValueChange={(city) => {
+                      field.onChange(city);
+                      form.setValue('district', '', { shouldValidate: true });
+                      setDraft({ city, district: '' });
+                    }}
+                    options={Object.keys(REGIONS)}
+                  />
+                )}
               />
             </div>
             <div>
               <label className="formlabel" htmlFor="district">
                 구·시
               </label>
-              <Select
-                className="mt-2"
-                id="district"
-                placeholder={draft.city ? '구·시 선택' : '시·도 먼저'}
-                disabled={!draft.city}
-                value={draft.district ?? ''}
-                onValueChange={(district) => setDraft({ district })}
-                options={draft.city ? REGIONS[draft.city] : []}
+              <Controller
+                name="district"
+                control={form.control}
+                render={({ field }) => (
+                  <Select
+                    className="mt-2"
+                    id="district"
+                    placeholder="구·시 선택"
+                    value={field.value ?? ''}
+                    onValueChange={(district) => {
+                      field.onChange(district);
+                      setDraft({ district });
+                    }}
+                    options={REGIONS[draft.city ?? ''] ?? []}
+                  />
+                )}
               />
             </div>
           </div>
@@ -393,8 +428,9 @@ const OnboardingPage = () => {
                   const files = Array.from(e.target.files ?? []);
                   e.target.value = '';
                   if (!files.length) return;
-                  if (photos.length + files.length > 6) {
-                    setError('프로필 사진은 최대 6장까지 등록할 수 있어요.');
+                  const count = photoUploadCountSchema.safeParse(photos.length + files.length);
+                  if (!count.success) {
+                    setError(count.error.issues[0].message);
                     return;
                   }
                   setUploading(true);
@@ -426,8 +462,9 @@ const OnboardingPage = () => {
               className="mt-2 min-h-28 w-full rounded-md border border-line-strong bg-surface p-3 text-sm text-fg"
               maxLength={1000}
               placeholder="일상과 좋아하는 것들을 들려주세요."
-              value={draft.intro ?? ''}
-              onChange={(e) => setDraft({ intro: e.target.value })}
+              {...form.register('intro', {
+                onChange: (event) => setDraft({ intro: event.target.value }),
+              })}
             />
           </label>
           <label className="formlabel" htmlFor="tags">
@@ -437,8 +474,9 @@ const OnboardingPage = () => {
               id="tags"
               maxLength={120}
               placeholder="산책, 커피, 독서"
-              value={draft.tagsText ?? (draft.tags ?? []).join(', ')}
-              onChange={(e) => setDraft({ tagsText: e.target.value })}
+              {...form.register('tagsText', {
+                onChange: (event) => setDraft({ tagsText: event.target.value }),
+              })}
             />
           </label>
           <p className="footnote">
@@ -450,6 +488,7 @@ const OnboardingPage = () => {
       <p className="error" role="alert">
         {error}
       </p>
+      <FormErrors errors={form.formState.errors} />
       <button
         className="btn full"
         disabled={uploading || saving || (!valid && step < 3)}

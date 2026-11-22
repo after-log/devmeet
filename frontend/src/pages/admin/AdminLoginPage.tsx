@@ -1,4 +1,8 @@
-import { useState, type FormEvent } from 'react';
+import { useState } from 'react';
+import { useSchemaForm } from '@/hooks/useSchemaForm';
+import { setFormError } from '@/hooks/setFormError';
+import { adminLoginSchema } from '@/validation/auth';
+import { FormErrors } from '@/components/ui/form-errors';
 import { Link, Navigate } from 'react-router-dom';
 import { ArrowRight, Eye, EyeOff, LockKeyhole, ShieldCheck } from 'lucide-react';
 import { useAdmin } from './hooks/useAdmin';
@@ -6,9 +10,8 @@ import { AdminButton, AdminSurface, Field, IconButton } from './components/Admin
 
 export default function AdminLoginPage() {
   const { authenticated, booting, busy, login, error: sessionError, initialize } = useAdmin();
-  const [credentials, setCredentials] = useState({ id: '', password: '' });
+  const form = useSchemaForm(adminLoginSchema, { defaultValues: { id: '', password: '' } });
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
   if (booting)
     return (
       <AdminSurface className="grid min-h-dvh place-items-center bg-white">
@@ -16,15 +19,14 @@ export default function AdminLoginPage() {
       </AdminSurface>
     );
   if (authenticated) return <Navigate to="/admin" replace />;
-  const submit = async (event: FormEvent) => {
-    event.preventDefault();
-    setError('');
+  const submit = form.handleSubmit(async (credentials) => {
+    form.clearErrors('root');
     try {
       await login(credentials.id, credentials.password);
     } catch (error) {
-      setError(error instanceof Error ? error.message : '관리자 로그인에 실패했어요.');
+      setFormError(form.setError, error);
     }
-  };
+  });
   return (
     <AdminSurface className="grid min-h-dvh grid-cols-2 bg-white max-sm:block">
       <div className="flex min-h-dvh flex-col justify-between bg-[#e5e5e5] px-[65px] py-[50px] max-[900px]:p-10 max-sm:min-h-0 max-sm:px-7 max-sm:py-[25px]">
@@ -59,10 +61,7 @@ export default function AdminLoginPage() {
         </small>
       </div>
       <main className="grid place-items-center p-[45px] max-sm:px-7 max-sm:py-[35px]">
-        <form
-          onSubmit={(event) => void submit(event)}
-          className="w-full max-w-[350px] max-sm:max-w-[400px]"
-        >
+        <form noValidate onSubmit={submit} className="w-full max-w-[350px] max-sm:max-w-[400px]">
           <div className="mb-[23px] grid size-12 place-items-center rounded-xl bg-[#f5f5f5] text-neutral-600">
             <LockKeyhole size={23} />
           </div>
@@ -75,8 +74,7 @@ export default function AdminLoginPage() {
               className="mt-[7px] block min-h-[42px] w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2.5 text-sm font-normal text-[#262626] placeholder:text-neutral-600"
               autoComplete="username"
               placeholder="관리자 아이디"
-              value={credentials.id}
-              onChange={(e) => setCredentials({ ...credentials, id: e.target.value })}
+              {...form.register('id')}
               required
             />
           </Field>
@@ -87,8 +85,7 @@ export default function AdminLoginPage() {
                 type={showPassword ? 'text' : 'password'}
                 autoComplete="current-password"
                 placeholder="비밀번호 입력"
-                value={credentials.password}
-                onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
+                {...form.register('password')}
                 required
               />
               <IconButton
@@ -100,11 +97,11 @@ export default function AdminLoginPage() {
               </IconButton>
             </div>
           </Field>
-          {(error || sessionError) && (
-            <p className="mt-3! text-[13px] text-red-700" role="alert">
-              {error || sessionError}
-            </p>
-          )}
+          <FormErrors
+            errors={form.formState.errors}
+            serverError={sessionError}
+            className="mt-3! text-[13px] text-red-700"
+          />
           <AdminButton
             type="submit"
             disabled={busy}

@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useSchemaForm } from '@/hooks/useSchemaForm';
+import { reportReviewSchema } from '@/validation/admin';
+import { FormErrors } from '@/components/ui/form-errors';
 import type { Report } from '../types';
 import { useAdmin } from '../hooks/useAdmin';
 import {
@@ -14,7 +16,13 @@ import {
 
 export default function ReportReviewDialog({ report }: { report: Report }) {
   const { closeDialog, reviewReport } = useAdmin();
-  const [note, setNote] = useState(report.note);
+  const form = useSchemaForm(reportReviewSchema, {
+    defaultValues: { status: 'VALID', note: report.note },
+  });
+  const submitReview = (status: 'VALID' | 'DISMISSED') => {
+    form.setValue('status', status);
+    void form.handleSubmit((input) => reviewReport(report, input.status, input.note))();
+  };
   return (
     <Modal title="신고 내역 확인" description={`${report.id} · ${report.date}`} close={closeDialog}>
       <Badge status={report.status} />
@@ -31,24 +39,24 @@ export default function ReportReviewDialog({ report }: { report: Report }) {
       <Field label="검토 메모">
         <TextArea
           maxLength={1000}
-          value={note}
+          {...form.register('note')}
           readOnly={report.status !== 'OPEN'}
           placeholder="확인한 내용과 처리 사유를 입력해 주세요."
-          onChange={(e) => setNote(e.target.value)}
         />
       </Field>
+      <FormErrors errors={form.formState.errors} className="mt-3 text-sm text-red-700" />
       {report.status === 'OPEN' && (
         <ModalActions>
           <AdminButton
-            disabled={!note.trim()}
-            onClick={() => reviewReport(report, 'DISMISSED', note)}
+            disabled={form.formState.isSubmitting}
+            onClick={() => submitReview('DISMISSED')}
           >
             신고 기각
           </AdminButton>
           <AdminButton
             variant="primary"
-            disabled={!note.trim()}
-            onClick={() => reviewReport(report, 'VALID', note)}
+            disabled={form.formState.isSubmitting}
+            onClick={() => submitReview('VALID')}
           >
             유효 신고로 처리
           </AdminButton>

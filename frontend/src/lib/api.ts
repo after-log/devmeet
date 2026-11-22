@@ -1,3 +1,6 @@
+import { validateRequestBody } from '@/validation/requests';
+import { parseForm } from '@/validation/forms';
+import { photoFileSchema, photoDimensionsSchema } from '@/validation/profile';
 import type {
   Connections,
   Message,
@@ -36,6 +39,7 @@ export async function request<T>(
   body?: unknown,
   retry = true,
 ): Promise<T> {
+  body = validateRequestBody(path, method, body);
   const headers: Record<string, string> = {};
   const changing = !['GET', 'HEAD'].includes(method);
   if (changing) {
@@ -126,15 +130,13 @@ export const api = {
   saveValues: (valueAnswers: ValueAnswers) =>
     request<{ profile: Profile }>('/profile/values', 'PUT', { valueAnswers }),
   photo: async (file: File) => {
-    if (
-      !['image/jpeg', 'image/png', 'image/webp'].includes(file.type) ||
-      file.size > 10 * 1024 * 1024
-    )
-      throw new ApiError(400, '10MB 이하의 JPEG·PNG·WebP 사진을 선택해 주세요.');
+    parseForm(photoFileSchema, file);
     const image = await createImageBitmap(file);
-    if (image.width * image.height > 40_000_000) {
+    try {
+      parseForm(photoDimensionsSchema, { width: image.width, height: image.height });
+    } catch (error) {
       image.close();
-      throw new ApiError(400, '사진 해상도가 너무 커요.');
+      throw error;
     }
     const ratio = Math.min(1, 640 / Math.max(image.width, image.height));
     const canvas = document.createElement('canvas');

@@ -152,3 +152,17 @@ npm run preview # http://localhost:4173
 문항 추가·활성 전환은 사용자 가치관 화면과 새 추천 계산에도 반영됩니다.
 관리자 전용 세션 및 CSRF를 사용하며, 새로고침하면 서버에서 로그인 상태를 확인합니다.
 관리자 테이블은 TanStack React Table, 스타일은 컴포넌트의 Tailwind 클래스를 사용합니다.
+
+## 폼 검증
+
+사용자·관리자 폼은 `src/hooks/useSchemaForm.ts`에서 React Hook Form과 `zodResolver`를 연결합니다.
+입력 규칙과 정규화는 `src/validation/`의 기능별 Zod 스키마에 정의합니다. 기본 검증 시점은
+`onChange`이며, 제출에는 `handleSubmit`이 반환하는 검증된 값을 사용합니다.
+일반 입력은 `register`, 커스텀 선택·슬라이더는 `Controller`로 연결하고 오류는 공통 `FormErrors`로 표시합니다.
+서버 실패는 `setFormError`로 필드 또는 `root.server` 오류에 연결합니다.
+
+브라우저별 검증 메시지 대신 스키마 오류를 표시하도록 폼에 `noValidate`를 적용합니다.
+`required`, `maxLength`, `inputMode` 등의 입력 힌트와 편집 제한은 함께 사용할 수 있습니다.
+API 요청 직전에도 같은 스키마를 검사하며, 서버의 인증·권한·업무 규칙 검증은 서버에서 수행합니다.
+온보딩 단계, 동적 가치관 선택지, 추천 나이 범위, 비밀번호 UTF-8 바이트 길이 같은 교차 필드 규칙도
+스키마에서 관리합니다. 관련 검증·resolver·API 회귀 검사는 `npm test`로 실행합니다.

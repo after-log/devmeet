@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useSchemaForm } from '@/hooks/useSchemaForm';
+import { companyDomainRegistrationSchema } from '@/validation/companyEmail';
 import { adminApi } from '../api';
 import { Field } from '../components/AdminUI';
 import CompanyEmailActionDialog, {
@@ -6,9 +7,9 @@ import CompanyEmailActionDialog, {
 } from './CompanyEmailActionDialog';
 
 export default function CompanyDomainRegisterDialog(callbacks: CompanyEmailDialogCallbacks) {
-  const [company, setCompany] = useState('');
-  const [domain, setDomain] = useState('');
-  const [website, setWebsite] = useState('');
+  const form = useSchemaForm(companyDomainRegistrationSchema, {
+    defaultValues: { company: '', domain: '', website: '', note: '' },
+  });
   const field =
     'mt-2 block w-full rounded-lg border border-neutral-200 bg-white p-3 text-sm text-neutral-800';
   return (
@@ -17,30 +18,17 @@ export default function CompanyDomainRegisterDialog(callbacks: CompanyEmailDialo
       title="기업 도메인 등록"
       description="회사와 도메인의 관계를 직접 확인한 결과를 기록해 주세요."
       submitLabel="도메인 승인 및 등록"
-      onSubmit={(note) =>
-        adminApi.registerCompanyDomain({
-          company: company.trim(),
-          domain: domain.trim(),
-          website: website.trim(),
-          note,
-        })
-      }
+      form={form}
+      onSubmit={(input) => adminApi.registerCompanyDomain(input)}
     >
       <Field label="회사명">
-        <input
-          required
-          maxLength={100}
-          value={company}
-          onChange={(event) => setCompany(event.target.value)}
-          className={field}
-        />
+        <input required maxLength={100} {...form.register('company')} className={field} />
       </Field>
       <Field label="이메일 도메인">
         <input
           required
           maxLength={253}
-          value={domain}
-          onChange={(event) => setDomain(event.target.value)}
+          {...form.register('domain')}
           placeholder="company.com"
           className={field}
         />
@@ -50,8 +38,7 @@ export default function CompanyDomainRegisterDialog(callbacks: CompanyEmailDialo
           type="url"
           required
           maxLength={500}
-          value={website}
-          onChange={(event) => setWebsite(event.target.value)}
+          {...form.register('website')}
           placeholder="https://company.com"
           className={field}
         />

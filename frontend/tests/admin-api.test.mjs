@@ -1,20 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
-import ts from 'typescript';
+import { loadTypeScript } from './helpers/load-typescript.mjs';
 
-const compile = (source) =>
-  ts.transpileModule(source, {
-    compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 },
-  }).outputText;
-const shared = compile(await readFile(new URL('../src/lib/api.ts', import.meta.url), 'utf8'));
-const sharedUrl = 'data:text/javascript;base64,' + Buffer.from(shared).toString('base64');
-const source = compile(
-  await readFile(new URL('../src/pages/admin/api.ts', import.meta.url), 'utf8'),
-).replace("'@/lib/api'", JSON.stringify(sharedUrl));
-let version = 0;
-const client = () =>
-  import('data:text/javascript;base64,' + Buffer.from(source).toString('base64') + '#' + version++);
+const client = () => loadTypeScript(new URL('../src/pages/admin/api.ts', import.meta.url));
 const response = (data, status = 200) =>
   new Response(status === 204 ? null : JSON.stringify(data), {
     status,
@@ -58,7 +46,11 @@ test('photo review sends original photo URLs instead of operator previews', asyn
     assert.deepEqual(JSON.parse(options.body), {
       status: 'APPROVED',
       reason: '확인',
-      photos: ['/api/photos/photo-id'],
+      photos: [
+        '/api/photos/00000000-0000-4000-8000-000000000001',
+        '/api/photos/00000000-0000-4000-8000-000000000002',
+        '/api/photos/00000000-0000-4000-8000-000000000003',
+      ],
     });
     return response(undefined, 204);
   };
@@ -68,7 +60,11 @@ test('photo review sends original photo URLs instead of operator previews', asyn
       {
         id: 'member-id',
         photos: ['/api/admin/photo-files/photo-id'],
-        reviewPhotos: ['/api/photos/photo-id'],
+        reviewPhotos: [
+          '/api/photos/00000000-0000-4000-8000-000000000001',
+          '/api/photos/00000000-0000-4000-8000-000000000002',
+          '/api/photos/00000000-0000-4000-8000-000000000003',
+        ],
       },
       'APPROVED',
       '확인',
@@ -93,7 +89,12 @@ test('expired operator CSRF retries once and server failures remain errors', asy
   try {
     const { adminApi } = await client();
     await assert.rejects(
-      adminApi.addQuestion({}),
+      adminApi.addQuestion({
+        section: '가치관',
+        text: '질문',
+        purpose: '매칭',
+        options: ['하나', '둘', '셋', '넷'],
+      }),
       (error) => error.status === 500 && error.message === '저장 실패',
     );
     assert.equal(attempts, 2);

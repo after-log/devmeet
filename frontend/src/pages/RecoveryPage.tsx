@@ -1,4 +1,8 @@
 import { useState } from 'react';
+import { useSchemaForm } from '@/hooks/useSchemaForm';
+import { setFormError } from '@/hooks/setFormError';
+import { recoveryFormSchema } from '@/validation/auth';
+import { FormErrors } from '@/components/ui/form-errors';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { request } from '@/lib/api';
 
@@ -7,43 +11,41 @@ export default function RecoveryPage() {
   const [query] = useSearchParams();
   const verify = pathname.endsWith('/verify');
   const reset = pathname.endsWith('/reset');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const mode = verify ? 'verify' : reset ? 'reset' : 'request';
+  const form = useSchemaForm(recoveryFormSchema, {
+    values: { mode, token: query.get('token') ?? '', email: '', password: '' },
+  });
   const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
-  const [busy, setBusy] = useState(false);
+  const busy = form.formState.isSubmitting;
   return (
     <>
       <h2>{verify ? '이메일 확인' : reset ? '새 비밀번호' : '비밀번호 찾기'}</h2>
       <form
-        onSubmit={async (event) => {
-          event.preventDefault();
-          setBusy(true);
-          setError('');
+        noValidate
+        onSubmit={form.handleSubmit(async (input) => {
+          form.clearErrors('root');
           try {
-            if (verify) {
-              await request('/auth/email/verify', 'POST', { token: query.get('token') ?? '' });
+            if (input.mode === 'verify') {
+              await request('/auth/email/verify', 'POST', { token: input.token });
               setMessage('이메일 확인이 완료됐어요.');
-            } else if (reset) {
+            } else if (input.mode === 'reset') {
               await request('/auth/password/reset', 'POST', {
-                token: query.get('token') ?? '',
-                password,
+                token: input.token,
+                password: input.password,
               });
               setMessage('비밀번호를 바꿨어요. 다시 로그인해 주세요.');
             } else {
               const response = await request<{ message: string }>(
                 '/auth/password/request',
                 'POST',
-                { email },
+                { email: input.email },
               );
               setMessage(response.message);
             }
-          } catch (err) {
-            setError((err as Error).message);
-          } finally {
-            setBusy(false);
+          } catch (error) {
+            setFormError(form.setError, error);
           }
-        }}
+        })}
       >
         {!verify && (
           <label className="formlabel">
@@ -54,19 +56,12 @@ export default function RecoveryPage() {
               type={reset ? 'password' : 'email'}
               minLength={reset ? 10 : undefined}
               maxLength={reset ? 72 : 254}
-              value={reset ? password : email}
-              onChange={(event) =>
-                reset ? setPassword(event.target.value) : setEmail(event.target.value)
-              }
+              {...form.register(reset ? 'password' : 'email')}
               autoComplete={reset ? 'new-password' : 'email'}
             />
           </label>
         )}
-        {error && (
-          <p role="alert" className="error">
-            {error}
-          </p>
-        )}
+        <FormErrors errors={form.formState.errors} className="error" />
         {message && (
           <p role="status" className="text-point">
             {message}

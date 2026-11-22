@@ -1,16 +1,14 @@
-import type { Dispatch, SetStateAction } from 'react';
+import { Controller } from 'react-hook-form';
+import { useSchemaForm } from '@/hooks/useSchemaForm';
+import { matchingPresetSchema } from '@/validation/matching';
+import { FormErrors } from '@/components/ui/form-errors';
 import type { MatchingPresetDraft } from '../types';
-import {
-  isMatchingPresetDraftValid,
-  matchingWeightTotal,
-  matchingWeights,
-} from '../matchingPresets';
+import { matchingWeightTotal, matchingWeights } from '../matchingPresets';
 import { AdminButton } from './AdminUI';
 import MatchingWeightField from './MatchingWeightField';
 
 export default function MatchingPresetForm({
   draft,
-  setDraft,
   busy,
   ready,
   error,
@@ -19,43 +17,32 @@ export default function MatchingPresetForm({
   onSave,
 }: {
   draft: MatchingPresetDraft;
-  setDraft: Dispatch<SetStateAction<MatchingPresetDraft>>;
   busy: boolean;
   ready: boolean;
   error: string;
   backLabel: string;
   onCancel: () => void;
-  onSave: () => Promise<void>;
+  onSave: (input: MatchingPresetDraft) => Promise<void>;
 }) {
-  const total = matchingWeightTotal(draft);
-  const valid = isMatchingPresetDraftValid(draft);
+  const form = useSchemaForm(matchingPresetSchema, { values: draft });
+  const total = matchingWeightTotal(form.watch());
+  const submitting = busy || form.formState.isSubmitting;
   return (
-    <form
-      onSubmit={(event) => {
-        event.preventDefault();
-        void onSave();
-      }}
-      className="p-5"
-    >
-      {error && (
-        <p
-          role="alert"
-          className="mb-4! rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800"
-        >
-          {error}
-        </p>
-      )}
-      <fieldset disabled={busy || !ready} className="m-0 min-w-0 border-0 p-0">
+    <form noValidate onSubmit={form.handleSubmit(onSave)} className="p-5">
+      <FormErrors
+        errors={form.formState.errors}
+        serverError={error}
+        className="mb-4! rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800"
+      />
+      <fieldset disabled={submitting || !ready} className="m-0 min-w-0 border-0 p-0">
         <label className="mb-4 block text-sm font-medium">
           프리셋 이름
           <input
-            required
             maxLength={60}
-            disabled={!!draft.baseId}
-            value={draft.name}
-            onChange={(event) => setDraft({ ...draft, name: event.target.value })}
+            readOnly={!!draft.baseId}
+            {...form.register('name')}
             placeholder="예: 가치관 중심"
-            className="mt-2 block w-full rounded-lg border border-neutral-200 bg-white p-3 text-sm text-neutral-800 disabled:bg-neutral-100"
+            className="mt-2 block w-full rounded-lg border border-neutral-200 bg-white p-3 text-sm text-neutral-800 read-only:bg-neutral-100"
           />
         </label>
         <label className="mb-5 block text-sm font-medium">
@@ -63,8 +50,7 @@ export default function MatchingPresetForm({
           <textarea
             maxLength={300}
             rows={2}
-            value={draft.description}
-            onChange={(event) => setDraft({ ...draft, description: event.target.value })}
+            {...form.register('description')}
             placeholder="어떤 연결을 우선하는 설정인지 적어 주세요."
             className="mt-2 block w-full resize-y rounded-lg border border-neutral-200 bg-white p-3 text-sm text-neutral-800"
           />
@@ -79,23 +65,28 @@ export default function MatchingPresetForm({
           </span>
         </div>
         {matchingWeights.map(({ key, label, detail }) => (
-          <MatchingWeightField
+          <Controller
             key={key}
-            label={label}
-            detail={detail}
-            value={draft[key]}
-            onChange={(value) => setDraft({ ...draft, [key]: value })}
+            name={key}
+            control={form.control}
+            render={({ field }) => (
+              <MatchingWeightField
+                label={label}
+                detail={detail}
+                value={field.value}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+                inputRef={field.ref}
+              />
+            )}
           />
         ))}
-        {total !== 100 && (
-          <p className="mb-3! text-sm text-red-700">가중치 합계를 100%로 맞춰 주세요.</p>
-        )}
         <div className="flex justify-end gap-2 border-t border-neutral-100 pt-4">
-          <AdminButton disabled={busy} onClick={onCancel}>
+          <AdminButton disabled={submitting} onClick={onCancel}>
             {backLabel}
           </AdminButton>
-          <AdminButton type="submit" variant="primary" disabled={busy || !valid || !ready}>
-            {busy ? '처리 중…' : draft.baseId ? '새 버전 저장' : '프리셋 저장'}
+          <AdminButton type="submit" variant="primary" disabled={submitting || !ready}>
+            {submitting ? '처리 중…' : draft.baseId ? '새 버전 저장' : '프리셋 저장'}
           </AdminButton>
         </div>
       </fieldset>

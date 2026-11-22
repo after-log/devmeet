@@ -1,17 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
-import ts from 'typescript';
+import { loadTypeScript } from './helpers/load-typescript.mjs';
 
-const source = await readFile(new URL('../src/lib/api.ts', import.meta.url), 'utf8');
-const compiled = ts.transpileModule(source, {
-  compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 },
-}).outputText;
-let instance = 0;
-const client = () =>
-  import(
-    'data:text/javascript;base64,' + Buffer.from(compiled).toString('base64') + '#test' + instance++
-  );
+const client = () => loadTypeScript(new URL('../src/lib/api.ts', import.meta.url));
 const response = (body, status = 200) =>
   new Response(JSON.stringify(body), {
     status,
@@ -32,12 +23,32 @@ test('onboarding sends required defaults and excludes UI-only draft fields', asy
     const { api } = await client();
     await api.saveProfile({
       name: '지원',
+      age: 28,
+      height: 170,
+      location: '서울시 성동구',
+      job: '개발자',
+      education: '대학교',
+      role: 'developer',
+      meeting: '주 1회',
+      contact: '매일',
+      smoking: '비흡연',
+      drinking: '가끔',
+      religion: '무교',
+      intro: '자기소개',
       city: '서울시',
       district: '성동구',
       tagsText: '산책',
-      photos: ['/api/photos/first', '/api/photos/second', '/api/photos/third'],
+      photos: [
+        '/api/photos/00000000-0000-4000-8000-000000000001',
+        '/api/photos/00000000-0000-4000-8000-000000000002',
+        '/api/photos/00000000-0000-4000-8000-000000000003',
+      ],
     });
-    assert.deepEqual(sent.photos, ['/api/photos/first', '/api/photos/second', '/api/photos/third']);
+    assert.deepEqual(sent.photos, [
+      '/api/photos/00000000-0000-4000-8000-000000000001',
+      '/api/photos/00000000-0000-4000-8000-000000000002',
+      '/api/photos/00000000-0000-4000-8000-000000000003',
+    ]);
     assert.equal(sent.region, '');
     assert.equal(sent.minAge, 19);
     assert.equal(sent.maxAge, 60);

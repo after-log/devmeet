@@ -2,7 +2,8 @@ import sections from '@/data/value-questions.json';
 import type { ValueQuestion } from '@/hooks/useValueCatalog';
 import type { ValueAnswers } from '@/types';
 
-export const PUBLIC_VALUE_LIMIT = 10;
+import { PUBLIC_VALUE_LIMIT } from '@/validation/profile';
+export { PUBLIC_VALUE_LIMIT } from '@/validation/profile';
 export const valueQuestions = sections.flatMap((section) => section.questions);
 export const publicValueAnswers = (
   answers: ValueAnswers,

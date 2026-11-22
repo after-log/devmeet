@@ -36,7 +36,6 @@ export default function MatchingPresetDialogs({
           {state.workspace === 'edit' ? (
             <MatchingPresetForm
               draft={state.draft}
-              setDraft={state.setDraft}
               busy={state.busy}
               ready={!!settings.data}
               error={state.workspaceError}

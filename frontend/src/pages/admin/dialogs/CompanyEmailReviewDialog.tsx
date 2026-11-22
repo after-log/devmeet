@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useSchemaForm } from '@/hooks/useSchemaForm';
+import { companyEmailDecisionSchema } from '@/validation/companyEmail';
 import { adminApi } from '../api';
 import { canReviewCompanyEmail } from '../companyEmail';
 import type { CompanyEmailRequest } from '../types';
@@ -12,8 +13,11 @@ export default function CompanyEmailReviewDialog({
   request,
   ...callbacks
 }: CompanyEmailDialogCallbacks & { request: CompanyEmailRequest }) {
-  const [decision, setDecision] = useState<'APPROVED' | 'REJECTED'>('APPROVED');
-  const [scope, setScope] = useState<'MEMBER' | 'DOMAIN'>('MEMBER');
+  const form = useSchemaForm(companyEmailDecisionSchema, {
+    defaultValues: { status: 'APPROVED', scope: 'MEMBER', note: '' },
+  });
+  const decision = form.watch('status');
+  const scope = form.watch('scope');
   const canReview = canReviewCompanyEmail(request);
   const selectClass =
     'mt-2 block w-full rounded-lg border border-neutral-200 bg-white p-3 text-sm text-neutral-800';
@@ -24,21 +28,14 @@ export default function CompanyEmailReviewDialog({
       description="이메일 소유 확인 이력과 제출 자료를 확인한 뒤 처리해 주세요."
       danger={decision === 'REJECTED'}
       submitLabel={decision === 'APPROVED' ? '승인' : '반려'}
-      onSubmit={
-        canReview
-          ? (note) => adminApi.reviewCompanyEmail(request.id, { status: decision, scope, note })
-          : undefined
-      }
+      form={form}
+      onSubmit={canReview ? (input) => adminApi.reviewCompanyEmail(request.id, input) : undefined}
     >
       <CompanyEmailRequestDetails request={request} />
       {canReview && (
         <div className="mb-4">
           <Field label="처리 결과">
-            <select
-              value={decision}
-              onChange={(event) => setDecision(event.target.value as typeof decision)}
-              className={selectClass}
-            >
+            <select {...form.register('status')} className={selectClass}>
               <option value="APPROVED">승인</option>
               <option value="REJECTED">반려</option>
             </select>
@@ -46,11 +43,7 @@ export default function CompanyEmailReviewDialog({
           {decision === 'APPROVED' && (
             <>
               <Field label="승인 범위">
-                <select
-                  value={scope}
-                  onChange={(event) => setScope(event.target.value as typeof scope)}
-                  className={selectClass}
-                >
+                <select {...form.register('scope')} className={selectClass}>
                   <option value="MEMBER">이 회원만 승인</option>
                   <option value="DOMAIN" disabled={request.sharedDomain || !request.website}>
                     기업 도메인 전체 승인

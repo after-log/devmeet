@@ -1,3 +1,4 @@
+import { matchingPresetSchema } from '@/validation/matching';
 import type { MatchingPreset, MatchingPresetDraft } from './types';
 
 export const matchingWeights = [
@@ -47,11 +48,5 @@ export function matchingWeightTotal(draft: MatchingPresetDraft) {
   return draft.valuesWeight + draft.meetingWeight + draft.contactWeight;
 }
 export function isMatchingPresetDraftValid(draft: MatchingPresetDraft) {
-  return (
-    draft.name.trim().length > 0 &&
-    matchingWeightTotal(draft) === 100 &&
-    matchingWeights.every(
-      ({ key }) => Number.isInteger(draft[key]) && draft[key] >= 0 && draft[key] <= 100,
-    )
-  );
+  return matchingPresetSchema.safeParse(draft).success;
 }

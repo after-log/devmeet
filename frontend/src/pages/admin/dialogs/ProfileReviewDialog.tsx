@@ -1,3 +1,6 @@
+import { useSchemaForm } from '@/hooks/useSchemaForm';
+import { photoReviewSchema } from '@/validation/admin';
+import { FormErrors } from '@/components/ui/form-errors';
 import AdminPhoto from '../components/AdminPhoto';
 import { useState } from 'react';
 import { Check, X } from 'lucide-react';
@@ -17,7 +20,13 @@ import {
 export default function ProfileReviewDialog({ member }: { member: Member }) {
   const { closeDialog, reviewProfile } = useAdmin();
   const [photoIndex, setPhotoIndex] = useState(0);
-  const [reason, setReason] = useState('');
+  const form = useSchemaForm(photoReviewSchema, {
+    defaultValues: { status: 'APPROVED', reason: '', photos: member.reviewPhotos },
+  });
+  const submitReview = (status: 'APPROVED' | 'REJECTED') => {
+    form.setValue('status', status);
+    void form.handleSubmit((input) => reviewProfile(member, input.status, input.reason))();
+  };
   return (
     <Modal
       title="프로필 검수"
@@ -76,21 +85,22 @@ export default function ProfileReviewDialog({ member }: { member: Member }) {
             <TextArea
               maxLength={500}
               placeholder="수정이 필요한 부분을 구체적으로 적어 주세요."
-              value={reason}
-              onChange={(e) => setReason(e.target.value)}
+              {...form.register('reason')}
             />
           </Field>
+          <FormErrors errors={form.formState.errors} className="mt-3 text-sm text-red-700" />
           <ModalActions>
             <AdminButton
               variant="danger"
-              disabled={!reason.trim()}
-              onClick={() => reviewProfile(member, 'REJECTED', reason)}
+              disabled={form.formState.isSubmitting}
+              onClick={() => submitReview('REJECTED')}
             >
               <X size={16} /> 불합격
             </AdminButton>
             <AdminButton
               variant="primary"
-              onClick={() => reviewProfile(member, 'APPROVED', reason)}
+              disabled={form.formState.isSubmitting}
+              onClick={() => submitReview('APPROVED')}
             >
               <Check size={16} /> 합격
             </AdminButton>

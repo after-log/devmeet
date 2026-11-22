@@ -1,3 +1,8 @@
+import { Controller } from 'react-hook-form';
+import { useSchemaForm } from '@/hooks/useSchemaForm';
+import { preferencesSchema } from '@/validation/profile';
+import { reportSchema } from '@/validation/community';
+import { FormErrors } from '@/components/ui/form-errors';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -12,13 +17,11 @@ import SocialButtons from '@/components/SocialButtons';
 const FiltersSheet = ({ close }: { close: () => void }) => {
   const { user, demo, draft, setDraft, setUser } = useApp();
   const p = user?.profile ?? draft;
-  const [region, setRegion] = useState(p.region ?? '');
-  const [minAge, setMinAge] = useState(String(p.minAge ?? 19));
-  const [maxAge, setMaxAge] = useState(String(p.maxAge ?? 60));
-  const save = async () => {
+  const form = useSchemaForm(preferencesSchema, {
+    defaultValues: { region: p.region ?? '', minAge: p.minAge ?? 19, maxAge: p.maxAge ?? 60 },
+  });
+  const save = async (patch: { region: string; minAge: number; maxAge: number }) => {
     try {
-      if (Number(minAge) > Number(maxAge)) return toast('최소 나이는 최대 나이보다 작아야 해요.');
-      const patch = { region, minAge: Number(minAge), maxAge: Number(maxAge) };
       if (demo || !user?.profile) setDraft(patch);
       else {
         const { profile } = await api.saveProfile({ ...user.profile, ...patch });
@@ -31,22 +34,29 @@ const FiltersSheet = ({ close }: { close: () => void }) => {
     }
   };
   return (
-    <>
+    <form noValidate onSubmit={form.handleSubmit(save)}>
       <p className="eyebrow">// preferences</p>
       <DialogTitle>추천 조건</DialogTitle>
       <label className="formlabel" htmlFor="filter-region">
         지역
       </label>
-      <Select
-        id="filter-region"
-        value={region || 'all'}
-        onValueChange={(v) => setRegion(v === 'all' ? '' : v)}
-        options={[
-          { value: 'all', label: '서울·경기 전체' },
-          { value: '서울', label: '서울시' },
-          { value: '경기', label: '경기도' },
-        ]}
+      <Controller
+        name="region"
+        control={form.control}
+        render={({ field }) => (
+          <Select
+            id="filter-region"
+            value={field.value || 'all'}
+            onValueChange={(value) => field.onChange(value === 'all' ? '' : value)}
+            options={[
+              { value: 'all', label: '서울·경기 전체' },
+              { value: '서울', label: '서울시' },
+              { value: '경기', label: '경기도' },
+            ]}
+          />
+        )}
       />
+
       <div className="grid grid-cols-2 gap-2">
         <label className="formlabel">
           최소 나이
@@ -55,8 +65,7 @@ const FiltersSheet = ({ close }: { close: () => void }) => {
             type="number"
             min={19}
             max={80}
-            value={minAge}
-            onChange={(e) => setMinAge(e.target.value)}
+            {...form.register('minAge', { valueAsNumber: true })}
           />
         </label>
         <label className="formlabel">
@@ -66,8 +75,7 @@ const FiltersSheet = ({ close }: { close: () => void }) => {
             type="number"
             min={19}
             max={80}
-            value={maxAge}
-            onChange={(e) => setMaxAge(e.target.value)}
+            {...form.register('maxAge', { valueAsNumber: true })}
           />
         </label>
       </div>
@@ -76,10 +84,11 @@ const FiltersSheet = ({ close }: { close: () => void }) => {
         <br />
         오늘 이미 배정된 인연은 유지돼요.
       </DialogDescription>
-      <button className="btn full" onClick={save}>
+      <FormErrors errors={form.formState.errors} />
+      <button type="submit" className="btn full" disabled={form.formState.isSubmitting}>
         조건 저장
       </button>
-    </>
+    </form>
   );
 };
 
@@ -120,7 +129,9 @@ const SafetySheet = ({ id, close }: { id: string; close: () => void }) => {
 
 const ReportSheet = ({ id, close }: { id: string; close: () => void }) => {
   const demo = useApp((s) => s.demo);
-  const [reason, setReason] = useState(REPORT_REASONS[0]);
+  const form = useSchemaForm(reportSchema.omit({ id: true }), {
+    defaultValues: { reason: REPORT_REASONS[0] },
+  });
   return (
     <>
       <p className="eyebrow">// report</p>
@@ -128,15 +139,23 @@ const ReportSheet = ({ id, close }: { id: string; close: () => void }) => {
       <label className="formlabel" htmlFor="report-reason">
         어떤 문제가 있었나요?
       </label>
-      <Select
-        id="report-reason"
-        value={reason}
-        onValueChange={setReason}
-        options={REPORT_REASONS}
+      <Controller
+        name="reason"
+        control={form.control}
+        render={({ field }) => (
+          <Select
+            id="report-reason"
+            value={field.value}
+            onValueChange={field.onChange}
+            options={REPORT_REASONS}
+          />
+        )}
       />
+      <FormErrors errors={form.formState.errors} />
       <button
         className="btn full"
-        onClick={async () => {
+        disabled={form.formState.isSubmitting}
+        onClick={form.handleSubmit(async ({ reason }) => {
           if (demo) {
             close();
             return toast('둘러보기에서는 실제 신고가 접수되지 않아요.');
@@ -148,7 +167,7 @@ const ReportSheet = ({ id, close }: { id: string; close: () => void }) => {
           } catch (err) {
             toast((err as Error).message);
           }
-        }}
+        })}
       >
         신고 기록하기
       </button>
