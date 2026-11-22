@@ -1,6 +1,7 @@
 import { ApiError } from '@/lib/api';
 import type {
   AdminStatistics,
+  CompanyEmailDirectory,
   MatchingPreset,
   MatchingPresetDraft,
   MatchingSettings,
@@ -84,6 +85,22 @@ export const adminApi = {
       csrf = null;
     }
   },
+  companyEmails: () => adminRequest<CompanyEmailDirectory>('/company-email'),
+  reviewCompanyEmail: (
+    id: string,
+    body: { status: 'APPROVED' | 'REJECTED'; scope: 'MEMBER' | 'DOMAIN'; note: string },
+  ) => adminRequest<void>('/company-email/requests/' + id, 'PUT', body),
+  registerCompanyDomain: (body: {
+    company: string;
+    domain: string;
+    website: string;
+    note: string;
+  }) => adminRequest<void>('/company-email/domains', 'POST', body),
+  activateCompanyDomain: (domain: string, active: boolean, note: string) =>
+    adminRequest<void>('/company-email/domains/' + encodeURIComponent(domain), 'PUT', {
+      active,
+      note,
+    }),
   matching: () => adminRequest<MatchingSettings>('/matching'),
   createMatchingPreset: (draft: MatchingPresetDraft) =>
     adminRequest<MatchingPreset>('/matching', 'POST', draft),

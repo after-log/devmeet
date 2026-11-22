@@ -3,7 +3,7 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
 import { AdminSurface, IconButton } from './AdminUI';
 
-export default function MatchingWorkspaceDialog({
+export default function AdminFormDialog({
   title,
   description,
   busy,

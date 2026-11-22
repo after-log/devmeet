@@ -3,6 +3,7 @@ import {
   ArrowDownLeft,
   ArrowRight,
   ClipboardCheck,
+  Building2,
   LayoutDashboard,
   SlidersHorizontal,
   Sliders,
@@ -15,6 +16,7 @@ const menu = [
   { path: '', label: '대시보드', icon: LayoutDashboard },
   { path: '/profiles', label: '프로필 검수', icon: ClipboardCheck },
   { path: '/members', label: '회원 관리', icon: Users },
+  { path: '/companies', label: '기업 이메일 인증', icon: Building2 },
   { path: '/matching', label: '매칭 설정', icon: Sliders },
   { path: '/values', label: '가치관 관리', icon: SlidersHorizontal },
 ];

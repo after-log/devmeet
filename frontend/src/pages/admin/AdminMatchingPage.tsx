@@ -4,7 +4,7 @@ import { adminApi, adminDate } from './api';
 import { useAdmin } from './hooks/useAdmin';
 import { AdminButton, Panel } from './components/AdminUI';
 import MatchingPresetDialog from './components/MatchingPresetDialog';
-import MatchingWorkspaceDialog from './components/MatchingWorkspaceDialog';
+import MatchingWorkspaceDialog from './components/AdminFormDialog';
 import MatchingPresetPicker from './components/MatchingPresetPicker';
 import WeightBar, { matchingWeights as weights } from './components/MatchingPresetSummary';
 import type { MatchingPreset, MatchingPresetDraft, MatchingSettings } from './types';

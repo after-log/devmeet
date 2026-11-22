@@ -85,3 +85,35 @@ export type MatchingSettings = {
     matches: number;
   }[];
 };
+
+export type CompanyEmailRequest = {
+  id: string;
+  memberId: string;
+  memberName: string;
+  loginEmail: string;
+  company: string;
+  email: string;
+  domain: string;
+  website: string;
+  evidence: string;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'SUPERSEDED' | 'REVOKED';
+  scope: 'MEMBER' | 'DOMAIN' | null;
+  note: string;
+  current: boolean;
+  sharedDomain: boolean;
+  createdAt: string;
+  emailVerifiedAt: string | null;
+  reviewedAt: string | null;
+};
+export type CompanyEmailDomain = {
+  domain: string;
+  company: string;
+  website: string;
+  active: boolean;
+  note: string;
+  updatedAt: string;
+};
+export type CompanyEmailDirectory = {
+  requests: CompanyEmailRequest[];
+  domains: CompanyEmailDomain[];
+};

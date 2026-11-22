@@ -36,7 +36,6 @@ export default function ProfileCard({
               {member.age}세
             </small>
           </h3>
-          <span className="text-[12px] text-neutral-600 max-sm:hidden">{member.id}</span>
         </div>
         <p className="mt-[5px]! mb-4! text-[12px] whitespace-nowrap text-neutral-600 max-sm:mb-2! max-sm:min-h-7 max-sm:text-[12px] max-sm:whitespace-normal">
           {member.role} · {member.region}

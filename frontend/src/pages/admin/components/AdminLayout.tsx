@@ -16,6 +16,7 @@ export default function AdminLayout() {
         members: '회원 관리',
         values: '가치관 관리',
         matching: '매칭 설정',
+        companies: '기업 이메일 인증',
       } as Record<string, string>
     )[pathname.split('/')[2]] ?? '대시보드';
   if (booting)

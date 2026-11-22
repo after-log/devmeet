@@ -1,11 +1,8 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { request } from '@/lib/api';
 
-type EmailStatus = {
-  available: boolean;
-  verified: { company: string; email: string; verifiedAt: string } | null;
-  pending: { company: string; email: string; expiresAt: string; resendAt: string } | null;
-};
+import type { WorkEmailStatus as EmailStatus } from '@/lib/workEmail';
+import CompanyEmailReviewForm from './CompanyEmailReviewForm';
 
 export default function WorkEmailVerification() {
   const [status, setStatus] = useState<EmailStatus | null>(null);
@@ -80,7 +77,7 @@ export default function WorkEmailVerification() {
     try {
       setStatus(await request<EmailStatus>('/work-email/verify', 'POST', { code }));
       setCode('');
-      setNotice('이메일 확인을 완료했어요.');
+      setNotice('이메일 소유 확인을 완료했어요. 기업 인증 상태를 확인해 주세요.');
     } catch (err) {
       setError((err as Error).message);
       // Refresh the pending challenge after expiration or too many incorrect attempts.
@@ -96,19 +93,67 @@ export default function WorkEmailVerification() {
 
   return (
     <section className="panel" aria-labelledby="work-email-heading">
-      <h3 id="work-email-heading">회사 이메일 확인</h3>
+      <h3 id="work-email-heading">기업 이메일 인증</h3>
       <p className="muted">
-        회사명과 회사 이메일을 입력해 주세요. 이메일 접근 권한을 확인하며, 재직 여부나 개발 직무를
-        증명하지는 않아요.
+        먼저 이메일 소유를 확인해 주세요. 승인된 기업 도메인은 자동 인증되고, 미등록 회사나 개인
+        메일은 자료를 제출해 관리자 검토를 받을 수 있어요. 개발 직무를 증명하는 인증은 아니에요.
       </p>
       {status?.verified && (
         <div className="mb-4 text-sm">
-          <p className="text-point">이메일 확인 완료</p>
+          <p className="text-point">이메일 소유 확인 완료</p>
           <p className="break-all">
             {status.verified.company} · {status.verified.email}
           </p>
         </div>
       )}
+      {status?.companyReview && (
+        <div className="mb-4 rounded-lg border border-line p-4 text-sm" role="status">
+          <p className={status.companyReview.status === 'APPROVED' ? 'text-point' : 'text-fg-3'}>
+            {status.companyReview.status === 'APPROVED'
+              ? status.companyReview.scope === 'DOMAIN'
+                ? '기업 이메일 인증 완료'
+                : '소속 확인 완료 · 회원별 승인'
+              : status.companyReview.status === 'PENDING'
+                ? '기업 인증 검토 중'
+                : status.companyReview.status === 'REJECTED'
+                  ? '기업 인증 요청 반려'
+                  : '기업 인증 재검토 필요'}
+          </p>
+          <p className="mt-2 break-all">
+            {status.companyReview.company} · {status.companyReview.email}
+          </p>
+          {status.companyReview.note && (
+            <p className="mt-2 text-xs whitespace-pre-wrap text-fg-3">
+              {status.companyReview.note}
+            </p>
+          )}
+          <button
+            type="button"
+            disabled={busy}
+            className="mt-2 text-xs underline"
+            onClick={() => setReload((value) => value + 1)}
+          >
+            상태 새로고침
+          </button>
+        </div>
+      )}
+      {status?.verified &&
+        !['PENDING', 'APPROVED'].includes(status.companyReview?.status ?? '') && (
+          <CompanyEmailReviewForm
+            key={status.verified.email + status.verified.verifiedAt}
+            status={status}
+            disabled={busy}
+            onBusyChange={setBusy}
+            onComplete={(next) => {
+              setStatus(next);
+              setNotice(
+                next.companyReview?.status === 'APPROVED'
+                  ? '승인된 기업 도메인으로 인증을 완료했어요.'
+                  : '검토 요청을 보냈어요. 관리자가 확인 후 결과를 안내해 드려요.',
+              );
+            }}
+          />
+        )}
       {!status && !error && (
         <p className="muted" role="status">
           불러오는 중…
