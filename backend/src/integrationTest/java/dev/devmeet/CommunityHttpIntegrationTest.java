@@ -226,6 +226,42 @@ class CommunityHttpIntegrationTest {
   }
 
   @Test
+  void profileFieldEditsPreserveOtherFieldsAndPhotoReview() throws Exception {
+    Actor owner = member("서울시 " + UUID.randomUUID(), "developer");
+    var original = owner.ok("GET", "/me", null).get("user").get("profile");
+    var edited = owner.ok("PATCH", "/profile/name", Map.of("value", " 새 이름 ")).get("profile");
+    assertThat(edited.get("name").asText()).isEqualTo("새 이름");
+    assertThat(edited.get("photos")).isEqualTo(original.get("photos"));
+    assertThat(edited.get("region")).isEqualTo(original.get("region"));
+    assertThat(owner.ok("GET", "/me", null).get("user").get("verification").get("photoStatus").asText())
+        .isEqualTo("APPROVED");
+    assertThat(owner.call("PATCH", "/profile/age", Map.of("value", 18)).statusCode()).isEqualTo(400);
+    assertThat(owner.call("PATCH", "/profile/tags", Map.of("value", List.of(" "))).statusCode())
+        .isEqualTo(400);
+    assertThat(owner.call("PATCH", "/profile/region", Map.of("value", "서울")).statusCode())
+        .isEqualTo(400);
+    assertThat(owner.call("PATCH", "/profile/photos", Map.of("value", List.of("invalid"))).statusCode())
+        .isEqualTo(400);
+
+    String first = original.get("photo").asText();
+    jdbc.update("UPDATE profiles SET photos=JSON_ARRAY(?) WHERE account_id=UUID_TO_BIN(?)", first, owner.id);
+    var legacy = owner.ok("PATCH", "/profile/intro", Map.of("value", "새 자기소개")).get("profile");
+    assertThat(legacy.get("intro").asText()).isEqualTo("새 자기소개");
+    assertThat(legacy.get("name").asText()).isEqualTo("새 이름");
+    assertThat(legacy.get("photos").size()).isEqualTo(1);
+
+    String second = original.get("photos").get(1).asText();
+    String third = original.get("photos").get(2).asText();
+    assertThat(owner.call("PATCH", "/profile/photos", Map.of("value", List.of(first, first, third))).statusCode())
+        .isEqualTo(400);
+    var gallery = owner.ok("PATCH", "/profile/photos", Map.of("value", List.of(second, first, third))).get("profile");
+    assertThat(gallery.get("photo").asText()).isEqualTo(second);
+    assertThat(gallery.get("intro").asText()).isEqualTo("새 자기소개");
+    assertThat(owner.ok("GET", "/me", null).get("user").get("verification").get("photoStatus").asText())
+        .isEqualTo("PENDING");
+  }
+
+  @Test
   void galleryRequiresThreeOwnedPhotosAndFreshApprovalBeforePublicAccess() throws Exception {
     Actor owner = register(UUID.randomUUID() + "@example.test");
     Actor viewer = register(UUID.randomUUID() + "@example.test");

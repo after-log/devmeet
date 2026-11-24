@@ -5,7 +5,7 @@ import { useApp } from '@/stores/app';
 import { parseForm } from '@/validation/forms';
 import { profileSchema } from '@/validation/profile';
 import { usePhotoUpload } from './usePhotoUpload';
-import type { Profile } from '@/types';
+import type { EditableProfileField, Profile } from '@/types';
 
 export function useProfileMutations() {
   const client = useQueryClient();
@@ -28,9 +28,16 @@ export function useProfileMutations() {
     mutationFn: api.saveValues,
     onSuccess: saved,
   });
+  const field = useMutation({
+    mutationKey: mutationKeys.member.profile(owner).mutationKey,
+    mutationFn: ({ field, value }: { field: EditableProfileField; value: unknown }) =>
+      api.updateProfileField(field, parseForm(profileSchema.shape[field], value)),
+    onSuccess: saved,
+  });
   const photo = usePhotoUpload(owner);
   return {
     saveProfile: profile.mutateAsync,
+    updateProfileField: field.mutateAsync,
     saveValues: values.mutateAsync,
     photo: photo.mutateAsync,
   };

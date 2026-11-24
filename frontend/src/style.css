@@ -180,7 +180,7 @@
     @apply grid size-11 shrink-0 place-items-center rounded-full bg-selected text-2xl text-sub;
   }
   .values-total {
-    @apply mt-6 shrink-0 rounded-full border border-line bg-surface px-3 py-1.5 font-mono text-xs text-point;
+    @apply shrink-0 rounded-full border border-line bg-surface px-3 py-1.5 font-mono text-xs text-point;
   }
   .values-tabs {
     @apply sticky top-0 z-10 -mx-6 flex overflow-x-auto border-b border-line bg-canvas px-3 max-[480px]:-mx-5 max-[360px]:-mx-3.75;

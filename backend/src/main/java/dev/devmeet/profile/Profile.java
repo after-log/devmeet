@@ -121,10 +121,6 @@ public class Profile {
   }
 
   public void update(ProfileRequest request, Map<String, ValueAnswer> answers) {
-    if (!photos.equals(request.photos())) {
-      photoStatus = "PENDING";
-      photoReviewReason = "";
-    }
     name = request.name().strip();
     age = request.age();
     height = request.height();
@@ -140,12 +136,45 @@ public class Profile {
     religion = request.religion().strip();
     intro = request.intro().strip();
     tags = request.tags().stream().map(String::strip).toList();
-    photos = List.copyOf(request.photos());
-    photo = photos.getFirst();
+    updatePhotos(request.photos());
     minAge = request.minAge();
     maxAge = request.maxAge();
     region = request.region().strip();
     valueAnswers = Map.copyOf(answers);
+  }
+
+  void updateField(String field, ProfileRequest request) {
+    switch (field) {
+      case "name" -> name = request.name().strip();
+      case "age" -> age = request.age();
+      case "height" -> height = request.height();
+      case "location" -> location = request.location().strip();
+      case "job" -> job = request.job().strip();
+      case "education" -> education = request.education().strip();
+      case "role" -> {
+        role = request.role();
+        if (role.equals("non-developer")) preference = "개발자";
+      }
+      case "meeting" -> meeting = request.meeting().strip();
+      case "contact" -> contact = request.contact().strip();
+      case "preference" -> preference = request.preference().strip();
+      case "smoking" -> smoking = request.smoking().strip();
+      case "drinking" -> drinking = request.drinking().strip();
+      case "religion" -> religion = request.religion().strip();
+      case "intro" -> intro = request.intro().strip();
+      case "tags" -> tags = request.tags().stream().map(String::strip).toList();
+      case "photos" -> updatePhotos(request.photos());
+      default -> throw new IllegalArgumentException("Unknown editable profile field: " + field);
+    }
+  }
+
+  private void updatePhotos(List<String> next) {
+    if (!photos.equals(next)) {
+      photoStatus = "PENDING";
+      photoReviewReason = "";
+    }
+    photos = List.copyOf(next);
+    photo = photos.getFirst();
   }
 
   public ProfileRequest view() {

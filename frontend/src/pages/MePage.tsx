@@ -7,22 +7,29 @@ import { useValueCatalog } from '@/hooks/useValueCatalog';
 import { demoProfilePhoto } from '@/data/members';
 import { publicValueAnswers, PUBLIC_VALUE_LIMIT } from '@/lib/value-answers';
 import PageScene from '@/components/pixel/PageScene';
+import { profilePhotos } from './profile-edit/fields';
+
+const photoStatusLabels = new Map([
+  ['APPROVED', '사진 검수 완료'],
+  ['PENDING', '사진 검수 대기'],
+  ['REJECTED', '사진 검수 반려'],
+]);
 
 const MePage = () => {
   const { logout } = useMemberActions();
   const navigate = useNavigate();
-  const { user, demo, demoValueAnswers, resetDraft, openSheet } = useApp();
+  const { user, demo, demoValueAnswers, openSheet } = useApp();
   const { sections: valueSections, loading: catalogLoading } = useValueCatalog(demo);
   const questions = valueSections.flatMap((section) => section.questions);
   const p = user?.profile;
   const name = p?.name ?? '체험 계정';
+  const photoStatus = photoStatusLabels.get(user?.verification?.photoStatus ?? '') ?? '사진 미등록';
   const answers = demo ? demoValueAnswers : (p?.valueAnswers ?? {});
   const answered = questions.filter((q) => answers[q.id]?.choice != null).length;
   const publicAnswers = publicValueAnswers(answers, questions);
   const total = valueSections.reduce((sum, section) => sum + section.questions.length, 0);
   return (
     <>
-      <p className="eyebrow">// my.profile</p>
       <h2>나의 프로필</h2>
       <PageScene name="profile" className="mt-4" />
       <div className="profile-self">
@@ -37,26 +44,31 @@ const MePage = () => {
             {name}
             {p ? <span className="ml-2 font-mono text-[14px] text-fg-3">{p.age}</span> : null}
           </h3>
-          <p className="m-0 text-xs leading-relaxed wrap-break-word text-fg-3">
-            {p ? `${p.location} · ${p.job}` : '가입 없이 둘러보는 중이에요'}
-          </p>
+          <div className="flex flex-wrap items-baseline gap-x-2 text-xs leading-6 text-fg-3">
+            <p className="m-0 wrap-anywhere">
+              {p ? `${p.location} · ${p.job}` : '가입 없이 둘러보는 중이에요'}
+            </p>
+            {!demo && p && (
+              <Link
+                className="inline-flex items-center gap-0.5 rounded-sm hover:text-fg focus-visible:outline-2 focus-visible:outline-point"
+                to="/me/edit/photos"
+                state={{ fromMe: true }}
+              >
+                {photoStatus}
+                <ChevronRight className="size-3 shrink-0" aria-hidden="true" />
+              </Link>
+            )}
+          </div>
         </div>
       </div>
-      {p && (p.photos?.length ?? 1) < 3 && (
+      {!demo && p && profilePhotos(p).length < 3 && (
         <div className="panel">
           <p className="text-sm">
             프로필 사진을 최소 3장 등록해 주세요. 사진 승인 후 다른 회원에게 공개돼요.
           </p>
-          <button
-            className="btn full"
-            onClick={() => {
-              resetDraft({ ...p, tagsText: p.tags.join(', ') });
-              useApp.getState().setStep(3);
-              navigate('/onboarding');
-            }}
-          >
+          <Link className="btn full" to="/me/edit/photos" state={{ fromMe: true }}>
             사진 추가하기
-          </button>
+          </Link>
         </div>
       )}
       <Link className="values-entry" to="/me/values">
@@ -88,27 +100,6 @@ const MePage = () => {
           </div>
         </section>
       )}
-      <div className="panel">
-        <h3>인증 정보</h3>
-        {[
-          [
-            '사진 확인',
-            demo
-              ? '체험 사진'
-              : ({ APPROVED: '검수 승인', PENDING: '검수 대기', REJECTED: '반려', NONE: '미등록' }[
-                  user?.verification?.photoStatus ?? 'NONE'
-                ] ?? '미등록'),
-          ],
-        ].map(([k, v]) => (
-          <div className="info-row" key={k}>
-            <span>{k}</span>
-            <strong>{v}</strong>
-          </div>
-        ))}
-        {user?.verification?.photoReviewReason && (
-          <p className="footnote text-left">{user.verification.photoReviewReason}</p>
-        )}
-      </div>
       <Link className="settings-row" to="/me/verification">
         인증 관리
         <span>
@@ -116,18 +107,12 @@ const MePage = () => {
         </span>
       </Link>
       {!demo && p && (
-        <button
-          className="settings-row"
-          onClick={() => {
-            resetDraft({ ...p, tagsText: p.tags.join(', ') });
-            navigate('/onboarding');
-          }}
-        >
+        <Link className="settings-row" to="/me/edit">
           프로필 편집
           <span>
             <ChevronRight className="ico" aria-hidden="true" />
           </span>
-        </button>
+        </Link>
       )}
       <button className="settings-row" onClick={() => openSheet({ kind: 'filters' })}>
         추천 조건

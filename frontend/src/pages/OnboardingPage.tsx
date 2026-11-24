@@ -1,11 +1,12 @@
 import { Controller } from 'react-hook-form';
 import { useSchemaForm } from '@/hooks/useSchemaForm';
-import { createOnboardingSchema, photoUploadCountSchema } from '@/validation/profile';
+import { createOnboardingSchema } from '@/validation/profile';
 import { FormErrors } from '@/components/ui/form-errors';
 import { ArrowRight, Check, ChevronRight, Keyboard, Sparkles } from 'lucide-react';
 import { useEffect, useState, type ReactNode } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import ProfilePhotoFields from '@/components/ProfilePhotoFields';
 import ProfileBuilt from '@/components/pixel/ProfileBuilt';
 import SignupWelcome from '@/components/pixel/SignupWelcome';
 import { useProfileMutations } from '@/hooks/queries/useProfileMutations';
@@ -145,7 +146,7 @@ const OnboardingPage = () => {
     );
   // 처음 가입한 회원이 저장을 마치면 '빌드 완료' 화면을 한 번 보여 준다
   if (built) return <ProfileBuilt profile={built} onContinue={() => navigate('/today')} />;
-  const editing = !!user.profile;
+  if (user.profile && !saving) return <Navigate to="/me/edit" replace />;
 
   // 예전 형식("서울 성동구")도 드롭다운에서 고른 상태로 보이게 한다
   if (draft.city === undefined && draft.location) {
@@ -245,13 +246,8 @@ const OnboardingPage = () => {
         preference: draft.role === 'non-developer' ? '개발자' : draft.preference,
         tags,
       });
-      if (editing) {
-        navigate('/me');
-        toast('프로필을 저장했어요.');
-      } else {
-        setBuilt(profile);
-        toast('가입이 완료됐어요. 사진 승인 후 추천이 시작돼요.');
-      }
+      setBuilt(profile);
+      toast('가입이 완료됐어요. 사진 승인 후 추천이 시작돼요.');
     } catch (err) {
       setError((err as Error).message);
     } finally {
@@ -382,77 +378,15 @@ const OnboardingPage = () => {
           <div className="panel photo-required">
             <p className="section-comment">// profile.photo · required</p>
             <h3>프로필 사진 · {photos.length} / 6장</h3>
-            <p className="mb-4 text-xs text-fg-3">
-              얼굴이 잘 보이는 사진을 최소 3장 등록해 주세요. 첫 번째 사진이 대표 사진이에요.
-            </p>
-            <div className="grid grid-cols-3 gap-2">
-              {photos.map((photo, index) => (
-                <div key={photo} className="min-w-0 space-y-2">
-                  <img
-                    className="aspect-3/4 w-full rounded-lg object-cover"
-                    src={photo}
-                    alt={`등록 사진 ${index + 1}`}
-                  />
-                  <button
-                    type="button"
-                    className="w-full text-xs text-point"
-                    disabled={uploading || saving || index === 0}
-                    onClick={() => updatePhotos([photo, ...photos.filter((p) => p !== photo)])}
-                  >
-                    {index === 0 ? '대표 사진' : '대표로 설정'}
-                  </button>
-                  <button
-                    type="button"
-                    className="w-full text-xs text-fg-3"
-                    disabled={uploading || saving}
-                    onClick={() => updatePhotos(photos.filter((p) => p !== photo))}
-                    aria-label={`사진 ${index + 1} 삭제`}
-                  >
-                    삭제
-                  </button>
-                </div>
-              ))}
-            </div>
-            <label className="formlabel" htmlFor="photo">
-              {uploading ? '사진 업로드 중…' : '사진 추가하기'}
-              <input
-                className="mt-2"
-                id="photo"
-                type="file"
-                multiple
-                accept="image/jpeg,image/png,image/webp"
-                aria-required="true"
-                disabled={uploading || saving || photos.length >= 6}
-                onChange={async (e) => {
-                  const files = Array.from(e.target.files ?? []);
-                  e.target.value = '';
-                  if (!files.length) return;
-                  const count = photoUploadCountSchema.safeParse(photos.length + files.length);
-                  if (!count.success) {
-                    setError(count.error.issues[0].message);
-                    return;
-                  }
-                  setUploading(true);
-                  setError('');
-                  const uploaded = [...photos];
-                  try {
-                    for (const file of files) {
-                      const { photo } = await profileMutations.photo(file);
-                      uploaded.push(photo);
-                      updatePhotos([...uploaded]);
-                    }
-                    toast('사진을 등록했어요. 저장하면 검수가 시작돼요.');
-                  } catch (err) {
-                    setError((err as Error).message);
-                  } finally {
-                    setUploading(false);
-                  }
-                }}
-              />
-            </label>
-            <p className="footnote text-left">
-              사진 전체가 승인된 뒤 프로필에 공개돼요. 사진을 변경하면 다시 검수를 받아요.
-            </p>
+            <ProfilePhotoFields
+              photos={photos}
+              uploading={uploading}
+              saving={saving}
+              onChange={updatePhotos}
+              uploadPhoto={profileMutations.photo}
+              onUploadingChange={setUploading}
+              onError={setError}
+            />
           </div>
           <label className="formlabel" htmlFor="intro">
             자기소개
@@ -496,13 +430,9 @@ const OnboardingPage = () => {
         {saving ? (
           '저장 중…'
         ) : step === 3 ? (
-          editing ? (
-            '저장하기'
-          ) : (
-            <>
-              사진 검수 요청하고 가입 완료 <ArrowRight className="ico" aria-hidden="true" />
-            </>
-          )
+          <>
+            사진 검수 요청하고 가입 완료 <ArrowRight className="ico" aria-hidden="true" />
+          </>
         ) : (
           <>
             다음 <ArrowRight className="ico" aria-hidden="true" />

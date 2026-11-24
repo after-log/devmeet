@@ -7,6 +7,7 @@ import java.security.Principal;
 import java.util.Map;
 import java.util.UUID;
 import org.springframework.web.bind.annotation.*;
+import tools.jackson.databind.JsonNode;
 
 @RestController
 @RequestMapping("/api")
@@ -20,6 +21,7 @@ public class ProfileController {
   }
 
   public record ValuesRequest(@NotNull @Size(max = 5000) Map<String, ValueAnswer> valueAnswers) {}
+  public record FieldEdit(@NotNull JsonNode value) {}
 
   @GetMapping("/value-questions")
   public Object questions() {
@@ -29,6 +31,12 @@ public class ProfileController {
   @PutMapping("/profile")
   public Object save(Principal principal, @Valid @RequestBody ProfileRequest request) {
     return Map.of("profile", profiles.save(principal.getName(), request));
+  }
+
+  @PatchMapping("/profile/{field}")
+  public Object updateField(
+      Principal principal, @PathVariable String field, @Valid @RequestBody FieldEdit edit) {
+    return Map.of("profile", profiles.updateField(principal.getName(), field, edit.value()));
   }
 
   @PutMapping("/profile/values")
