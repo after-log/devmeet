@@ -136,21 +136,17 @@ const ValuesEditor = ({ sections }: { sections: ValueSection[] }) => {
 
   return (
     <div className="values-page">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="eyebrow mb-2!">// my.values</p>
-          <h2>나를 알아가는 질문</h2>
-        </div>
+      <div className="mb-5 flex items-start justify-between gap-3">
+        <p className="m-0 text-xs leading-6 text-fg-3">
+          정답은 없어요. 지금의 나와 가장 가까운 답을 골라주세요.
+          <br />
+          답변은 기본 비공개예요. 프로필에는 최대 10개까지 골라 공개할 수 있어요.
+        </p>
         <span className="values-total">
           {answered}
           <span className="text-fg-4"> / {total}</span>
         </span>
       </div>
-      <p className="mt-3 mb-5 text-xs leading-6 text-fg-3">
-        정답은 없어요. 지금의 나와 가장 가까운 답을 골라주세요.
-        <br />
-        답변은 기본 비공개예요. 프로필에는 최대 10개까지 골라 공개할 수 있어요.
-      </p>
       <div className="mb-5 flex items-center justify-between rounded-lg border border-line bg-surface px-4 py-3 text-xs">
         <span className="inline-flex items-center gap-2 text-fg-2">
           <Eye size={14} />
@@ -221,7 +217,6 @@ const ValuesEditor = ({ sections }: { sections: ValueSection[] }) => {
         <div className="space-y-9 py-7">
           {section.questions.map((question, index) => {
             const answer = answers[question.id];
-            const skipped = answer?.choice === null;
             return (
               <fieldset key={question.id} className="min-w-0 border-0 p-0" disabled={saving}>
                 <legend className="mb-3 w-full text-[13px] leading-6 text-fg">
@@ -254,23 +249,7 @@ const ValuesEditor = ({ sections }: { sections: ValueSection[] }) => {
                     );
                   })}
                 </div>
-                <div className="mt-3 flex items-center justify-between gap-3">
-                  <button
-                    type="button"
-                    aria-pressed={skipped}
-                    className={`text-[11px] underline-offset-4 hover:underline ${skipped ? 'text-point' : 'text-fg-4'}`}
-                    onClick={() => {
-                      if (skipped)
-                        setAnswers((current) => {
-                          const next = { ...current };
-                          delete next[question.id];
-                          return next;
-                        });
-                      else update(question.id, { choice: null, private: true });
-                    }}
-                  >
-                    {skipped ? '건너뜀 · 취소' : '건너뛰기'}
-                  </button>
+                <div className="mt-3 flex justify-end">
                   <button
                     type="button"
                     aria-pressed={answer?.choice != null && answer.private === false}

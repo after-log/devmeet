@@ -2,10 +2,11 @@ import { Link, matchPath, useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Ellipsis, Moon, Sun } from 'lucide-react';
 import { findPerson, useApp } from '@/stores/app';
 import { Avatar } from '@/components/PersonCard';
+import { isEditableProfileField, profileEditFields } from '@/pages/profile-edit/fields';
 import type { Theme } from '../../lib/theme';
 
 const AppHeader = ({ theme, onToggleTheme }: { theme: Theme; onToggleTheme: () => void }) => {
-  const { pathname } = useLocation();
+  const { pathname, state } = useLocation();
   const navigate = useNavigate();
   const { user, step, setStep, openSheet } = useApp();
   const profileRoute = ['/people/:id', '/likes/:id', '/chat/:id']
@@ -14,12 +15,20 @@ const AppHeader = ({ theme, onToggleTheme }: { theme: Theme; onToggleTheme: () =
   const person = profileRoute ? findPerson(profileRoute.params.id) : undefined;
   const isChat = !!matchPath('/chat/:id', pathname);
   const isOnboarding = pathname === '/onboarding';
+  const profileField = matchPath('/me/edit/:field', pathname)?.params.field;
+  const PageTitle = pathname.startsWith('/me/') ? 'h1' : 'p';
   let detail: { title: string; parent: string } | undefined;
 
   if (matchPath('/people/:id', pathname)) detail = { title: '프로필', parent: '/today' };
   else if (matchPath('/likes/:id', pathname)) detail = { title: '호감 상세', parent: '/likes' };
   else if (isChat) detail = { title: person?.name ?? '대화', parent: '/chat' };
   else if (matchPath('/match/:id', pathname)) detail = { title: '매칭', parent: '/today' };
+  else if (pathname === '/me/edit') detail = { title: '프로필 편집', parent: '/me' };
+  else if (profileField && isEditableProfileField(profileField))
+    detail = {
+      title: profileEditFields[profileField].label,
+      parent: state?.fromMe ? '/me' : '/me/edit',
+    };
   else if (pathname === '/me/verification') detail = { title: '인증 관리', parent: '/me' };
   else if (pathname === '/me/verification/company')
     detail = { title: '회사 인증', parent: '/me/verification' };
@@ -39,6 +48,8 @@ const AppHeader = ({ theme, onToggleTheme }: { theme: Theme; onToggleTheme: () =
     if (!detail) return;
     if (isOnboarding && step > 0) setStep(step - 1);
     else if (isOnboarding) navigate(detail.parent);
+    else if (profileField && !state?.fromMe && !state?.fromProfileEdit)
+      navigate(detail.parent, { replace: true });
     else if (typeof window.history.state?.idx === 'number' && window.history.state.idx > 0)
       navigate(-1);
     else navigate(detail.parent, { replace: true });
@@ -58,9 +69,9 @@ const AppHeader = ({ theme, onToggleTheme }: { theme: Theme; onToggleTheme: () =
           </button>
           {isChat && person && <Avatar person={person} size={36} />}
           <div className="min-w-0 flex-1">
-            <p className="m-0 truncate font-display text-sm font-semibold text-fg">
+            <PageTitle className="m-0 truncate font-display text-sm font-semibold text-fg">
               {detail.title}
-            </p>
+            </PageTitle>
             {isChat && person && (
               <p className="m-0 truncate text-[11px] text-fg-4">
                 {person.job} · {person.location}

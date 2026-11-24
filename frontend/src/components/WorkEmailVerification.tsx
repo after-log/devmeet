@@ -11,6 +11,7 @@ export default function WorkEmailVerification() {
   const [formError, setError] = useState('');
   const error = formError || queryError?.message || '';
   const [notice, setNotice] = useState('');
+  const [openForm, setOpenForm] = useState<'email' | 'review' | 'closed' | null>(null);
   const [now, setNow] = useState(Date.now());
   useEffect(() => {
     if (!status?.pending) return;
@@ -19,24 +20,44 @@ export default function WorkEmailVerification() {
   }, [status?.pending]);
 
   const pending = status?.pending;
+  const emailVerified = status?.verified;
+  const canRequestReview =
+    !!emailVerified && !['PENDING', 'APPROVED'].includes(status.companyReview?.status ?? '');
+  const showEmailForm = !emailVerified || openForm === 'email' || (openForm === null && !!pending);
   const resendSeconds = pending
     ? Math.max(0, Math.ceil((Date.parse(pending.resendAt) - now) / 1000))
     : 0;
   const expired = !!pending && Date.parse(pending.expiresAt) <= now;
 
   return (
-    <section className="panel" aria-labelledby="work-email-heading">
-      <h3 id="work-email-heading">기업 이메일 인증</h3>
-      <p className="muted">
-        먼저 이메일 소유를 확인해 주세요. 승인된 기업 도메인은 자동 인증되고, 미등록 회사나 개인
-        메일은 자료를 제출해 관리자 검토를 받을 수 있어요. 개발 직무를 증명하는 인증은 아니에요.
-      </p>
-      {status?.verified && (
+    <section className="panel mt-0" aria-label="기업 이메일 인증">
+      {status && !emailVerified && (
+        <p className="muted">
+          먼저 이메일 소유를 확인해 주세요. 승인된 기업 도메인은 자동 인증되고, 미등록 회사나 개인
+          메일은 자료를 제출해 관리자 검토를 받을 수 있어요. 개발 직무를 증명하는 인증은 아니에요.
+        </p>
+      )}
+      {emailVerified && (
         <div className="mb-4 text-sm">
           <p className="text-point">이메일 소유 확인 완료</p>
           <p className="break-all">
-            {status.verified.company} · {status.verified.email}
+            {emailVerified.company} · {emailVerified.email}
           </p>
+          {status.available && (
+            <button
+              type="button"
+              disabled={busy}
+              aria-expanded={showEmailForm}
+              className="mt-2 text-xs underline"
+              onClick={() => setOpenForm(showEmailForm ? 'closed' : 'email')}
+            >
+              {showEmailForm
+                ? '이메일 변경 닫기'
+                : pending
+                  ? '이메일 변경 계속하기'
+                  : '이메일 변경'}
+            </button>
+          )}
         </div>
       )}
       {status?.companyReview && (
@@ -70,23 +91,34 @@ export default function WorkEmailVerification() {
           </button>
         </div>
       )}
-      {status?.verified &&
-        !['PENDING', 'APPROVED'].includes(status.companyReview?.status ?? '') && (
-          <CompanyEmailReviewForm
-            key={status.verified.email + status.verified.verifiedAt}
-            status={status}
-            disabled={busy}
-            onBusyChange={setBusy}
-            onComplete={(next) => {
-              setStatus(next);
-              setNotice(
-                next.companyReview?.status === 'APPROVED'
-                  ? '승인된 기업 도메인으로 인증을 완료했어요.'
-                  : '검토 요청을 보냈어요. 관리자가 확인 후 결과를 안내해 드려요.',
-              );
-            }}
-          />
-        )}
+      {canRequestReview && (
+        <button
+          type="button"
+          disabled={busy}
+          aria-expanded={openForm === 'review'}
+          className="btn secondary full"
+          onClick={() => setOpenForm(openForm === 'review' ? 'closed' : 'review')}
+        >
+          {openForm === 'review' ? '기업 인증 검토 요청 닫기' : '기업 인증 검토 요청'}
+        </button>
+      )}
+      {status && emailVerified && canRequestReview && openForm === 'review' && (
+        <CompanyEmailReviewForm
+          key={emailVerified.email + emailVerified.verifiedAt}
+          status={status}
+          disabled={busy}
+          onBusyChange={setBusy}
+          onComplete={(next) => {
+            setStatus(next);
+            setOpenForm('closed');
+            setNotice(
+              next.companyReview?.status === 'APPROVED'
+                ? '승인된 기업 도메인으로 인증을 완료했어요.'
+                : '검토 요청을 보냈어요. 관리자가 확인 후 결과를 안내해 드려요.',
+            );
+          }}
+        />
+      )}
       {!status && !error && (
         <p className="muted" role="status">
           불러오는 중…
@@ -97,10 +129,10 @@ export default function WorkEmailVerification() {
           다시 불러오기
         </button>
       )}
-      {status && !status.available && (
+      {status && showEmailForm && !status.available && (
         <p className="muted">이메일 발송은 현재 준비 중이에요. 잠시 후 다시 이용해 주세요.</p>
       )}
-      {status?.available && (
+      {status?.available && showEmailForm && (
         <>
           <WorkEmailRequestForm
             status={status}
@@ -125,6 +157,7 @@ export default function WorkEmailVerification() {
               onError={setError}
               onComplete={(next) => {
                 setStatus(next);
+                setOpenForm('closed');
                 setError('');
                 setNotice('이메일 소유 확인을 완료했어요. 기업 인증 상태를 확인해 주세요.');
               }}

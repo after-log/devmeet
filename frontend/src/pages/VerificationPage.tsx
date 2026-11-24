@@ -3,8 +3,6 @@ import { Link } from 'react-router-dom';
 
 const VerificationPage = () => (
   <>
-    <p className="eyebrow">// my.verification</p>
-    <h2>인증 관리</h2>
     <p className="intro">진행할 인증을 선택해 주세요.</p>
     <Link className="settings-row gap-4" to="/me/verification/company">
       <div className="min-w-0">

@@ -14,6 +14,8 @@ import LikeDetailPage from './pages/likes/detail';
 import ChatsPage from './pages/chat';
 import ChatPage from './pages/chat/detail';
 import MePage from './pages/MePage';
+import ProfileEditPage from './pages/profile-edit';
+import ProfileFieldPage from './pages/profile-edit/FieldPage';
 import VerificationPage from './pages/VerificationPage';
 import CompanyVerificationPage from './pages/CompanyVerificationPage';
 import GithubVerificationPage from './pages/GithubVerificationPage';
@@ -101,6 +103,22 @@ const App = () => (
         element={
           <Member>
             <MePage />
+          </Member>
+        }
+      />
+      <Route
+        path="me/edit"
+        element={
+          <Member>
+            <ProfileEditPage />
+          </Member>
+        }
+      />
+      <Route
+        path="me/edit/:field"
+        element={
+          <Member>
+            <ProfileFieldPage />
           </Member>
         }
       />

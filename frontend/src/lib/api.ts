@@ -2,6 +2,7 @@ import { axios } from './axios';
 export { ApiError } from './api-error';
 import type {
   Connections,
+  EditableProfileField,
   Message,
   Person,
   Profile,
@@ -27,6 +28,8 @@ export const api = {
     request<{ user: User }>('/login', 'POST', { email, password }),
   logout: () => request<void>('/logout', 'POST'),
   saveProfile: (input: Partial<Profile>) => request<{ profile: Profile }>('/profile', 'PUT', input),
+  updateProfileField: (field: EditableProfileField, value: unknown) =>
+    request<{ profile: Profile }>(`/profile/${field}`, 'PATCH', { value }),
   saveValues: (valueAnswers: ValueAnswers) =>
     request<{ profile: Profile }>('/profile/values', 'PUT', { valueAnswers }),
   photo: (form: FormData) => request<{ photo: string }>('/photo', 'POST', form),

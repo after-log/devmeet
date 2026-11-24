@@ -31,6 +31,11 @@ export interface Profile {
   region: string; // 추천 조건. 비우면 전체
 }
 
+export type EditableProfileField = Exclude<
+  keyof Profile,
+  'valueAnswers' | 'photo' | 'minAge' | 'maxAge' | 'region'
+>;
+
 /** 다른 회원에게 공개되는 정보 */
 export interface Person {
   githubVerified?: boolean;
