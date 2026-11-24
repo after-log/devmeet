@@ -10,7 +10,7 @@ import { publicValueAnswers } from '@/lib/value-answers';
 const PersonPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { people, liked, demo, user, connections } = useApp();
+  const { people, liked, demo, connections } = useApp();
   const { sections } = useValueCatalog(demo);
   const questions = sections.flatMap((section) => section.questions);
   const p = findPerson(id);
@@ -18,7 +18,6 @@ const PersonPage = () => {
   const inToday = people.some((x) => x.id === p.id);
   const matched = connections.matches.some((x) => x.id === p.id);
   const sent = liked.includes(p.id) || connections.sent.some((x) => x.id === p.id);
-  const dev = (user?.profile?.role ?? 'developer') === 'developer';
   const rows: [string, string][] = [
     ['만남', p.meeting],
     ['연락', p.contact],
@@ -31,10 +30,6 @@ const PersonPage = () => {
   return (
     <>
       <article className="profile">
-        <div className="file-tab">
-          <span className="file-icon">ts</span>
-          {p.name}.profile.ts<span className="tab-end">{demo ? 'demo' : '•'}</span>
-        </div>
         <PhotoGallery photos={p.photos} photo={p.photo} name={p.name} />
         <div className="profile-heading">
           <div>
@@ -93,11 +88,7 @@ const PersonPage = () => {
         </button>
       ) : (
         <span className="mt-6 block">
-          <LikeButton
-            person={p}
-            disabled={sent || !inToday}
-            label={dev ? 'LGTM! · 좋아요 보내기' : '좋아요 보내기'}
-          />
+          <LikeButton person={p} disabled={sent || !inToday} label="좋아요 보내기" />
         </span>
       )}
       {!inToday && !sent && !matched && (

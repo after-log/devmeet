@@ -9,11 +9,8 @@ import PageScene from '@/components/pixel/PageScene';
 
 const TodayPage = () => {
   const navigate = useNavigate();
-  const { people, index, setIndex, liked, remaining, demo, user, openSheet, refresh, notice } =
-    useApp();
+  const { people, index, setIndex, remaining, demo, openSheet, refresh, notice } = useApp();
   const p = people[index];
-  const dev = (user?.profile?.role ?? 'developer') === 'developer';
-  const sent = !!p && liked.includes(p.id);
   return (
     <>
       <div className="topline">
@@ -90,7 +87,6 @@ const TodayPage = () => {
           </div>
           <p className="footnote mt-1!">
             {remaining <= 0 ? '오늘의 좋아요를 모두 사용했어요.' : ''}
-            {dev && !sent && remaining > 0 ? 'LGTM!은 마음에 드는 프로필에 보내는 좋아요예요.' : ''}
           </p>
           {remaining <= 0 && <PixelCountdown />}
         </>

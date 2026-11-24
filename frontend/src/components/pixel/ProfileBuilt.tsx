@@ -81,17 +81,13 @@ const ProfileBuilt = ({ profile, onContinue }: { profile: Profile; onContinue: (
 
   return (
     <div className="relative">
-      <p className="eyebrow">{built ? '// build complete' : '// compiling me.profile.ts'}</p>
+      <p className="eyebrow">{built ? '// build complete' : '// compiling…'}</p>
       <h2 className="onboard-hero">
         프로필이
         <br />
         완성됐어요.
       </h2>
       <article className="profile">
-        <div className="file-tab">
-          <span className="file-icon">ts</span>
-          me.profile.ts<span className="tab-end">{built ? '✓' : '•'}</span>
-        </div>
         <canvas ref={photo} className="built-photo" width={320} height={240} aria-hidden="true" />
         <RhythmBox rows={lines.slice(0, shown)} stepIn />
         <div className="built-status">

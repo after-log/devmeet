@@ -258,15 +258,6 @@
   .profile {
     @apply overflow-hidden rounded-[9px] border border-border bg-canvas;
   }
-  .file-tab {
-    @apply flex h-10.75 items-center gap-2.25 border-b border-border bg-lift px-4.25 font-mono text-xs leading-[normal] text-fg-2;
-  }
-  .file-icon {
-    @apply text-[10px] font-bold text-point;
-  }
-  .tab-end {
-    @apply ml-auto text-base text-fg-4;
-  }
   .profile-heading {
     @apply flex items-center justify-between gap-3 px-5 pt-5.75 pb-5 max-[480px]:pt-5 max-[360px]:px-4;
   }
@@ -527,9 +518,6 @@
   }
   .prev {
     @apply mt-7 overflow-hidden rounded-lg border border-border bg-surface;
-  }
-  .prev .file-tab {
-    @apply h-9.5;
   }
   .prev .rhythm {
     @apply mb-4;
