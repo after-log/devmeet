@@ -15,6 +15,7 @@ export type ProfileFieldConfig = { label: string } & (
   | { kind: 'text'; maxLength: number }
   | { kind: 'number'; min: number; max: number }
   | { kind: 'select'; options: SelectOption[] }
+  | { kind: 'choice'; options: readonly string[] }
   | { kind: 'location' }
   | { kind: 'photos' }
   | { kind: 'intro' }
@@ -25,7 +26,7 @@ export const profileEditFields: Record<EditableProfileField, ProfileFieldConfig>
   photos: { label: '프로필 사진', kind: 'photos' },
   name: { label: '프로필 이름', kind: 'text', maxLength: 30 },
   age: { label: '나이', kind: 'number', min: 19, max: 80 },
-  gender: { label: '성별', kind: 'select', options: [...GENDERS] },
+  gender: { label: '성별', kind: 'choice', options: GENDERS },
   height: { label: '키', kind: 'number', min: 100, max: 250 },
   location: { label: '사는 지역', kind: 'location' },
   job: { label: '하는 일', kind: 'text', maxLength: 60 },

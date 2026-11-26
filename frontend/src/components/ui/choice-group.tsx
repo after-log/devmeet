@@ -6,14 +6,16 @@ export const ChoiceGroup = ({
   options,
   value,
   onValueChange,
+  disabled,
 }: {
   id: string;
   label: string;
-  options: string[];
+  options: readonly string[];
   value: string;
   onValueChange: (value: string) => void;
+  disabled?: boolean;
 }) => (
-  <fieldset className="mt-5.5 border-0 p-0">
+  <fieldset className="mt-5.5 border-0 p-0" disabled={disabled}>
     <legend className="mb-2.25 p-0 text-[13px] text-fg-3">{label}</legend>
     <div className="grid grid-cols-2 gap-2">
       {options.map((option) => (
