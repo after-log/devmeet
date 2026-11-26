@@ -5,9 +5,10 @@ import PageScene from '@/components/pixel/PageScene';
 
 const WelcomePage = () => {
   const navigate = useNavigate();
-  const { user, startDemo, openSheet } = useApp();
+  const { user, startDemo, openSheet, logout } = useApp();
   if (user?.profile) return <Navigate to="/today" replace />;
-  if (user) return <Navigate to="/onboarding" replace />;
+  // 로그인했지만 프로필이 없는 회원도 이 화면에 머물 수 있어야 온보딩에서 빠져나올 수 있다
+  const signedUp = !!user;
   return (
     <>
       <p className="prompt">
@@ -35,7 +36,18 @@ const WelcomePage = () => {
           <b>03</b>서로 좋아요를 보냈을 때만 대화가 열려요
         </li>
       </ul>
-      <SocialButtons />
+      {signedUp ? (
+        <div className="mt-4 space-y-2">
+          <button type="button" className="btn full" onClick={() => navigate('/onboarding')}>
+            프로필 이어서 만들기
+          </button>
+          <button type="button" className="btn secondary full" onClick={() => void logout()}>
+            로그아웃
+          </button>
+        </div>
+      ) : (
+        <SocialButtons />
+      )}
       <button
         className="skip"
         onClick={() => {
