@@ -63,16 +63,19 @@ V8 마이그레이션이 기존 JSON의 80개 문항과 ID·선택지를 그대�
 
 ## 운영자와 사진 검수
 
-관리자 계정은 일반 회원·OAuth 계정과 분리합니다. 로컬에서는 다음을 한 번 실행합니다:
+관리자 계정은 일반 회원·OAuth 계정과 분리합니다. 로컬에서 원하는 비밀번호를 쓰려면
+`LOCAL_ADMIN_PASSWORD` 환경 변수를 설정하고 `backend`에서 다음을 한 번 실행합니다.
 
 ```sh
-./gradlew setupLocalAdmin
+./gradlew --no-daemon setupLocalAdmin
 ```
 
-`backend/.local/admin.properties`에 관리자 ID와 BCrypt 비밀번호 해시를 생성합니다.
-로그인 정보는 `backend/.local/admin-credentials.txt`에서 확인합니다. 두 파일은 소유자만
-읽을 수 있고 Git·Docker 컨텍스트·배포 JAR에서 제외됩니다. 기존 설정은 덮어쓰지 않습니다.
-백엔드를 재시작한 뒤 `http://localhost:5173/admin`에서 로그인합니다.
+`backend/.local/admin.properties`에 관리자 ID `admin`과 BCrypt 비밀번호 해시를 저장합니다.
+`LOCAL_ADMIN_PASSWORD`를 지정하지 않으면 비밀번호를 자동 생성해
+`backend/.local/admin-credentials.txt`에 저장합니다. 두 파일은 소유자만 읽을 수 있고
+Git·Docker 컨텍스트·배포 JAR에서 제외됩니다. 초기 설정을 마치면
+`LOCAL_ADMIN_PASSWORD`는 해제할 수 있습니다. 백엔드를 재시작한 뒤
+`http://localhost:5173/admin`에서 로그인합니다.
 
 운영에서는 `ADMIN_USERNAME`, `ADMIN_PASSWORD_HASH`를 Secret으로 지정합니다.
 `ADMIN_EMAILS`로 일반 회원에게 관리자 권한을 부여하던 방식은 더 이상 사용하지 않습니다.

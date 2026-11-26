@@ -37,6 +37,7 @@ const adminQueries = createQueryKeys('admin', {
 });
 
 const publicQueries = createQueryKeys('public', {
+  authCapabilities: null,
   providers: null,
   valueCatalog: null,
 });
