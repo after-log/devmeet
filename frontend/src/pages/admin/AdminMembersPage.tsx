@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAdmin } from './hooks/useAdmin';
-import { Panel, StatusTabs, Tabs, Toolbar } from './components/AdminUI';
+import { AdminButton, Panel, StatusTabs, Tabs, Toolbar } from './components/AdminUI';
+import MockMembersDialog from './dialogs/MockMembersDialog';
 import MembersTable from './components/MembersTable';
 import ReportsTable from './components/ReportsTable';
 
@@ -9,6 +10,8 @@ function MemberRecords({ isReports }: { isReports: boolean }) {
   const { members, reports, openMember, openReport } = useAdmin();
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState('ALL');
+  const [showMockMembers, setShowMockMembers] = useState(false);
+  const mockMembersButton = useRef<HTMLButtonElement>(null);
   const options = isReports
     ? [
         { value: 'ALL', label: '전체', count: reports.length },
@@ -44,11 +47,22 @@ function MemberRecords({ isReports }: { isReports: boolean }) {
         }
       >
         <StatusTabs options={options} value={status} onChange={setStatus} />
+        {!isReports && (
+          <AdminButton ref={mockMembersButton} onClick={() => setShowMockMembers(true)}>
+            테스트 계정 등록
+          </AdminButton>
+        )}
       </Toolbar>
       {isReports ? (
         <ReportsTable reports={reports} onDetail={openReport} search={search} status={status} />
       ) : (
         <MembersTable members={members} onDetail={openMember} search={search} status={status} />
+      )}
+      {showMockMembers && (
+        <MockMembersDialog
+          close={() => setShowMockMembers(false)}
+          restoreFocus={() => mockMembersButton.current?.focus()}
+        />
       )}
     </>
   );

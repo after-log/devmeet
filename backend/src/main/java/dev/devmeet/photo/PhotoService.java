@@ -8,15 +8,19 @@ import java.nio.file.*;
 import java.util.UUID;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class PhotoService {
+  private static final org.slf4j.Logger log = LoggerFactory.getLogger(PhotoService.class);
   private final MemberAccess access;
   private final JdbcTemplate jdbc;
   private final Path directory;
@@ -46,8 +50,19 @@ public class PhotoService {
         >= 20) throw new ApiException(HttpStatus.TOO_MANY_REQUESTS, "사진은 하루 최대 20번 등록할 수 있어요.");
     if (file.isEmpty() || file.getSize() > 10 * 1024 * 1024)
       throw new ApiException(HttpStatus.BAD_REQUEST, "10MB 이하의 사진을 선택해 주세요.");
+    try (InputStream input = file.getInputStream()) {
+      return store(owner, input);
+    }
+  }
+
+  @Transactional(rollbackFor = IOException.class)
+  public String storeFixture(UUID owner, InputStream input) throws IOException {
+    return store(owner, input);
+  }
+
+  private String store(UUID owner, InputStream source) throws IOException {
     BufferedImage image;
-    try (ImageInputStream input = ImageIO.createImageInputStream(file.getInputStream())) {
+    try (ImageInputStream input = ImageIO.createImageInputStream(source)) {
       var readers = ImageIO.getImageReaders(input);
       if (!readers.hasNext())
         throw new ApiException(HttpStatus.BAD_REQUEST, "JPEG 또는 PNG 사진을 선택해 주세요.");
@@ -81,14 +96,31 @@ public class PhotoService {
     UUID id = UUID.randomUUID();
     Files.createDirectories(directory);
     Path destination = directory.resolve(id + ".jpg");
-    ImageIO.write(resized, "jpeg", destination.toFile());
+    TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+      @Override
+      public void afterCompletion(int status) {
+        if (status == STATUS_ROLLED_BACK) {
+          try {
+            Files.deleteIfExists(destination);
+          } catch (IOException error) {
+            log.warn("Could not remove rolled-back photo {}", id, error);
+          }
+        }
+      }
+    });
     try {
+      if (!ImageIO.write(resized, "jpeg", destination.toFile()))
+        throw new IOException("JPEG writer is unavailable");
       jdbc.update(
           "INSERT INTO photos(id,owner_id) VALUES(UUID_TO_BIN(?),UUID_TO_BIN(?))",
           id.toString(),
           owner.toString());
-    } catch (RuntimeException error) {
-      Files.deleteIfExists(destination);
+    } catch (IOException | RuntimeException error) {
+      try {
+        Files.deleteIfExists(destination);
+      } catch (IOException cleanupError) {
+        error.addSuppressed(cleanupError);
+      }
       throw error;
     }
     return "/api/photos/" + id;

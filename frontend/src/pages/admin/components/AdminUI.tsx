@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import type { ButtonHTMLAttributes, ComponentPropsWithRef, ReactNode } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import {
   ChevronLeft,
@@ -42,7 +42,7 @@ export function AdminButton({
   className,
   type = 'button',
   ...props
-}: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: 'default' | 'primary' | 'danger' }) {
+}: ComponentPropsWithRef<'button'> & { variant?: 'default' | 'primary' | 'danger' }) {
   return (
     <button
       type={type}

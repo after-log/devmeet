@@ -4,6 +4,7 @@ WORKDIR /workspace/backend
 COPY backend/gradle gradle
 COPY backend/gradlew backend/build.gradle backend/settings.gradle ./
 COPY backend/src src
+COPY backend/fixtures fixtures
 RUN chmod +x gradlew && ./gradlew --no-daemon bootJar
 
 FROM eclipse-temurin:21-jre-alpine
