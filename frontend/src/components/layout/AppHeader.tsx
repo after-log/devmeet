@@ -1,18 +1,11 @@
 import { Link, matchPath, useLocation, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import { ArrowLeft, Ellipsis } from 'lucide-react';
+import { ArrowLeft, Ellipsis, Moon, Sun } from 'lucide-react';
 import { findPerson, useApp } from '@/stores/app';
 import { Avatar } from '@/components/PersonCard';
 import { isEditableProfileField, profileEditFields } from '@/pages/profile-edit/fields';
-import { SUB_LABEL, applySubMode, getSubMode, nextSubMode } from '@/lib/sub-color';
+import type { Theme } from '../../lib/theme';
 
-const AppHeader = () => {
-  const [subMode, setSubMode] = useState(getSubMode);
-  const cycleSub = () => {
-    const next = nextSubMode(subMode);
-    applySubMode(next);
-    setSubMode(next);
-  };
+const AppHeader = ({ theme, onToggleTheme }: { theme: Theme; onToggleTheme: () => void }) => {
   const { pathname, state } = useLocation();
   const navigate = useNavigate();
   const { user, step, setStep, openSheet } = useApp();
@@ -105,13 +98,11 @@ const AppHeader = () => {
         </>
       )}
       <button
-        type="button"
         className="icon grid shrink-0 place-items-center"
-        aria-label={`서브색 바꾸기 · 지금 ${SUB_LABEL[subMode]}`}
-        title={`서브색 · ${SUB_LABEL[subMode]}`}
-        onClick={cycleSub}
+        aria-label={theme === 'light' ? '다크 모드로 전환' : '라이트 모드로 전환'}
+        onClick={onToggleTheme}
       >
-        <i className="block size-3 bg-sub" aria-hidden="true" />
+        {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
       </button>
     </header>
   );

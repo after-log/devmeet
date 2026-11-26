@@ -1,11 +1,12 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouteTyping } from '@/lib/typewriter';
 import { useApp } from '../../stores/app';
 import AppHeader from '@/components/layout/AppHeader';
 import BottomNav from '@/components/layout/BottomNav';
 import AppSheets from '@/components/AppSheets';
 import { Toaster } from '@/components/ui/sonner';
+import { applyTheme, getTheme } from '../../lib/theme';
 import { useMemberSession } from '@/hooks/queries/useMemberSession';
 import { useMemberEvents } from '@/hooks/queries/useMemberEvents';
 import { usePwaInstall } from '@/hooks/usePwaInstall';
@@ -29,6 +30,12 @@ const AppLayout = () => {
   useRouteTyping(typingKey, booted, getMain);
   const isChatDetail = /^\/chat\/[^/]+\/?$/.test(pathname);
   const isValuesPage = pathname === '/me/values';
+  const [theme, setTheme] = useState(getTheme);
+  const toggleTheme = () => {
+    const next = theme === 'light' ? 'dark' : 'light';
+    applyTheme(next);
+    setTheme(next);
+  };
   useMemberEvents();
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -42,7 +49,7 @@ const AppLayout = () => {
         <div
           className={`min-h-dvh border-x border-line bg-canvas max-[480px]:border-0 min-[650px]:min-h-[calc(100dvh-35px)] min-[650px]:rounded-t-xl min-[650px]:border min-[650px]:border-b-0 min-[650px]:border-line ${isValuesPage ? 'min-[650px]:overflow-clip' : 'min-[650px]:overflow-hidden'} ${isChatDetail ? 'chat-detail-layout' : 'pb-23.5'}`}
         >
-          <AppHeader />
+          <AppHeader theme={theme} onToggleTheme={toggleTheme} />
           {(pathname === '/' || TABS.includes(pathname)) && (
             <PwaInstallBanner state={installState} />
           )}
@@ -96,7 +103,7 @@ const AppLayout = () => {
       </div>
       <AppSheets />
       <PwaUpdate />
-      <Toaster theme="dark" />
+      <Toaster theme={theme} />
     </>
   );
 };

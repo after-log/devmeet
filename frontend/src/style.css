@@ -31,33 +31,31 @@
 }
 
 @theme {
-  /* 색 체계: Composio 다크 기준 회색 단계 + 메인색 하나 + 바꿔 쓸 수 있는 서브색 */
-  --color-page: #0f0f0f;
-  --color-canvas: #0f0f0f;
-  --color-surface: #181818;
-  --color-lift: #222222;
-  --color-border: #333333;
-  --color-nav: #0f0f0ff2;
-  --color-line: #222222;
-  --color-line-strong: #333333;
-  --color-hover-line: #4a4a4a;
-  --color-fg: #ffffff;
-  --color-fg-2: #a8a8a8;
-  --color-fg-3: #888888;
-  --color-fg-4: #6e6e6e;
-  /* 메인색: 시안 01 Blurple (확정 전 기본값) */
-  --color-point: #5865f2;
-  --color-on-accent: #ffffff;
-  --color-selected: #1b1e3d;
-  --color-mine: #5865f2;
-  --color-mine-fg: #ffffff;
-  --color-tag-point: #3a43a8;
-  --color-tag-blue: #3a43a8;
-  /* 서브색: 메인보다 덜 튀게. 상단 버튼으로 회색·보색·어울리는 색·랜덤을 고른다 */
-  --color-sub: var(--sub, #b4b4b4);
-  --color-tag-sub: var(--sub-line, #3a3a3a);
-  --color-danger: #ff4d4d;
-  --color-backdrop: #000000b3;
+  --color-canvas: #1e1f22;
+  --color-surface: #242529;
+  --color-lift: #2b2d30;
+  --color-border: #393b40;
+  /* 포인트 컬러: 메인 네온 그린, 서브 코랄 오렌지 */
+  --color-point: #39ff14;
+  --color-sub: #e8554a;
+  --color-danger: #e8554a;
+  --color-page: #18191b;
+  --color-nav: #242529f5;
+  --color-line: #363940;
+  --color-line-strong: #43464e;
+  --color-hover-line: #626876;
+  --color-fg: #dfe1e5;
+  --color-fg-2: #b9bdc7;
+  --color-fg-3: #969eab;
+  --color-fg-4: #7f8793;
+  --color-on-accent: #151922;
+  --color-selected: #1c2e1a;
+  --color-mine: #1e3a1b;
+  --color-mine-fg: #c4ffb8;
+  --color-tag-sub: #5a3330;
+  --color-tag-point: #2f6b25;
+  --color-tag-blue: #2f6b25;
+  --color-backdrop: #0d0f14bb;
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
@@ -105,6 +103,34 @@
   :root {
     color-scheme: dark;
     scrollbar-gutter: stable;
+  }
+  :root[data-theme='light'] {
+    color-scheme: light;
+    --color-canvas: #ffffff;
+    --color-surface: #f7f8fa;
+    --color-lift: #ebecf0;
+    --color-border: #dfe1e5;
+    /* 흰 배경에서도 읽히도록 진한 초록 */
+    --color-point: #178a05;
+    --color-sub: #d23f34;
+    --color-danger: #d23f34;
+    --color-page: #f2f3f5;
+    --color-nav: #fffffff0;
+    --color-line: #e6e7ea;
+    --color-line-strong: #c9ccd6;
+    --color-hover-line: #a8acb8;
+    --color-fg: #1e1f22;
+    --color-fg-2: #3a3d44;
+    --color-fg-3: #5f636e;
+    --color-fg-4: #868a95;
+    --color-on-accent: #ffffff;
+    --color-selected: #ecfbe8;
+    --color-mine: #d9f7d0;
+    --color-mine-fg: #145c08;
+    --color-tag-sub: #f2c0bb;
+    --color-tag-point: #a6eb94;
+    --color-tag-blue: #a6eb94;
+    --color-backdrop: #1e1f2266;
   }
   body {
     @apply m-0 bg-page font-sans text-[14px] leading-[1.6] text-fg;
@@ -198,7 +224,7 @@
   .values-save {
     @apply sticky bottom-0 z-20 -mx-6 border-t border-line bg-canvas px-6 py-4 max-[480px]:-mx-5 max-[480px]:px-5 max-[360px]:-mx-3.75 max-[360px]:px-3.75;
   }
-  /* 서비스 이름 '찌릿': Mona10 픽셀 글꼴 + 메인색 픽셀 불꽃 두 칸 */
+  /* 서비스 이름 '찌릿': Mona10 픽셀 글꼴 + 포인트색 픽셀 불꽃 두 칸 */
   .logo {
     @apply flex items-center gap-1 font-display text-[22px] leading-none font-bold text-fg no-underline;
   }
