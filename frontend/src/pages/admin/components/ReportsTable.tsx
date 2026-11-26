@@ -42,7 +42,7 @@ export default function ReportsTable({
         header: '관리',
         cell: ({ row }) => (
           <AdminButton
-            className="min-h-0 rounded-[5px] border-[#e5e5e5] px-2.25 py-1.25 text-[12px] text-neutral-600"
+            className="min-h-0 rounded-md border-[#e5e5e5] px-2.25 py-1.25 text-[12px] text-neutral-600"
             onClick={() => onDetail(row.original)}
           >
             신고 확인

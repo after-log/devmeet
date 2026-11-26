@@ -47,7 +47,7 @@ export function AdminButton({
     <button
       type={type}
       className={cn(
-        'inline-flex min-h-11 items-center justify-center gap-2 rounded-[7px] border px-3.75 py-2.5 text-sm font-medium whitespace-nowrap',
+        'inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border px-3.75 py-2.5 text-sm font-medium whitespace-nowrap',
         variant === 'primary'
           ? 'border-[#262626] bg-[#262626] text-white hover:bg-[#404040]'
           : variant === 'danger'
@@ -154,7 +154,7 @@ export function Modal({
     >
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-60 bg-[#17171770] backdrop-blur-sm" />
-        <Dialog.Content className="fixed top-1/2 left-1/2 z-61 max-h-[90dvh] w-[calc(100%-36px)] max-w-180 -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-[15px] bg-white p-6.75 shadow-[0_24px_100px_#17171730] max-sm:max-h-[92dvh] max-sm:p-5.25">
+        <Dialog.Content className="fixed top-1/2 left-1/2 z-61 max-h-[90dvh] w-[calc(100%-36px)] max-w-180 -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl bg-white p-6.75 shadow-[0_24px_100px_#17171730] max-sm:max-h-[92dvh] max-sm:p-5.25">
           <AdminSurface>
             <header className="mb-5.5 flex items-start justify-between gap-3.75 border-b border-[#f5f5f5] pb-5">
               <div>
@@ -274,7 +274,7 @@ export function Tabs({
           {option.count !== undefined && (
             <span
               className={cn(
-                'ml-1.75 inline-block rounded-[5px] px-1.5 py-px text-[12px]',
+                'ml-1.75 inline-block rounded-md px-1.5 py-px text-[12px]',
                 value === option.value
                   ? 'bg-[#e5e5e5] text-[#404040]'
                   : 'bg-[#f5f5f5] text-neutral-600',
@@ -393,7 +393,7 @@ export function Pager({
     >
       <div className="flex items-center gap-1.25">
         <button
-          className="grid size-9 place-items-center rounded-[5px] border border-transparent bg-transparent"
+          className="grid size-9 place-items-center rounded-md border border-transparent bg-transparent"
           aria-label="이전 페이지"
           disabled={!page}
           onClick={() => change(page - 1)}
@@ -406,7 +406,7 @@ export function Pager({
             aria-label={`${i + 1}페이지`}
             aria-current={page === i ? 'page' : undefined}
             className={cn(
-              'grid size-9 place-items-center rounded-[5px] border',
+              'grid size-9 place-items-center rounded-md border',
               page === i
                 ? 'border-neutral-800 bg-neutral-800 text-white'
                 : 'border-transparent bg-transparent',
@@ -417,7 +417,7 @@ export function Pager({
           </button>
         ))}
         <button
-          className="grid size-9 place-items-center rounded-[5px] border border-transparent bg-transparent"
+          className="grid size-9 place-items-center rounded-md border border-transparent bg-transparent"
           aria-label="다음 페이지"
           disabled={page + 1 >= pages}
           onClick={() => change(page + 1)}

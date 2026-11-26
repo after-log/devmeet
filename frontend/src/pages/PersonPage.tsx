@@ -33,7 +33,7 @@ const PersonPage = () => {
         <PhotoGallery photos={p.photos} photo={p.photo} name={p.name} />
         <div className="profile-heading">
           <div>
-            <p className="section-comment mb-1!">// {p.location}</p>
+            <p className="section-comment mb-1!">{p.location}</p>
             <div className="profile-name">
               {p.name}
               <span>{p.age}</span>
@@ -52,7 +52,7 @@ const PersonPage = () => {
         </div>
         <RhythmBox rows={personRows(p)} />
         <div className="profile-body">
-          <p className="section-comment">// about me</p>
+          <p className="section-comment">한마디</p>
           <p className="bio whitespace-pre-wrap">{p.intro}</p>
           <div className="reason">
             <div className="reason-top">
@@ -60,7 +60,7 @@ const PersonPage = () => {
             </div>
             <p>{reasonFor(p)}</p>
           </div>
-          <p className="section-comment">// rhythm</p>
+          <p className="section-comment">생활 리듬</p>
           {publicValueAnswers(p.valueAnswers ?? {}, questions).map((answer) => (
             <div className="mb-5" key={answer.id}>
               <p className="mb-1 text-xs text-fg-3">{answer.text}</p>

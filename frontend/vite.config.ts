@@ -14,9 +14,9 @@ export default defineConfig({
       includeManifestIcons: false, // PNG icons are already covered by globPatterns below.
       manifest: {
         id: '/',
-        name: 'devmeet — 코드 밖의 연결',
-        short_name: 'devmeet',
-        description: '취향과 일상의 결이 맞는 사람을 만나는 devmeet',
+        name: '찌릿',
+        short_name: '찌릿',
+        description: '취향과 일상의 결이 맞는 사람을 만나는 찌릿',
         lang: 'ko',
         start_url: '/',
         scope: '/',

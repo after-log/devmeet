@@ -8,7 +8,6 @@ const AuthPage = () => {
   if (user) return <Navigate to={user.profile ? '/today' : '/onboarding'} replace />;
   return (
     <>
-      <p className="eyebrow">$ devmeet login</p>
       <h2 className="onboard-hero">
         오늘의 인연이
         <br />

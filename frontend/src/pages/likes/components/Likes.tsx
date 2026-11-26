@@ -97,10 +97,7 @@ const Likes = ({ entries, profiles, matchedIds, onOpen, onDiscover }: LikesProps
             </button>
           )}
         </div>
-      ) : (
-        <p className="footnote mt-6">// 마음에 드는 인연을 눌러 더 알아보세요</p>
-      )}
-      <p className="footnote">mock 데이터로 구성된 미리보기예요.</p>
+      ) : null}
     </>
   );
 };

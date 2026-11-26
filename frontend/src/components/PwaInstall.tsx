@@ -35,7 +35,7 @@ export const PwaInstallButton = ({ state }: { state: InstallState }) => {
         className="flex min-h-10 shrink-0 items-center gap-1.5 rounded-md px-2 text-xs whitespace-nowrap text-point hover:bg-selected disabled:opacity-50"
         onClick={() => void install()}
         disabled={busy}
-        aria-label="devmeet 앱 설치"
+        aria-label="찌릿 앱 설치"
       >
         <Download size={15} aria-hidden="true" />앱 설치
       </button>
@@ -44,11 +44,11 @@ export const PwaInstallButton = ({ state }: { state: InstallState }) => {
           <img src="/icons/icon-192.png" alt="" className="mb-4 size-14 rounded-xl" />
           <DialogTitle>홈 화면에서 바로 만나요</DialogTitle>
           <DialogDescription className="mt-3">
-            devmeet을 앱으로 추가하면 홈 화면에서 바로 열 수 있어요.
+            찌릿을 앱으로 추가하면 홈 화면에서 바로 열 수 있어요.
           </DialogDescription>
           {state.ios ? (
             <ol className="my-5 list-decimal space-y-3 pl-5 text-sm text-fg-2">
-              <li>Safari에서 devmeet을 열어 주세요.</li>
+              <li>Safari에서 찌릿을 열어 주세요.</li>
               <li>
                 <Share className="inline size-4" aria-hidden="true" /> 공유 메뉴를 열어 주세요.
               </li>
@@ -64,7 +64,7 @@ export const PwaInstallButton = ({ state }: { state: InstallState }) => {
             </p>
           )}
           {error && (
-            <p role="alert" className="text-xs text-sub">
+            <p role="alert" className="text-xs text-danger">
               {error}
             </p>
           )}
@@ -86,7 +86,7 @@ export const PwaInstallBanner = ({ state }: { state: InstallState }) => {
     >
       <img src="/icons/icon-192.png" alt="" className="size-10 shrink-0 rounded-lg" />
       <div className="min-w-0 flex-1">
-        <p className="m-0 text-xs font-semibold">devmeet을 홈 화면에 추가해 보세요</p>
+        <p className="m-0 text-xs font-semibold">찌릿을 홈 화면에 추가해 보세요</p>
       </div>
       <PwaInstallButton state={state} />
       <button

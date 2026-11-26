@@ -111,10 +111,6 @@ const ChatList = ({
           )}
         </div>
       )}
-      {visibleRooms.length > 0 && (
-        <p className="footnote mt-6">// 좋은 대화의 시작은, 작은 관심 하나</p>
-      )}
-      <p className="footnote">mock 데이터로 구성된 미리보기예요.</p>
     </>
   );
 };

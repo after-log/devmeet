@@ -14,7 +14,6 @@ const MatchPage = () => {
   const dev = (user?.profile?.role ?? 'developer') === 'developer';
   return (
     <div className="match">
-      <p className="eyebrow">// connection established</p>
       <PixelMerge me={me.photo} you={p.photo} onDone={() => setMerged(true)} />
       <div className={merged ? 'pixel-stepin' : 'invisible'} aria-live="polite">
         <div className="gradient-title mt-2!">{dev ? 'git merge --no-ff' : 'match = true;'}</div>
@@ -26,7 +25,7 @@ const MatchPage = () => {
         {dev && <p className="merged">Merged.</p>}
         <p className="onboard-lead">{p.name}님과 첫 인사를 건네볼까요?</p>
         <div className="panel text-left">
-          <p className="section-comment">// shared rhythm</p>
+          <p className="section-comment">함께 맞는 점</p>
           <p className="m-0!">{reasonFor(p)}</p>
         </div>
       </div>

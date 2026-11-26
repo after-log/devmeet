@@ -12,7 +12,7 @@ function firstMessage(error: unknown): string | undefined {
 export function FormErrors<T extends FieldValues>({
   errors,
   serverError,
-  className = 'mt-3 text-sm text-sub',
+  className = 'mt-3 text-sm text-danger',
 }: {
   errors: FieldErrors<T>;
   serverError?: string;

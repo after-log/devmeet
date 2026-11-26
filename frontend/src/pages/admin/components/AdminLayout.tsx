@@ -73,7 +73,7 @@ export default function AdminLayout() {
       <AdminDialogs />
       {notice && (
         <div
-          className="fixed bottom-7 left-[calc(50%+100px)] z-90 flex max-w-[calc(100%-30px)] -translate-x-1/2 items-center gap-2.5 rounded-[9px] border border-[#525252] bg-[#262626] px-5 py-3.25 text-sm text-white shadow-lg max-sm:left-1/2 max-sm:w-max max-sm:text-[13px]"
+          className="fixed bottom-7 left-[calc(50%+100px)] z-90 flex max-w-[calc(100%-30px)] -translate-x-1/2 items-center gap-2.5 rounded-xl border border-[#525252] bg-[#262626] px-5 py-3.25 text-sm text-white shadow-lg max-sm:left-1/2 max-sm:w-max max-sm:text-[13px]"
           role="status"
         >
           <Check size={17} className="shrink-0 text-emerald-300" />

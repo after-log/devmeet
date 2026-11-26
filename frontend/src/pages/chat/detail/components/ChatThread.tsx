@@ -114,7 +114,7 @@ const ChatThread = ({
         </p>
         <article className="profile mb-6 bg-surface">
           <div className="p-4">
-            <p className="section-comment">// 대화의 시작이 될 상대의 관심사</p>
+            <p className="section-comment">상대의 관심사</p>
             <div className="flex flex-wrap gap-2">
               {room.interests.map((interest) => (
                 <span

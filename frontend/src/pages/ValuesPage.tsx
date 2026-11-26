@@ -38,7 +38,7 @@ const ValuesPage = () => {
   return (
     <>
       {catalog.error && (
-        <div role="alert" className="mb-4 rounded-lg border border-sub p-3 text-xs text-sub">
+        <div role="alert" className="mb-4 rounded-lg border border-danger p-3 text-xs text-danger">
           {catalog.error}
           <button className="ml-2 underline" onClick={() => void catalog.refresh()}>
             다시 불러오기
@@ -280,7 +280,7 @@ const ValuesEditor = ({ sections }: { sections: ValueSection[] }) => {
       <div className="values-save">
         <FormErrors errors={form.formState.errors} />
         {error && (
-          <p role="alert" className="mb-2 text-xs text-sub">
+          <p role="alert" className="mb-2 text-xs text-danger">
             {error}
           </p>
         )}

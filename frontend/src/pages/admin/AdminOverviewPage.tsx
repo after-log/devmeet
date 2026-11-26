@@ -39,7 +39,7 @@ export default function AdminOverviewPage() {
           </p>
         </div>
         <Link
-          className="ml-auto inline-flex min-h-10.25 items-center justify-center gap-2 rounded-[7px] border border-[#262626] bg-[#262626] px-3.75 py-2.5 text-sm font-medium whitespace-nowrap text-white hover:bg-[#404040] max-[900px]:ml-15"
+          className="ml-auto inline-flex min-h-10.25 items-center justify-center gap-2 rounded-lg border border-[#262626] bg-[#262626] px-3.75 py-2.5 text-sm font-medium whitespace-nowrap text-white hover:bg-[#404040] max-[900px]:ml-15"
           to="/admin/profiles"
         >
           프로필 검수하기 <ArrowRight size={16} />
@@ -66,7 +66,7 @@ export default function AdminOverviewPage() {
               onClick={() => openReview(m)}
             >
               <AdminPhoto
-                className="h-11.25 w-10.5 rounded-[7px] object-cover"
+                className="h-11.25 w-10.5 rounded-lg object-cover"
                 src={m.photos[0]}
                 alt=""
               />
@@ -101,7 +101,7 @@ export default function AdminOverviewPage() {
               key={r.id}
               onClick={() => openReport(r)}
             >
-              <span className="grid size-8.75 place-items-center rounded-[9px] bg-[#f5f5f5] text-neutral-600">
+              <span className="grid size-8.75 place-items-center rounded-xl bg-[#f5f5f5] text-neutral-600">
                 <Flag size={17} />
               </span>
               <div className="flex-1">
@@ -122,7 +122,7 @@ export default function AdminOverviewPage() {
       <div className="mt-7 text-center text-[12px] text-neutral-600">
         작은 확인이 더 안전한 만남을 만듭니다.{' '}
         <span className="block font-mono text-[12px] leading-loose tracking-[0.7px] text-neutral-500">
-          devmeet administration
+          찌릿 관리
         </span>
       </div>
     </>

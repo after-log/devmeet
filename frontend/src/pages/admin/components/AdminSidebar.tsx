@@ -29,7 +29,7 @@ export default function AdminSidebar() {
         className="flex items-center px-3.75 font-mono text-[28px] font-bold tracking-[-1.9px] text-[#262626] max-[900px]:px-2.5 max-[900px]:text-2xl max-sm:text-[22px]"
         to="/admin"
       >
-        devmeet<span className="text-[#262626]">.</span>
+        찌릿
         <small className="mt-1.75 ml-3 rounded bg-[#f5f5f5] px-1.5 py-0.75 font-mono text-[12px] font-semibold tracking-[1.2px] text-neutral-600 max-[900px]:ml-1.75 max-[900px]:text-[12px]">
           ADMIN
         </small>
@@ -52,7 +52,7 @@ export default function AdminSidebar() {
             <Icon size={19} className="max-sm:size-3.5" />
             <span>{label}</span>
             {path === '/profiles' && pending > 0 && (
-              <b className="ml-auto min-w-5.75 rounded-[5px] bg-amber-100 text-center text-[12px] text-amber-800 max-sm:ml-0 max-sm:min-w-3.75 max-sm:text-[12px]">
+              <b className="ml-auto min-w-5.75 rounded-md bg-amber-100 text-center text-[12px] text-amber-800 max-sm:ml-0 max-sm:min-w-3.75 max-sm:text-[12px]">
                 {pending}
               </b>
             )}

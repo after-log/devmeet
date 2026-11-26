@@ -91,10 +91,10 @@ const AppHeader = ({ theme, onToggleTheme }: { theme: Theme; onToggleTheme: () =
         </>
       ) : (
         <>
-          <Link className="logo" to="/">
-            devmeet<span>_</span>
+          <Link className="logo" to="/" aria-label="찌릿 홈">
+            찌릿
+            <span aria-hidden="true" />
           </Link>
-          <span className="demo max-[360px]:hidden">preview</span>
         </>
       )}
       <button

@@ -171,7 +171,7 @@ export default function WorkEmailVerification() {
         </p>
       )}
       {error && (
-        <p className="text-sm text-sub" role="alert">
+        <p className="text-sm text-danger" role="alert">
           {error}
         </p>
       )}

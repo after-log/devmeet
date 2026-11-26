@@ -55,7 +55,7 @@ const AppLayout = () => {
           )}
           {demo && (
             <div className="demo-banner">
-              <span>// 둘러보기 · 가상 인물 · 실제 전송 안 됨</span>
+              <span>둘러보기 중 · 실제로 보내지지 않아요</span>
               <button
                 onClick={() => {
                   exitDemo();
@@ -75,7 +75,10 @@ const AppLayout = () => {
             }
           >
             {error && !demo && (
-              <div role="alert" className="mb-5 rounded-lg border border-sub p-3 text-xs text-sub">
+              <div
+                role="alert"
+                className="mb-5 rounded-lg border border-danger p-3 text-xs text-danger"
+              >
                 {error}
                 <button className="ml-3 underline" onClick={() => void reconnect()}>
                   다시 연결

@@ -62,7 +62,7 @@ export default function WorkEmailCodeForm({
           maxLength={6}
         />
         {expired && (
-          <p className="text-xs text-sub">인증번호가 만료됐어요. 새 번호를 받아 주세요.</p>
+          <p className="text-xs text-danger">인증번호가 만료됐어요. 새 번호를 받아 주세요.</p>
         )}
         <button className="btn full" disabled={busy || expired}>
           이메일 확인하기

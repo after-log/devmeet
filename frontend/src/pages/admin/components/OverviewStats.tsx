@@ -48,10 +48,7 @@ export default function OverviewStats() {
           <div className="flex items-center justify-between text-[13px] text-neutral-600 max-sm:text-[12px]">
             <span>{label}</span>
             <span
-              className={cn(
-                'grid size-8.25 place-items-center rounded-[9px] max-sm:size-6.75',
-                tone,
-              )}
+              className={cn('grid size-8.25 place-items-center rounded-xl max-sm:size-6.75', tone)}
             >
               <Icon size={18} />
             </span>

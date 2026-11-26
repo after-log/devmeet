@@ -376,7 +376,7 @@ const OnboardingPage = () => {
       {step === 3 && (
         <>
           <div className="panel photo-required">
-            <p className="section-comment">// profile.photo · required</p>
+            <p className="section-comment">사진 · 필수</p>
             <h3>프로필 사진 · {photos.length} / 6장</h3>
             <ProfilePhotoFields
               photos={photos}
