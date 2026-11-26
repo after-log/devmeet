@@ -24,6 +24,7 @@ const memberQueries = createQueryKeys('member', {
 
 const adminQueries = createQueryKeys('admin', {
   session: null,
+  mockMembers: null,
   account: (username: string) => ({
     queryKey: [username],
     contextQueries: {

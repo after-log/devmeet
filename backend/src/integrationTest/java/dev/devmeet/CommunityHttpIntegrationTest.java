@@ -166,7 +166,7 @@ class CommunityHttpIntegrationTest {
   }
 
   @Test
-  void administratorSeedsMockMembersAndSkipsExistingAccounts() throws Exception {
+  void administratorManagesMockMembersWithoutChangingOrdinaryAccounts() throws Exception {
     var credentials = Map.of("password", "fixture-sign-in-password");
     assertThat(new Actor().call("POST", "/admin/mock-members", credentials).statusCode())
         .isEqualTo(401);
@@ -195,6 +195,46 @@ class CommunityHttpIntegrationTest {
         HttpResponse.BodyHandlers.ofByteArray());
     assertThat(response.statusCode()).isEqualTo(200);
     assertThat(ImageIO.read(new ByteArrayInputStream(response.body())).getWidth()).isEqualTo(480);
+
+    String mockId = user.get("id").asText();
+    var ordinary = register("mock-member-99@devmeet.test");
+    String match = UUID.randomUUID().toString();
+    var pair = new ArrayList<>(List.of(mockId, ordinary.id));
+    pair.sort(Comparator.naturalOrder());
+    jdbc.update(
+        "INSERT INTO matches(id,first_id,second_id) VALUES(UUID_TO_BIN(?),UUID_TO_BIN(?),UUID_TO_BIN(?))",
+        match, pair.getFirst(), pair.getLast());
+    jdbc.update(
+        "INSERT INTO messages(id,match_id,sender_id,body) VALUES(UUID_TO_BIN(UUID()),UUID_TO_BIN(?),UUID_TO_BIN(?),'fixture')",
+        match, ordinary.id);
+
+    var disabled = admin.ok("PUT", "/admin/mock-members/enabled", Map.of("enabled", false));
+    assertThat(disabled.get("enabled").asBoolean()).isFalse();
+    assertThat(disabled.get("count").asInt()).isEqualTo(30);
+    assertThat(admin.call("POST", "/admin/mock-members", credentials).statusCode()).isEqualTo(409);
+    assertThat(member.call("GET", "/me", null).statusCode()).isEqualTo(403);
+    assertThat(ordinary.call("GET", "/me", null).statusCode()).isEqualTo(200);
+    assertThat(jdbc.queryForObject(
+        "SELECT COUNT(*) FROM messages WHERE match_id=UUID_TO_BIN(?)", Integer.class, match)).isEqualTo(1);
+    var enabled = admin.ok("PUT", "/admin/mock-members/enabled", Map.of("enabled", true));
+    assertThat(enabled.get("enabled").asBoolean()).isTrue();
+    member.ok("POST", "/login",
+        Map.of("email", "mock-member-01@devmeet.test", "password", "fixture-sign-in-password"));
+
+    var purged = admin.ok("DELETE", "/admin/mock-members", null);
+    assertThat(purged.get("deleted").asInt()).isEqualTo(30);
+    var status = admin.ok("GET", "/admin/mock-members", null);
+    assertThat(status.get("enabled").asBoolean()).isFalse();
+    assertThat(status.get("count").asInt()).isZero();
+    assertThat(admin.call("POST", "/admin/mock-members", credentials).statusCode()).isEqualTo(409);
+    assertThat(ordinary.call("GET", "/me", null).statusCode()).isEqualTo(200);
+    assertThat(jdbc.queryForObject(
+        "SELECT COUNT(*) FROM messages WHERE match_id=UUID_TO_BIN(?)", Integer.class, match)).isZero();
+    assertThat(jdbc.queryForObject(
+        "SELECT COUNT(*) FROM profiles WHERE account_id=UUID_TO_BIN(?)", Integer.class, mockId)).isZero();
+    assertThat(java.nio.file.Files.exists(
+        java.nio.file.Path.of("./build/integration-photos", photo.substring(photo.lastIndexOf('/') + 1) + ".jpg")))
+        .isFalse();
   }
 
   @Test

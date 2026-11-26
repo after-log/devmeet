@@ -67,8 +67,9 @@ app:
   require-github: ${REQUIRE_GITHUB:false}
   photo-directory: ${PHOTO_DIRECTORY:./data/photos}
   mock-members:
+    auto-seed: ${MOCK_MEMBERS_AUTO_SEED:false}
     enabled: ${LOCAL_MOCK_MEMBERS_ENABLED:false}
-    password: ${LOCAL_MOCK_MEMBERS_PASSWORD:}
+    password: ${MOCK_MEMBERS_PASSWORD:${LOCAL_MOCK_MEMBERS_PASSWORD:}}
   oauth:
     github:
       client-id: ${GITHUB_CLIENT_ID:}

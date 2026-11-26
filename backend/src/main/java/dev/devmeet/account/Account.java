@@ -25,6 +25,9 @@ public class Account {
   private boolean suspended;
 
   @Column(nullable = false)
+  private boolean mockDisabled;
+
+  @Column(nullable = false)
   private boolean emailVerified;
 
   protected Account() {}
@@ -49,7 +52,7 @@ public class Account {
   }
 
   public boolean isSuspended() {
-    return suspended;
+    return suspended || mockDisabled;
   }
 
   public boolean isEmailVerified() {

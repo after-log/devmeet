@@ -99,13 +99,7 @@ public class PhotoService {
     TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
       @Override
       public void afterCompletion(int status) {
-        if (status == STATUS_ROLLED_BACK) {
-          try {
-            Files.deleteIfExists(destination);
-          } catch (IOException error) {
-            log.warn("Could not remove rolled-back photo {}", id, error);
-          }
-        }
+        if (status == STATUS_ROLLED_BACK) deleteStoredPhoto(id);
       }
     });
     try {
@@ -124,6 +118,23 @@ public class PhotoService {
       throw error;
     }
     return "/api/photos/" + id;
+  }
+
+  public void deleteAfterCommit(java.util.List<UUID> ids) {
+    TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+      @Override
+      public void afterCommit() {
+        ids.forEach(PhotoService.this::deleteStoredPhoto);
+      }
+    });
+  }
+
+  private void deleteStoredPhoto(UUID id) {
+    try {
+      Files.deleteIfExists(directory.resolve(id + ".jpg"));
+    } catch (IOException error) {
+      log.warn("Could not remove photo {}", id, error);
+    }
   }
 
   public void validateOwner(UUID owner, String photo) {
