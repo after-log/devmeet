@@ -31,7 +31,7 @@ export default function AdminLoginPage() {
     <AdminSurface className="grid min-h-dvh grid-cols-2 bg-white max-sm:block">
       <div className="flex min-h-dvh flex-col justify-between bg-[#e5e5e5] px-16.25 py-12.5 max-[900px]:p-10 max-sm:min-h-0 max-sm:px-7 max-sm:py-6.25">
         <Link to="/" className="font-mono text-[33px] font-bold tracking-[-2px] text-[#262626]">
-          devmeet<span className="text-[#262626]">.</span>
+          찌릿
         </Link>
         <div className="max-sm:hidden">
           <span className="text-[12px] font-semibold tracking-[1.7px] text-neutral-600">
@@ -45,7 +45,7 @@ export default function AdminLoginPage() {
           <p className="mt-4.25! text-[14px] leading-[1.9] text-neutral-600">
             안전한 프로필과 신뢰할 수 있는 커뮤니티.
             <br />
-            devmeet 운영을 위한 관리자 워크스페이스.
+            찌릿 운영을 위한 관리자 워크스페이스.
           </p>
           <div className="mt-15 flex items-center gap-5.75 text-neutral-600">
             <ShieldCheck size={68} strokeWidth={1} />
@@ -57,7 +57,7 @@ export default function AdminLoginPage() {
           </div>
         </div>
         <small className="text-[12px] text-neutral-600 max-sm:hidden">
-          © 2026 devmeet. All rights reserved.
+          © 2026 찌릿. All rights reserved.
         </small>
       </div>
       <main className="grid place-items-center p-11.25 max-sm:px-7 max-sm:py-8.75">

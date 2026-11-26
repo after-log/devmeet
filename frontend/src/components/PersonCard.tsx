@@ -95,7 +95,7 @@ const PersonCard = ({
     </div>
     <RhythmBox rows={personRows(person)} />
     <div className="profile-body">
-      <p className="section-comment">// about me</p>
+      <p className="section-comment">한마디</p>
       <p className="bio line-clamp-3">{person.intro}</p>
       <div className="reason">
         <div className="reason-top">
@@ -136,18 +136,15 @@ export const PersonRow = ({
 );
 
 export const Empty = ({
-  mark,
   title,
   children,
   action,
 }: {
-  mark: string;
   title: string;
   children: ReactNode;
   action?: ReactNode;
 }) => (
   <div className="empty">
-    <div className="big">{mark}</div>
     <h3>{title}</h3>
     <p>{children}</p>
     {action}

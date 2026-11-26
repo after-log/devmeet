@@ -49,7 +49,7 @@ export default function MatchingPresetDialog({
           onPointerDownOutside={(event) => {
             if (busy) event.preventDefault();
           }}
-          className="fixed top-1/2 left-1/2 z-71 max-h-[90dvh] w-[calc(100%-36px)] max-w-120 -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-[15px] bg-white p-6 shadow-[0_24px_100px_#17171730]"
+          className="fixed top-1/2 left-1/2 z-71 max-h-[90dvh] w-[calc(100%-36px)] max-w-120 -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl bg-white p-6 shadow-[0_24px_100px_#17171730]"
         >
           <AdminSurface>
             <div className="mb-4 flex items-start justify-between gap-3">
@@ -94,7 +94,7 @@ export default function MatchingPresetDialog({
                 type="button"
                 disabled={busy}
                 onClick={close}
-                className="min-h-11 rounded-[7px] border border-neutral-200 bg-white px-4 text-sm font-medium text-neutral-600 hover:bg-neutral-50"
+                className="min-h-11 rounded-lg border border-neutral-200 bg-white px-4 text-sm font-medium text-neutral-600 hover:bg-neutral-50"
               >
                 취소
               </button>

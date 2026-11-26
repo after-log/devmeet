@@ -14,15 +14,15 @@ export default defineConfig({
       includeManifestIcons: false, // PNG icons are already covered by globPatterns below.
       manifest: {
         id: '/',
-        name: 'devmeet — 코드 밖의 연결',
-        short_name: 'devmeet',
-        description: '취향과 일상의 결이 맞는 사람을 만나는 devmeet',
+        name: '찌릿',
+        short_name: '찌릿',
+        description: '취향과 일상의 결이 맞는 사람을 만나는 찌릿',
         lang: 'ko',
         start_url: '/',
         scope: '/',
         display: 'standalone',
-        theme_color: '#1e1f22',
-        background_color: '#1e1f22',
+        theme_color: '#0f0f0f',
+        background_color: '#0f0f0f',
         icons: [
           { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
           { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },

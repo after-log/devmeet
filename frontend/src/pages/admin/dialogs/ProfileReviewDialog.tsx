@@ -36,7 +36,7 @@ export default function ProfileReviewDialog({ member }: { member: Member }) {
       <div className="grid grid-cols-2 gap-6.25 max-sm:grid-cols-1">
         <div>
           <AdminPhoto
-            className="h-80 w-full rounded-[9px] bg-[#f5f5f5] object-cover max-sm:h-75"
+            className="h-80 w-full rounded-xl bg-[#f5f5f5] object-cover max-sm:h-75"
             src={member.photos[photoIndex]}
             alt={`${member.name} 등록 사진 ${photoIndex + 1}`}
           />

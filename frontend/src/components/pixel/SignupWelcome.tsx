@@ -3,7 +3,6 @@ import PageScene from './PageScene';
 
 const SignupWelcome = ({ name, onContinue }: { name?: string; onContinue: () => void }) => (
   <>
-    <p className="eyebrow">// welcome to devmeet</p>
     <PageScene name="welcome" />
     <h2 className="onboard-hero">
       가입이

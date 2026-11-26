@@ -95,7 +95,6 @@ const TodayPage = () => {
       </div>
       {!p ? (
         <Empty
-          mark="// waiting"
           title="좋은 만남을 준비하고 있어요"
           action={
             <>

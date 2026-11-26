@@ -48,7 +48,7 @@ export default function SocialButtons({ link = false }: { link?: boolean }) {
         </p>
       )}
       {error && (
-        <p role="alert" className="text-xs text-sub">
+        <p role="alert" className="text-xs text-danger">
           {error}
         </p>
       )}

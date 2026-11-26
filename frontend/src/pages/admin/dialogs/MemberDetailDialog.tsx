@@ -27,7 +27,7 @@ export default function MemberDetailDialog({ member }: { member: Member }) {
     >
       <div className="flex items-center gap-4.25">
         <AdminPhoto
-          className="h-21.25 w-18.75 rounded-[9px] object-cover"
+          className="h-21.25 w-18.75 rounded-xl object-cover"
           src={member.photos[0]}
           alt={member.name}
         />

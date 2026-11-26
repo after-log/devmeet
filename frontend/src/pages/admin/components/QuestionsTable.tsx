@@ -32,7 +32,7 @@ export default function QuestionsTable({
         enableGlobalFilter: false,
         filterFn: 'equalsString',
         cell: ({ row }) => (
-          <span className="rounded-[5px] bg-[#f5f5f5] px-2 py-0.75 text-[12px] text-neutral-600">
+          <span className="rounded-md bg-[#f5f5f5] px-2 py-0.75 text-[12px] text-neutral-600">
             {row.original.section}
           </span>
         ),

@@ -3,22 +3,28 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-    <meta name="theme-color" content="#1e1f22" />
-    <meta name="description" content="취향과 일상의 결이 맞는 사람을 만나는 devmeet" />
+    <meta name="theme-color" content="#0f0f0f" />
+    <meta name="description" content="취향과 일상의 결이 맞는 사람을 만나는 찌릿" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-title" content="devmeet" />
+    <meta name="apple-mobile-web-app-title" content="찌릿" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
-    <title>devmeet — 코드 밖의 연결</title>
+    <title>찌릿</title>
     <script>
+      // 저장된 서브색을 첫 화면부터 적용한다
       try {
-        const t =
-          localStorage.getItem('devmeet.theme') ||
-          (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
-        document.documentElement.dataset.theme = t;
-        document.querySelector('meta[name=theme-color]').content =
-          t === 'light' ? '#ffffff' : '#1e1f22';
+        const s = JSON.parse(localStorage.getItem('devmeet.sub') || 'null');
+        if (s && s.mode && s.mode !== 'gray') {
+          document.documentElement.style.setProperty(
+            '--sub',
+            'hsl(' + Math.round(s.hue) + ' 38% 70%)',
+          );
+          document.documentElement.style.setProperty(
+            '--sub-line',
+            'hsl(' + Math.round(s.hue) + ' 22% 26%)',
+          );
+        }
       } catch (e) {}
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />

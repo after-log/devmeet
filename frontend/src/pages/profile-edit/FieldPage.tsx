@@ -200,7 +200,7 @@ function ProfileFieldForm({
       )}
       {input()}
       {error && (
-        <p role="alert" className="mt-3 text-sm text-sub">
+        <p role="alert" className="mt-3 text-sm text-danger">
           {error}
         </p>
       )}

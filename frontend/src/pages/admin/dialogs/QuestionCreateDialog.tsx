@@ -66,7 +66,7 @@ export default function QuestionCreateDialog() {
           </strong>
           {[0, 1, 2, 3].map((i) => (
             <label key={i} className="mt-2.5 flex items-center gap-2.5">
-              <span className="rounded-[5px] bg-[#f5f5f5] p-1.5 font-mono text-[12px] text-neutral-600">
+              <span className="rounded-md bg-[#f5f5f5] p-1.5 font-mono text-[12px] text-neutral-600">
                 {String(i + 1).padStart(2, '0')}
               </span>
               <input

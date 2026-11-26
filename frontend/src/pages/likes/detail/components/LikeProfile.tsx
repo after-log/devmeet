@@ -63,7 +63,7 @@ const LikeProfile = ({
       </div>
       <RhythmBox rows={personRows(profile)} />
       <div className="profile-body">
-        <p className="section-comment">// about me</p>
+        <p className="section-comment">한마디</p>
         <p className="bio whitespace-pre-wrap">{profile.intro}</p>
         <div className="chips mt-4">
           {profile.tags.map((tag) => (

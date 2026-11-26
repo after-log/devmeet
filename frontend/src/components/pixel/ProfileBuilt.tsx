@@ -81,7 +81,6 @@ const ProfileBuilt = ({ profile, onContinue }: { profile: Profile; onContinue: (
 
   return (
     <div className="relative">
-      <p className="eyebrow">{built ? '// build complete' : '// compiling…'}</p>
       <h2 className="onboard-hero">
         프로필이
         <br />

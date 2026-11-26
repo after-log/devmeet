@@ -11,9 +11,6 @@ const WelcomePage = () => {
   const signedUp = !!user;
   return (
     <>
-      <p className="prompt">
-        <span>$</span>devmeet init
-      </p>
       <h2 className="onboard-hero">
         당신의 일상에,
         <br />

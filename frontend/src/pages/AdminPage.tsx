@@ -22,7 +22,6 @@ const AdminPage = () => {
   };
   return (
     <>
-      <p className="eyebrow">// admin</p>
       <h2>운영자 관리</h2>
       {error && (
         <p role="alert" className="error">

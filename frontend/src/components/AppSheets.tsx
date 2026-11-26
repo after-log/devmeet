@@ -34,7 +34,6 @@ const FiltersSheet = ({ close }: { close: () => void }) => {
   };
   return (
     <form noValidate onSubmit={form.handleSubmit(save)}>
-      <p className="eyebrow">// preferences</p>
       <DialogTitle>추천 조건</DialogTitle>
       <label className="formlabel" htmlFor="filter-region">
         지역
@@ -97,7 +96,6 @@ const SafetySheet = ({ id, close }: { id: string; close: () => void }) => {
   const { demo, demoBlock, openSheet } = useApp();
   return (
     <>
-      <p className="eyebrow">// safety</p>
       <DialogTitle>대화 · 프로필 관리</DialogTitle>
       <DialogDescription>개인 연락처와 금융 정보는 신중하게 공유해 주세요.</DialogDescription>
       <button className="btn secondary full" onClick={() => openSheet({ kind: 'report', id })}>
@@ -134,7 +132,6 @@ const ReportSheet = ({ id, close }: { id: string; close: () => void }) => {
   });
   return (
     <>
-      <p className="eyebrow">// report</p>
       <DialogTitle>신고 접수</DialogTitle>
       <label className="formlabel" htmlFor="report-reason">
         어떤 문제가 있었나요?
@@ -185,10 +182,9 @@ const BlockedSheet = () => {
   const people = demo ? [] : (blocked.data?.people ?? (blocked.isPending ? null : []));
   return (
     <>
-      <p className="eyebrow">// blocked</p>
       <DialogTitle>차단한 프로필</DialogTitle>
       {blocked.error && (
-        <p role="alert" className="text-sub">
+        <p role="alert" className="text-danger">
           {blocked.error.message}
         </p>
       )}
@@ -225,7 +221,6 @@ const InfoSheet = ({ kind }: { kind: 'social' | 'privacy' }) => {
   const { user, demo } = useApp();
   return kind === 'social' ? (
     <>
-      <p className="eyebrow">// developer.verification</p>
       <DialogTitle>개발자 인증</DialogTitle>
       <DialogDescription>
         GitHub 인증으로 본인 소유의 계정인지 확인해요. 개발 경력이나 재직 여부를 증명하지는 않아요.
@@ -246,7 +241,6 @@ const InfoSheet = ({ kind }: { kind: 'social' | 'privacy' }) => {
     </>
   ) : (
     <>
-      <p className="eyebrow">// privacy</p>
       <DialogTitle>개인정보 안내</DialogTitle>
       <DialogDescription>
         입력한 이름, 나이, 지역, 직업, 자기소개, 사진은 추천과 매칭 상대에게 보여요.
