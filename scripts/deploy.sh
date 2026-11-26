@@ -35,6 +35,7 @@ readonly PREVIOUS_IMAGE="$(sudo kubectl get deployment devmeet -o jsonpath='{.sp
 readonly PREVIOUS_BACKEND_IMAGE="$(sudo kubectl get deployment devmeet-backend -o jsonpath='{.spec.template.spec.containers[0].image}' --ignore-not-found)"
 # Database credentials and optional provider/SMTP credentials are provisioned separately.
 sudo kubectl get secret devmeet-backend >/dev/null
+sudo kubectl get secret devmeet-basic-auth -n default >/dev/null
 deploy_started=0
 
 rollback() {
@@ -106,9 +107,16 @@ if [[ "$DEPLOYED_BACKEND_IMAGE" != "$BACKEND_IMAGE" ]]; then
   false
 fi
 
-readonly HEALTH="$(curl --fail --silent --show-error --retry 10 --retry-delay 3 https://devmeet.zmint.dev/healthz)"
+HEALTH="$(sudo kubectl get --raw /api/v1/namespaces/default/services/http:devmeet:80/proxy/healthz)"
 if [[ "$HEALTH" != "ok" ]]; then
-  echo "Production health check returned an unexpected response" >&2
+  echo "Frontend health check returned an unexpected response" >&2
+  false
+fi
+
+PUBLIC_HEALTH_HEADERS="$(curl --silent --show-error --retry 10 --retry-delay 3 --dump-header - --output /dev/null https://devmeet.zmint.dev/healthz)"
+if ! grep -Eq '^HTTP/[^ ]+ 401([[:space:]]|$)' <<< "$PUBLIC_HEALTH_HEADERS" ||
+   ! grep -Eiq '^www-authenticate: Basic realm="DevMeet"[[:space:]]*$' <<< "$PUBLIC_HEALTH_HEADERS"; then
+  echo "Public DevMeet endpoint did not require the expected BasicAuth credentials" >&2
   false
 fi
 
