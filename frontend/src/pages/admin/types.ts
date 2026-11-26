@@ -1,3 +1,5 @@
+import type { Gender } from '@/types';
+
 export type ReviewStatus = 'PENDING' | 'APPROVED' | 'REJECTED' | 'NONE';
 export type Member = {
   id: string;
@@ -5,6 +7,7 @@ export type Member = {
   email: string;
   role: string;
   age: number;
+  gender: Gender | null;
   region: string;
   joined: string;
   photos: string[];

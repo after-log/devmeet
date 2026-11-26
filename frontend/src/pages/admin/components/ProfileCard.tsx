@@ -33,7 +33,7 @@ export default function ProfileCard({
           <h3 className="text-sm font-semibold">
             {member.name}
             <small className="ml-1.75 text-[13px] font-normal text-neutral-600">
-              {member.age}세
+              {member.age}세 · {member.gender ?? '성별 미입력'}
             </small>
           </h3>
         </div>

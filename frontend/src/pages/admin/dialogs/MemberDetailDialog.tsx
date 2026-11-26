@@ -42,6 +42,7 @@ export default function MemberDetailDialog({ member }: { member: Member }) {
       <DetailList
         items={[
           ['직무', member.role],
+          ['성별', member.gender ?? '미입력'],
           ['나이 / 지역', member.hasProfile ? `${member.age}세 / ${member.region}` : '미등록'],
           ['프로필 검수', <Badge status={member.review} />],
         ]}

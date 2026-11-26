@@ -7,6 +7,7 @@ import java.util.Map;
 public record ProfileRequest(
     @NotBlank(message = "프로필 이름을 입력해 주세요.") @Size(max = 30) String name,
     @NotNull @Min(19) @Max(80) Integer age,
+    @Pattern(regexp = "남성|여성", message = "성별을 선택해 주세요.") String gender,
     @NotNull @Min(100) @Max(250) Integer height,
     @NotBlank @Size(max = 60) String location,
     @NotBlank @Size(max = 60) String job,

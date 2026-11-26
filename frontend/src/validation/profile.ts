@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { GENDERS } from '@/data/options';
 import { photoUrlSchema, requiredText } from './common';
 
 export const PUBLIC_VALUE_LIMIT = 10;
@@ -13,6 +14,7 @@ const height = z
   .min(100, '키는 100cm 이상 입력해 주세요.')
   .max(250, '키는 250cm 이하로 입력해 주세요.');
 const role = z.enum(['developer', 'non-developer'], { error: '개발자 여부를 선택해 주세요.' });
+const gender = z.enum(GENDERS, { error: '성별을 선택해 주세요.' });
 export const profilePhotosSchema = z
   .array(photoUrlSchema)
   .min(3, '프로필 사진을 최소 3장 등록해 주세요.')
@@ -77,6 +79,7 @@ export const preferencesSchema = preferenceFieldsSchema.refine(ageOrder, {
 const basicFields = {
   name: requiredText('이름', 30),
   age,
+  gender,
   height,
   job: requiredText('직업', 60),
   education: requiredText('학력', 40),
@@ -122,6 +125,7 @@ const onboardingDraftFields = z
     role: role.optional(),
     name: z.string().optional(),
     age: z.number().optional(),
+    gender: gender.nullish(),
     height: z.number().optional(),
     city: z.string().optional(),
     district: z.string().optional(),

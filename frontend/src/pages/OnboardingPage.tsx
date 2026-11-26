@@ -15,6 +15,7 @@ import {
   CONTACT,
   DRINKING,
   EDUCATION,
+  GENDERS,
   MEETING,
   PREFERENCE,
   REGIONS,
@@ -310,6 +311,7 @@ const OnboardingPage = () => {
             {input('age', '나이', '19–80', true)}
             {input('height', '키 (cm)', '예: 172', true)}
           </div>
+          {select('gender', '성별', [...GENDERS])}
           <div className="grid grid-cols-2 gap-2">
             <div>
               <label className="formlabel" htmlFor="city">

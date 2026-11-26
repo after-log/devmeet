@@ -64,7 +64,9 @@ export default function ProfileReviewDialog({ member }: { member: Member }) {
           <Badge status={member.review} />
           <h3 className="mt-3.25! mb-1.5! text-[21px] font-semibold max-sm:text-[19px]">
             {member.name}{' '}
-            <small className="text-sm font-normal text-neutral-600">{member.age}세</small>
+            <small className="text-sm font-normal text-neutral-600">
+              {member.age}세 · {member.gender ?? '성별 미입력'}
+            </small>
           </h3>
           <p className="text-sm text-neutral-600">
             {member.role}

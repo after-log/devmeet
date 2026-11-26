@@ -1,4 +1,6 @@
 // 가입·추천 조건에서 쓰는 선택지. devmeet-mvp와 같은 값을 쓴다.
+export const GENDERS = ['남성', '여성'] as const;
+
 export const REGIONS: Record<string, string[]> = {
   서울시: [
     '강남구',
