@@ -43,6 +43,9 @@ spec:
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: prod
+            # This deployment is the Dev environment. Admin can pause or purge the fixtures.
+            - name: MOCK_MEMBERS_AUTO_SEED
+              value: "true"
             - name: PUBLIC_URL
               value: https://devmeet.zmint.dev
             - name: PHOTO_DIRECTORY

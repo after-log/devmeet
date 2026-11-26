@@ -52,6 +52,10 @@ export const adminApi = {
   activateMatchingPreset: (id: string) => adminRequest<void>('/matching/active', 'PUT', { id }),
   statistics: (days: 7 | 30) => adminRequest<AdminStatistics>('/statistics?days=' + days),
   members: () => adminRequest<Member[]>('/accounts'),
+  mockMembers: () => adminRequest<{ enabled: boolean; count: number }>('/mock-members'),
+  setMockMembersEnabled: (enabled: boolean) =>
+    adminRequest<{ enabled: boolean; count: number }>('/mock-members/enabled', 'PUT', { enabled }),
+  deleteMockMembers: () => adminRequest<{ deleted: number }>('/mock-members', 'DELETE'),
   createMockMembers: (password: string) =>
     adminRequest<{ created: number; skipped: number; failed: number }>('/mock-members', 'POST', {
       password,

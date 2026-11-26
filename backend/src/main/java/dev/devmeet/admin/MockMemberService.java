@@ -38,11 +38,12 @@ public class MockMemberService {
   private final JdbcTemplate jdbc;
   private final Validator validator;
   private final JsonMapper json;
+  private final MockMemberLifecycle lifecycle;
 
   public MockMemberService(
       AccountRepository accounts, RegistrationService registration, ProfileService profileService,
       ProfileRepository profiles, PhotoService photos, TransactionTemplate transaction,
-      JdbcTemplate jdbc, Validator validator, JsonMapper json) {
+      JdbcTemplate jdbc, Validator validator, JsonMapper json, MockMemberLifecycle lifecycle) {
     this.accounts = accounts;
     this.registration = registration;
     this.profileService = profileService;
@@ -52,6 +53,7 @@ public class MockMemberService {
     this.jdbc = jdbc;
     this.validator = validator;
     this.json = json;
+    this.lifecycle = lifecycle;
   }
 
   record Fixture(String email, List<String> photoFiles, ObjectNode profile) {}
@@ -59,6 +61,8 @@ public class MockMemberService {
   public record Result(int created, int skipped, int failed) {}
 
   public Result seed(String actor, String password) {
+    if (!lifecycle.enabled())
+      throw new ApiException(HttpStatus.CONFLICT, "테스트 계정을 활성화한 뒤 등록해 주세요.");
     boolean customPassword = StringUtils.hasText(password);
     if (customPassword && (password.length() < 10 || password.getBytes(StandardCharsets.UTF_8).length > 72))
       throw new ApiException(HttpStatus.BAD_REQUEST, "비밀번호는 10자 이상, UTF-8 기준 72바이트 이하로 입력해 주세요.");
@@ -73,11 +77,14 @@ public class MockMemberService {
     int created = 0, skipped = 0, failed = 0;
     for (var fixture : fixtures) {
       try {
-        if (Boolean.TRUE.equals(transaction.execute(status -> {
+        Boolean inserted = transaction.execute(status -> {
+          if (!lifecycle.lockEnabled()) return null;
           if (accounts.existsByEmail(fixture.email())) return false;
           create(actor, fixture, customPassword ? password : UUID.randomUUID().toString());
           return true;
-        }))) created++;
+        });
+        if (inserted == null) break;
+        if (inserted) created++;
         else skipped++;
       } catch (RuntimeException error) {
         if (isDuplicate(error) && accounts.existsByEmail(fixture.email())) {
@@ -112,6 +119,7 @@ public class MockMemberService {
       throw new IllegalArgumentException("Invalid mock member profile");
     profileService.save(fixture.email(), request);
     profiles.findById(account.getId()).orElseThrow().reviewPhoto("APPROVED", "");
+    jdbc.update("UPDATE accounts SET mock_member=true WHERE id=UUID_TO_BIN(?)", account.getId().toString());
     jdbc.update(
         "INSERT INTO admin_audit(actor,action,target_id,note) VALUES(?,'MOCK_MEMBER_CREATE',UUID_TO_BIN(?),'')",
         actor, account.getId().toString());

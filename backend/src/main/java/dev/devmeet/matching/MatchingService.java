@@ -126,7 +126,8 @@ public class MatchingService {
               .queryForList(
                   """
                   SELECT BIN_TO_UUID(p.account_id) FROM profiles p JOIN accounts a ON a.id=p.account_id
-                  WHERE p.account_id<>UUID_TO_BIN(?) AND a.suspended=false AND p.photo_status='APPROVED'
+                  WHERE p.account_id<>UUID_TO_BIN(?) AND a.suspended=false AND a.mock_disabled=false
+                  AND p.photo_status='APPROVED'
                   AND p.age BETWEEN ? AND ? ORDER BY a.created_at DESC LIMIT 500
                   """,
                   String.class,

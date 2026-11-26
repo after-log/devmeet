@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/admin/mock-members")
 public class MockMemberController {
   private final MockMemberService members;
+  private final MockMemberLifecycle lifecycle;
 
-  public MockMemberController(MockMemberService members) {
+  public MockMemberController(MockMemberService members, MockMemberLifecycle lifecycle) {
     this.members = members;
+    this.lifecycle = lifecycle;
   }
 
   public record Request(@Size(max = 72) String password) {
@@ -19,6 +21,23 @@ public class MockMemberController {
     public String toString() {
       return "MockMemberRequest[password=REDACTED]";
     }
+  }
+
+  public record Setting(@jakarta.validation.constraints.NotNull Boolean enabled) {}
+
+  @GetMapping
+  public MockMemberLifecycle.Status status() {
+    return lifecycle.status();
+  }
+
+  @PutMapping("/enabled")
+  public MockMemberLifecycle.Status setEnabled(Principal principal, @Valid @RequestBody Setting input) {
+    return lifecycle.setEnabled(principal.getName(), input.enabled());
+  }
+
+  @DeleteMapping
+  public MockMemberLifecycle.Deletion purge(Principal principal) {
+    return lifecycle.purge(principal.getName());
   }
 
   @PostMapping

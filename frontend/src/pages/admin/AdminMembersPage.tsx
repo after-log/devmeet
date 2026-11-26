@@ -49,7 +49,7 @@ function MemberRecords({ isReports }: { isReports: boolean }) {
         <StatusTabs options={options} value={status} onChange={setStatus} />
         {!isReports && (
           <AdminButton ref={mockMembersButton} onClick={() => setShowMockMembers(true)}>
-            테스트 계정 등록
+            테스트 계정 관리
           </AdminButton>
         )}
       </Toolbar>
