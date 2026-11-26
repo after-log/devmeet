@@ -149,7 +149,7 @@ const ChatThread = ({
         )}
         {!loading && !error && room.messages.length === 0 && (
           <div className="py-7 text-center">
-            <p className="font-mono text-lg text-point">hello, {profile.id}_</p>
+            <p className="font-mono text-lg wrap-anywhere text-point">hello, {profile.name}_</p>
             <p className="text-xs leading-7 text-fg-4">
               거창한 인사가 아니어도 괜찮아요.
               <br />

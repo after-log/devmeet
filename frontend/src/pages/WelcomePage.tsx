@@ -1,14 +1,20 @@
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useApp } from '../stores/app';
 import SocialButtons from '@/components/SocialButtons';
 import PageScene from '@/components/pixel/PageScene';
+import { useLocalPasswordLogin } from '@/hooks/queries/useLocalPasswordLogin';
+
+const secondaryAction =
+  'inline-flex min-h-10 items-center rounded-sm text-xs text-fg-3 underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-point';
 
 const WelcomePage = () => {
   const navigate = useNavigate();
   const { user, startDemo, openSheet, logout } = useApp();
+  const localPasswordLogin = useLocalPasswordLogin();
   if (user?.profile) return <Navigate to="/today" replace />;
   // 로그인했지만 프로필이 없는 회원도 이 화면에 머물 수 있어야 온보딩에서 빠져나올 수 있다
   const signedUp = !!user;
+  const showEmailLogin = !signedUp && localPasswordLogin;
   return (
     <>
       <h2 className="onboard-hero">
@@ -45,15 +51,22 @@ const WelcomePage = () => {
       ) : (
         <SocialButtons />
       )}
-      <button
-        className="skip"
-        onClick={() => {
-          startDemo();
-          navigate('/today');
-        }}
-      >
-        가입 없이 화면 둘러보기
-      </button>
+      <div className={showEmailLogin ? 'mt-3 flex flex-wrap justify-center gap-x-5' : undefined}>
+        {showEmailLogin && (
+          <Link className={secondaryAction} to="/auth/login">
+            이메일로 로그인
+          </Link>
+        )}
+        <button
+          className={showEmailLogin ? secondaryAction : 'skip'}
+          onClick={() => {
+            startDemo();
+            navigate('/today');
+          }}
+        >
+          가입 없이 화면 둘러보기
+        </button>
+      </div>
       <p className="footnote">
         만 19세 이상 이용 가능
         <br />

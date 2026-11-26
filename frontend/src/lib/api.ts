@@ -48,6 +48,8 @@ export const api = {
   unblock: (id: string) => request<void>('/blocks/' + id, 'DELETE'),
   blocks: () => request<{ people: Person[] }>('/blocks'),
   person: (id: string) => request<{ person: Person }>('/people/' + id),
+  authCapabilities: () =>
+    request<{ email: boolean; localPasswordLogin: boolean }>('/auth/capabilities'),
   providers: () => request<Record<'github' | 'kakao', boolean>>('/auth/providers'),
   link: (provider: 'github' | 'kakao') =>
     request<{ url: string }>('/auth/' + provider + '/link', 'POST'),
