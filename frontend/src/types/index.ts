@@ -1,5 +1,8 @@
+import type { GENDERS } from '@/data/options';
+
 // 화면과 서버 API가 함께 쓰는 타입.
 export type Role = 'developer' | 'non-developer';
+export type Gender = (typeof GENDERS)[number];
 
 export interface ValueAnswer {
   choice: string | null;
@@ -11,6 +14,7 @@ export interface Profile {
   valueAnswers?: ValueAnswers;
   name: string;
   age: number;
+  gender: Gender | null;
   height: number;
   location: string; // "서울시 서초구" 형식
   job: string;

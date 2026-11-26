@@ -24,6 +24,7 @@ test('onboarding sends required defaults and excludes UI-only draft fields', asy
     await api.saveProfile({
       name: '지원',
       age: 28,
+      gender: '여성',
       height: 170,
       location: '서울시 성동구',
       job: '개발자',
@@ -50,6 +51,7 @@ test('onboarding sends required defaults and excludes UI-only draft fields', asy
       '/api/photos/00000000-0000-4000-8000-000000000003',
     ]);
     assert.equal(sent.region, '');
+    assert.equal(sent.gender, '여성');
     assert.equal(sent.minAge, 19);
     assert.equal(sent.maxAge, 60);
     assert.deepEqual(sent.tags, []);

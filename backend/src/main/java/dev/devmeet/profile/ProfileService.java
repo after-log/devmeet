@@ -23,7 +23,7 @@ import tools.jackson.databind.json.JsonMapper;
 @Transactional(readOnly = true)
 public class ProfileService {
   private static final Set<String> EDITABLE_FIELDS = Set.of(
-      "name", "age", "height", "location", "job", "education", "role", "meeting", "contact",
+      "name", "age", "gender", "height", "location", "job", "education", "role", "meeting", "contact",
       "preference", "smoking", "drinking", "religion", "intro", "tags", "photos");
 
   private final AccountRepository accounts;
@@ -113,6 +113,8 @@ public class ProfileService {
     var violations = validator.validateProperty(request, field);
     if (!violations.isEmpty())
       throw new ApiException(HttpStatus.BAD_REQUEST, violations.iterator().next().getMessage());
+    if (field.equals("gender") && request.gender() == null)
+      throw new ApiException(HttpStatus.BAD_REQUEST, "성별을 선택해 주세요.");
 
     Account account = lockAccount(email);
     Profile profile = access.profile(account.getId());

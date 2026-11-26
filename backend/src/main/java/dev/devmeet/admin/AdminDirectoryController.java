@@ -27,7 +27,7 @@ public class AdminDirectoryController {
   public Object accounts() {
     return jdbc.query("""
         SELECT BIN_TO_UUID(a.id) id,a.email,a.suspended,a.created_at,
-               p.name,p.age,p.job,p.location,p.photos,p.photo_status,p.photo_review_reason
+               p.name,p.age,p.gender,p.job,p.location,p.photos,p.photo_status,p.photo_review_reason
         FROM accounts a LEFT JOIN profiles p ON p.account_id=a.id
         ORDER BY a.created_at DESC,a.id
         """, (rs, index) -> {
@@ -41,6 +41,7 @@ public class AdminDirectoryController {
       row.put("hasProfile", hasProfile);
       row.put("name", hasProfile ? rs.getString("name") : "프로필 미등록");
       row.put("age", rs.getInt("age"));
+      row.put("gender", rs.getString("gender"));
       row.put("role", hasProfile ? rs.getString("job") : "미등록");
       row.put("region", hasProfile ? rs.getString("location") : "");
       row.put("joined", rs.getTimestamp("created_at").toInstant());

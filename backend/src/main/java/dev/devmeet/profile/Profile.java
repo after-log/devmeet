@@ -19,6 +19,9 @@ public class Profile {
   @Column(nullable = false)
   private Integer age;
 
+  @Column(length = 10)
+  private String gender;
+
   @Column(nullable = false)
   private Integer height;
 
@@ -123,6 +126,7 @@ public class Profile {
   public void update(ProfileRequest request, Map<String, ValueAnswer> answers) {
     name = request.name().strip();
     age = request.age();
+    if (request.gender() != null) gender = request.gender();
     height = request.height();
     location = request.location().strip();
     job = request.job().strip();
@@ -147,6 +151,7 @@ public class Profile {
     switch (field) {
       case "name" -> name = request.name().strip();
       case "age" -> age = request.age();
+      case "gender" -> gender = request.gender();
       case "height" -> height = request.height();
       case "location" -> location = request.location().strip();
       case "job" -> job = request.job().strip();
@@ -181,6 +186,7 @@ public class Profile {
     return new ProfileRequest(
         name,
         age,
+        gender,
         height,
         location,
         job,

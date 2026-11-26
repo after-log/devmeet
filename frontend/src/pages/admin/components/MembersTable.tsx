@@ -36,6 +36,12 @@ export default function MembersTable({
         ),
       },
       {
+        accessorKey: 'gender',
+        header: '성별',
+        enableGlobalFilter: false,
+        cell: ({ row }) => row.original.gender ?? '미입력',
+      },
+      {
         accessorKey: 'role',
         header: '직무 / 지역',
         enableGlobalFilter: false,

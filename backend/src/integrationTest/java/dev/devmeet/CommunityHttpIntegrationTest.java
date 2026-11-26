@@ -166,6 +166,33 @@ class CommunityHttpIntegrationTest {
   }
 
   @Test
+  void administratorSeesSelfReportedGenderAndMissingValues() throws Exception {
+    Actor actor = register(UUID.randomUUID() + "@example.test");
+    assertThat(adminMember(actor).get("gender").isNull()).isTrue();
+
+    var body = profileBody("서울시 성동구", "non-developer");
+    body.put("photos", List.of(actor.upload(), actor.upload(), actor.upload()));
+    body.put("gender", "여성");
+    actor.ok("PUT", "/profile", body);
+    assertThat(adminMember(actor).get("gender").asText()).isEqualTo("여성");
+
+    body.remove("gender");
+    actor.ok("PUT", "/profile", body);
+    assertThat(adminMember(actor).get("gender").asText()).isEqualTo("여성");
+    assertThat(actor.call("PATCH", "/profile/gender", Map.of("value", "invalid")).statusCode())
+        .isEqualTo(400);
+    actor.ok("PATCH", "/profile/gender", Map.of("value", "남성"));
+    assertThat(adminMember(actor).get("gender").asText()).isEqualTo("남성");
+  }
+
+  private JsonNode adminMember(Actor actor) throws Exception {
+    for (var row : admin.ok("GET", "/admin/accounts", null)) {
+      if (row.get("id").asText().equals(actor.id)) return row;
+    }
+    throw new AssertionError("Member missing from admin directory: " + actor.id);
+  }
+
+  @Test
   void administratorCatalogChangesReachMembersAndPreserveInactiveAnswers() throws Exception {
     String id=admin.ok("POST","/admin/questions",Map.of("section","일상","text","통합 테스트 문항","purpose","매칭","options",List.of("하나","둘","셋","넷"))).get("id").asText();
     try {
