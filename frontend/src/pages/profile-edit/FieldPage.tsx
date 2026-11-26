@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import ProfilePhotoFields from '@/components/ProfilePhotoFields';
+import { ChoiceGroup } from '@/components/ui/choice-group';
 import { Select } from '@/components/ui/select';
 import { REGIONS, splitLocation } from '@/data/options';
 import { useProfileMutations } from '@/hooks/queries/useProfileMutations';
@@ -125,6 +126,17 @@ function ProfileFieldForm({
             </div>
           </div>
         );
+      case 'choice':
+        return (
+          <ChoiceGroup
+            id="edit-value"
+            label={config.label}
+            options={config.options}
+            value={value}
+            onValueChange={setValue}
+            disabled={saving}
+          />
+        );
       case 'select': {
         const options = fixedPreference ? ['개발자'] : config.options;
         const hasValue = options.some(
@@ -193,7 +205,7 @@ function ProfileFieldForm({
 
   return (
     <form noValidate onSubmit={save}>
-      {config.kind !== 'photos' && config.kind !== 'location' && (
+      {config.kind !== 'photos' && config.kind !== 'location' && config.kind !== 'choice' && (
         <label className="sr-only" htmlFor="edit-value">
           {config.label}
         </label>
