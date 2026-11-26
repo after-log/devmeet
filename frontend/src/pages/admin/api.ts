@@ -52,6 +52,10 @@ export const adminApi = {
   activateMatchingPreset: (id: string) => adminRequest<void>('/matching/active', 'PUT', { id }),
   statistics: (days: 7 | 30) => adminRequest<AdminStatistics>('/statistics?days=' + days),
   members: () => adminRequest<Member[]>('/accounts'),
+  createMockMembers: (password: string) =>
+    adminRequest<{ created: number; skipped: number; failed: number }>('/mock-members', 'POST', {
+      password,
+    }),
   reports: () => adminRequest<Report[]>('/reports'),
   questions: () => adminRequest<{ questions: Question[]; sections: Category[] }>('/questions'),
   reviewProfile: (member: Member, status: ReviewStatus, reason: string) =>

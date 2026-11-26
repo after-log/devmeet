@@ -42,6 +42,12 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
+tasks.named('processResources') {
+    from('fixtures') {
+        into 'fixtures'
+    }
+}
+
 // 로컬 접속 정보는 bootRun/IDE에서만 사용하고 배포 산출물에는 포함하지 않는다.
 tasks.withType(Jar).configureEach {
     exclude '**/application-local.yml', '**/application-local.example.yml'

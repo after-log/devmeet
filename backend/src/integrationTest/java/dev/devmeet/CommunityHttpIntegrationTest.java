@@ -166,6 +166,38 @@ class CommunityHttpIntegrationTest {
   }
 
   @Test
+  void administratorSeedsMockMembersAndSkipsExistingAccounts() throws Exception {
+    var credentials = Map.of("password", "fixture-sign-in-password");
+    assertThat(new Actor().call("POST", "/admin/mock-members", credentials).statusCode())
+        .isEqualTo(401);
+    assertThat(admin.call("POST", "/admin/mock-members", Map.of("password", "short")).statusCode())
+        .isEqualTo(400);
+
+    var created = admin.ok("POST", "/admin/mock-members", credentials);
+    assertThat(created.get("created").asInt()).isEqualTo(30);
+    assertThat(created.get("skipped").asInt()).isZero();
+    assertThat(created.get("failed").asInt()).isZero();
+
+    var repeat = admin.ok("POST", "/admin/mock-members", Map.of("password", "not-applied-on-repeat"));
+    assertThat(repeat.get("created").asInt()).isZero();
+    assertThat(repeat.get("skipped").asInt()).isEqualTo(30);
+    assertThat(repeat.get("failed").asInt()).isZero();
+
+    var member = new Actor();
+    var user = member.ok(
+        "POST", "/login",
+        Map.of("email", "mock-member-01@devmeet.test", "password", "fixture-sign-in-password")).get("user");
+    assertThat(user.get("profile").get("photos").size()).isEqualTo(3);
+    assertThat(user.get("verification").get("photoStatus").asText()).isEqualTo("APPROVED");
+    String photo = user.get("profile").get("photos").get(0).asText();
+    var response = member.client.send(
+        HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port + photo)).GET().build(),
+        HttpResponse.BodyHandlers.ofByteArray());
+    assertThat(response.statusCode()).isEqualTo(200);
+    assertThat(ImageIO.read(new ByteArrayInputStream(response.body())).getWidth()).isEqualTo(480);
+  }
+
+  @Test
   void administratorSeesSelfReportedGenderAndMissingValues() throws Exception {
     Actor actor = register(UUID.randomUUID() + "@example.test");
     assertThat(adminMember(actor).get("gender").isNull()).isTrue();
